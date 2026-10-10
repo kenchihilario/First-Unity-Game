@@ -125,5 +125,18 @@ public class RouletteUIManager : MonoBehaviour
             yield return null;
         }
         statusText.text = result == 0 ? "<color=#00FFAA>GREEN WINS (14x)</color>" : (result <= 7 ? "<color=#FF4444>RED WINS (2x)</color>" : "<color=#AAAAAA>BLACK WINS (2x)</color>");
+        
+        // Winning Bounce
+        float bounceDuration = 0.5f;
+        elapsed = 0f;
+        while(elapsed < bounceDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / bounceDuration;
+            float scale = 1f + Mathf.Sin(t * Mathf.PI) * 0.3f; // scale to 1.3 then back
+            blocks[targetIndex].transform.localScale = Vector3.one * scale;
+            yield return null;
+        }
+        blocks[targetIndex].transform.localScale = Vector3.one;
     }
 }

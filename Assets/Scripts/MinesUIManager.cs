@@ -19,7 +19,7 @@ public class MinesUIManager : MonoBehaviour
     private Color mineColor = new Color(1f, 0.2f, 0.2f, 1f);
     void Start()
     {
-        gameManager = GetComponent<MinesGameManager>();
+        gameManager = FindFirstObjectByType<MinesGameManager>();
         if (gameManager != null)
         {
             gameManager.OnStateChanged += UpdateState;
@@ -119,10 +119,28 @@ public class MinesUIManager : MonoBehaviour
         tileTexts[index].text = "";
         tileButtons[index].GetComponent<Image>().color = darkTileColor;
         tileButtons[index].transform.localScale = Vector3.one;
+        tileButtons[index].transform.localRotation = Quaternion.Euler(0, 0, 0);
     }
     void HandleTileRevealed(int index, bool isMine, float newMultiplier)
     {
         if (tileButtons[index] == null) return;
+        StartCoroutine(FlipTileRoutine(index, isMine, newMultiplier));
+    }
+
+    IEnumerator FlipTileRoutine(int index, bool isMine, float newMultiplier)
+    {
+        float duration = 0.2f;
+        float elapsed = 0f;
+        RectTransform rt = tileButtons[index].GetComponent<RectTransform>();
+        
+        while (elapsed < duration / 2f)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / (duration / 2f);
+            rt.localRotation = Quaternion.Euler(0, Mathf.Lerp(0, 90f, t), 0);
+            yield return null;
+        }
+        
         if (isMine)
         {
             tileTexts[index].text = "💣";
@@ -135,7 +153,20 @@ public class MinesUIManager : MonoBehaviour
             currentMultiplierText.text = $"{newMultiplier:F2}x";
             statusText.text = $"<color=#00FFAA>GEMS FOUND: {gameManager.gemsFound}</color>";
         }
+        
+        elapsed = 0f;
+        while (elapsed < duration / 2f)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / (duration / 2f);
+            rt.localRotation = Quaternion.Euler(0, Mathf.Lerp(90f, 0, t), 0);
+            rt.localScale = Vector3.one * (1f + Mathf.Sin(t * Mathf.PI) * 0.2f);
+            yield return null;
+        }
+        rt.localRotation = Quaternion.Euler(0, 0, 0);
+        rt.localScale = Vector3.one;
     }
+
     void HandleCashOut(float payout)
     {
         if (payout > 0)

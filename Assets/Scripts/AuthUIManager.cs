@@ -3,6 +3,8 @@ using UnityEngine.UI;
 
 public class AuthUIManager : MonoBehaviour
 {
+    public static AuthUIManager Instance;
+
     [Header("Auth Panels")]
     public GameObject authOverlay;
     public GameObject loginPanel;
@@ -12,6 +14,9 @@ public class AuthUIManager : MonoBehaviour
     public GameObject bankOverlay;
     public GameObject depositPanel;
     public GameObject withdrawPanel;
+
+    [Header("Account Settings")]
+    public GameObject accSettingsOverlay;
 
     [Header("Auth Inputs")]
     public InputField loginPhoneInput;
@@ -31,6 +36,11 @@ public class AuthUIManager : MonoBehaviour
     public GameObject loggedOutGroup; 
     public GameObject loggedInGroup;  
     public Text profileText;
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+    }
 
     void Start()
     {
@@ -58,6 +68,7 @@ public class AuthUIManager : MonoBehaviour
     public void ShowRegister() { CloseAll(); if(authOverlay) authOverlay.SetActive(true); if(registerPanel) registerPanel.SetActive(true); if(registerErrorText) registerErrorText.text = ""; }
     public void ShowDeposit() { CloseAll(); if(bankOverlay) bankOverlay.SetActive(true); if(depositPanel) depositPanel.SetActive(true); if(bankErrorText) bankErrorText.text = ""; }
     public void ShowWithdraw() { CloseAll(); if(bankOverlay) bankOverlay.SetActive(true); if(withdrawPanel) withdrawPanel.SetActive(true); if(bankErrorText) bankErrorText.text = ""; }
+    public void ShowAccountSettings() { CloseAll(); if(accSettingsOverlay) accSettingsOverlay.SetActive(true); }
     
     public void CloseAll() 
     { 
@@ -67,6 +78,7 @@ public class AuthUIManager : MonoBehaviour
         if(bankOverlay) bankOverlay.SetActive(false);
         if(depositPanel) depositPanel.SetActive(false);
         if(withdrawPanel) withdrawPanel.SetActive(false);
+        if(accSettingsOverlay) accSettingsOverlay.SetActive(false);
     }
 
     public void OnLoginSubmit()

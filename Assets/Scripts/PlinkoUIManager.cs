@@ -19,10 +19,9 @@ public class PlinkoUIManager : MonoBehaviour
     public Text[] slotTexts;
     void Start()
     {
-        gameManager = GetComponent<PlinkoGameManager>();
+        gameManager = FindFirstObjectByType<PlinkoGameManager>();
         if (gameManager != null)
         {
-            gameManager.OnStateChanged += UpdateState;
             gameManager.OnBallPathGenerated += AnimateBall;
             gameManager.OnBallLanded += HandleCashOut;
         }
@@ -33,30 +32,26 @@ public class PlinkoUIManager : MonoBehaviour
         if (halfBetBtn != null) halfBetBtn.onClick.AddListener(() => ModifyBet(0.5f));
         if (doubleBetBtn != null) doubleBetBtn.onClick.AddListener(() => ModifyBet(2f));
         pegPositions = new Vector2[gameManager.rows][];
-        float startY = 180f;
-        float ySpacing = 40f;
-        float xSpacing = 35f;
         for (int r = 0; r < gameManager.rows; r++)
         {
             int pegsInRow = r + 1;
             pegPositions[r] = new Vector2[pegsInRow];
-            float rowWidth = (pegsInRow - 1) * xSpacing;
-            float startX = -rowWidth / 2f;
             for (int c = 0; c < pegsInRow; c++)
             {
-                pegPositions[r][c] = new Vector2(startX + c * xSpacing, startY - r * ySpacing);
+                Transform peg = boardContainer.Find($"Peg_{r}_{c}");
+                if (peg != null)
+                {
+                    pegPositions[r][c] = peg.GetComponent<RectTransform>().anchoredPosition;
+                }
             }
         }
         UpdateState(PlinkoGameManager.GameState.Idle);
     }
     void OnActionClicked()
     {
-        if (gameManager.currentState == PlinkoGameManager.GameState.Idle)
-        {
-            float bet = 10f;
-            if (betAmountInput != null && float.TryParse(betAmountInput.text, out float b)) bet = b;
-            gameManager.DropBall(bet);
-        }
+        float bet = 10f;
+        if (betAmountInput != null && float.TryParse(betAmountInput.text, out float b)) bet = b;
+        gameManager.DropBall(bet);
     }
     void ModifyBet(float multiplier)
     {
@@ -67,56 +62,57 @@ public class PlinkoUIManager : MonoBehaviour
     }
     void UpdateState(PlinkoGameManager.GameState state)
     {
+        // Removed state logic so users can drop multiple balls!
         Text actionText = actionButton.transform.GetChild(0).GetComponent<Text>();
-        betAmountInput.interactable = state == PlinkoGameManager.GameState.Idle;
-        halfBetBtn.interactable = state == PlinkoGameManager.GameState.Idle;
-        doubleBetBtn.interactable = state == PlinkoGameManager.GameState.Idle;
-        actionButton.interactable = state == PlinkoGameManager.GameState.Idle;
-        if (state == PlinkoGameManager.GameState.Idle)
-        {
-            actionText.text = "DROP BALL";
-            actionButton.GetComponent<Image>().color = new Color(0f, 0.9f, 0.0f, 1f); 
-            statusText.text = "<color=#AAAAAA>READY TO DROP</color>";
-            foreach(var txt in slotTexts) {
-                if (txt != null) txt.color = Color.white;
-            }
-        }
-        else if (state == PlinkoGameManager.GameState.Dropping)
-        {
-            actionText.text = "DROPPING...";
-            actionButton.GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 1f); 
-            statusText.text = "<color=#FFFF00>WATCH THE BALL!</color>";
-        }
+        actionText.text = "DROP BALL";
+        actionButton.GetComponent<Image>().color = new Color(0f, 0.9f, 0.0f, 1f); 
     }
-    void AnimateBall(int[] path)
+    void AnimateBall(float betAmount, int[] path)
     {
-        StartCoroutine(BallDropRoutine(path));
+        StartCoroutine(BallDropRoutine(betAmount, path));
     }
-    IEnumerator BallDropRoutine(int[] path)
+    IEnumerator BallDropRoutine(float betAmount, int[] path)
     {
         GameObject ball = new GameObject("Ball", typeof(RectTransform));
         ball.transform.SetParent(boardContainer, false);
         Image img = ball.AddComponent<Image>();
         img.color = ballColor;
+        
+        Transform topPeg = boardContainer.Find("Peg_0_0");
+        if (topPeg != null) img.sprite = topPeg.GetComponent<Image>().sprite;
+
         UnityEngine.UI.Shadow shadow = ball.AddComponent<UnityEngine.UI.Shadow>();
         shadow.effectColor = new Color(1f, 0.5f, 0f, 0.5f);
-        shadow.effectDistance = new Vector2(0, 0); 
+        shadow.effectDistance = new Vector2(0, -2); 
         RectTransform ballRt = ball.GetComponent<RectTransform>();
-        ballRt.sizeDelta = new Vector2(24, 24);
+        ballRt.sizeDelta = new Vector2(28, 28);
         int currentCol = 0;
-        ballRt.anchoredPosition = new Vector2(0, 220); 
-        float dropSpeed = 0.15f;
+        
+        float dropSpeed = 0.22f; 
+        float totalRotation = 0f;
+        float ySpacingOffset = 60f;
+        if (gameManager.rows > 1) ySpacingOffset = pegPositions[0][0].y - pegPositions[1][0].y;
+        
+        ballRt.anchoredPosition = pegPositions[0][0] + new Vector2(0, ySpacingOffset); 
+        
         for (int r = 0; r < gameManager.rows; r++)
         {
             Vector2 startPos = ballRt.anchoredPosition;
             Vector2 pegPos = pegPositions[r][currentCol];
             float t = 0;
+            
             while(t < 1f)
             {
-                t += Time.deltaTime / dropSpeed;
-                ballRt.anchoredPosition = Vector2.Lerp(startPos, pegPos + new Vector2(0, 10), t); 
+                t += Time.deltaTime / (dropSpeed * 0.6f);
+                float easeY = t * t; 
+                ballRt.anchoredPosition = Vector2.Lerp(startPos, pegPos + new Vector2(0, 14), easeY); 
                 yield return null;
             }
+            
+            ballRt.localScale = new Vector3(1.3f, 0.7f, 1f);
+            yield return new WaitForSeconds(0.015f);
+            ballRt.localScale = Vector3.one;
+
             int dir = path[r]; 
             currentCol += dir;
             Vector2 endPos = pegPos;
@@ -126,29 +122,40 @@ public class PlinkoUIManager : MonoBehaviour
             }
             else
             {
-                float xSpacing = 35f;
-                float ySpacing = 40f;
-                float startY = 180f;
-                int finalSlots = gameManager.rows + 1;
-                float rowWidth = (finalSlots - 1) * xSpacing;
-                float startX = -rowWidth / 2f;
-                endPos = new Vector2(startX + currentCol * xSpacing, startY - (r+1) * ySpacing);
+                Transform slotObj = boardContainer.Find($"Slot_{currentCol}");
+                if (slotObj != null) endPos = slotObj.GetComponent<RectTransform>().anchoredPosition;
+                else endPos = pegPos + new Vector2((dir == 1 ? 1 : -1) * (pegPositions[1][1].x - pegPositions[1][0].x), -ySpacingOffset);
             }
+            
             t = 0;
+            float arcHeight = 35f;
+            
             while(t < 1f)
             {
-                t += Time.deltaTime / (dropSpeed * 1.2f);
-                float arc = Mathf.Sin(t * Mathf.PI) * 15f; 
+                t += Time.deltaTime / dropSpeed;
+                float arc = 4f * arcHeight * t * (1f - t); 
                 ballRt.anchoredPosition = Vector2.Lerp(pegPos, endPos, t) + new Vector2(0, arc);
+                
+                totalRotation += (dir == 1 ? -1 : 1) * 500f * Time.deltaTime;
+                ballRt.localRotation = Quaternion.Euler(0, 0, totalRotation);
                 yield return null;
             }
         }
+        
+        // Final bounce in slot
+        ballRt.localScale = new Vector3(1.3f, 0.7f, 1f);
         if (slotTexts[currentCol] != null)
         {
+            slotTexts[currentCol].transform.localScale = new Vector3(1.5f, 1.5f, 1f);
             slotTexts[currentCol].color = activeSlotColor;
         }
+        
+        yield return new WaitForSeconds(0.1f);
+        ballRt.localScale = Vector3.one;
+        if (slotTexts[currentCol] != null) slotTexts[currentCol].transform.localScale = Vector3.one;
+
         Destroy(ball, 1f); 
-        gameManager.BallReachedBottom(currentCol);
+        gameManager.BallReachedBottom(betAmount, currentCol);
     }
     void HandleCashOut(float payout)
     {

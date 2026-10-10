@@ -88,25 +88,46 @@ public class SlotsUIManager : MonoBehaviour
         isSpinning = true;
         while (isSpinning)
         {
-            if (reels[0] != null) reels[0].text = symbolEmojis[Random.Range(0, 5)];
-            if (reels[1] != null) reels[1].text = symbolEmojis[Random.Range(0, 5)];
-            if (reels[2] != null) reels[2].text = symbolEmojis[Random.Range(0, 5)];
-            float scale = 1f + Mathf.PingPong(Time.time * 5f, 0.2f);
-            if (reels[0] != null) reels[0].transform.localScale = Vector3.one * scale;
-            if (reels[1] != null) reels[1].transform.localScale = Vector3.one * scale;
-            if (reels[2] != null) reels[2].transform.localScale = Vector3.one * scale;
-            yield return new WaitForSeconds(0.05f); 
+            for (int i = 0; i < 3; i++)
+            {
+                if (reels[i] != null)
+                {
+                    reels[i].text = symbolEmojis[Random.Range(0, 5)];
+                    reels[i].transform.localPosition = new Vector3(0, Random.Range(-20f, 20f), 0);
+                    reels[i].transform.localScale = new Vector3(1f, 1.3f, 1f); 
+                }
+            }
+            yield return new WaitForSeconds(0.04f); 
         }
     }
     void SetFinalReels(int[] result)
     {
         isSpinning = false; 
-        reels[0].text = symbolEmojis[result[0]];
-        reels[1].text = symbolEmojis[result[1]];
-        reels[2].text = symbolEmojis[result[2]];
-        reels[0].transform.localScale = Vector3.one;
-        reels[1].transform.localScale = Vector3.one;
-        reels[2].transform.localScale = Vector3.one;
+        StartCoroutine(SnapReel(0, result[0], 0f));
+        StartCoroutine(SnapReel(1, result[1], 0.2f));
+        StartCoroutine(SnapReel(2, result[2], 0.4f));
+    }
+    IEnumerator SnapReel(int index, int resultSymbol, float delay)
+    {
+        if (delay > 0) yield return new WaitForSeconds(delay);
+        if (reels[index] == null) yield break;
+        reels[index].text = symbolEmojis[resultSymbol];
+        reels[index].transform.localScale = Vector3.one;
+        
+        Vector3 startPos = new Vector3(0, 80f, 0);
+        Vector3 endPos = Vector3.zero;
+        
+        float duration = 0.4f;
+        float elapsed = 0f;
+        while(elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            float ease = Mathf.Sin(-13f * (t + 1) * Mathf.PI * 0.5f) * Mathf.Pow(2f, -10f * t) + 1f;
+            reels[index].transform.localPosition = Vector3.LerpUnclamped(startPos, endPos, ease);
+            yield return null;
+        }
+        reels[index].transform.localPosition = endPos;
     }
     void ShowPayout(float payout)
     {

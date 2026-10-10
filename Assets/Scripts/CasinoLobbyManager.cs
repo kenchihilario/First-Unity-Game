@@ -16,6 +16,14 @@ public class CasinoLobbyManager : MonoBehaviour
     public Button playSlotsButton;
     public Button playMinesButton;
     public Button playPlinkoButton;
+
+    [Header("Top Bar Buttons (Auto-Wired)")]
+    public Button loginBtn;
+    public Button registerBtn;
+    public Button depositBtn;
+    public Button withdrawBtn;
+    public Button logoutBtn;
+
     void Start()
     {
         ShowLobby();
@@ -24,6 +32,8 @@ public class CasinoLobbyManager : MonoBehaviour
         if (playSlotsButton != null) playSlotsButton.onClick.AddListener(StartSlots);
         if (playMinesButton != null) playMinesButton.onClick.AddListener(StartMines);
         if (playPlinkoButton != null) playPlinkoButton.onClick.AddListener(StartPlinko);
+
+        // UI Buttons are now wired by CasinoSetupWizard dynamically!
     }
     void Update()
     {
@@ -41,8 +51,18 @@ public class CasinoLobbyManager : MonoBehaviour
         if(minesPanel) minesPanel.SetActive(false);
         if(plinkoPanel) plinkoPanel.SetActive(false);
     }
+    private bool CheckLogin()
+    {
+        if (AuthManager.Instance != null && !AuthManager.Instance.IsLoggedIn)
+        {
+            if (AuthUIManager.Instance != null) AuthUIManager.Instance.ShowLogin();
+            return false;
+        }
+        return true;
+    }
     public void StartCrash()
     {
+        if (!CheckLogin()) return;
         if(lobbyPanel) lobbyPanel.SetActive(false);
         if(crashPanel) crashPanel.SetActive(true);
         if(roulettePanel) roulettePanel.SetActive(false);
@@ -52,6 +72,7 @@ public class CasinoLobbyManager : MonoBehaviour
     }
     public void StartRoulette()
     {
+        if (!CheckLogin()) return;
         if(lobbyPanel) lobbyPanel.SetActive(false);
         if(crashPanel) crashPanel.SetActive(false);
         if(roulettePanel) roulettePanel.SetActive(true);
@@ -61,6 +82,7 @@ public class CasinoLobbyManager : MonoBehaviour
     }
     public void StartSlots()
     {
+        if (!CheckLogin()) return;
         if(lobbyPanel) lobbyPanel.SetActive(false);
         if(crashPanel) crashPanel.SetActive(false);
         if(roulettePanel) roulettePanel.SetActive(false);
@@ -70,6 +92,7 @@ public class CasinoLobbyManager : MonoBehaviour
     }
     public void StartMines()
     {
+        if (!CheckLogin()) return;
         if(lobbyPanel) lobbyPanel.SetActive(false);
         if(crashPanel) crashPanel.SetActive(false);
         if(roulettePanel) roulettePanel.SetActive(false);
@@ -79,6 +102,7 @@ public class CasinoLobbyManager : MonoBehaviour
     }
     public void StartPlinko()
     {
+        if (!CheckLogin()) return;
         if(lobbyPanel) lobbyPanel.SetActive(false);
         if(crashPanel) crashPanel.SetActive(false);
         if(roulettePanel) roulettePanel.SetActive(false);

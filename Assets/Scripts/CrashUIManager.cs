@@ -175,14 +175,20 @@ public class CrashUIManager : MonoBehaviour
     }
     IEnumerator ScreenShake()
     {
-        Vector3 originalPos = transform.position;
+        if (graphContainer == null || multiplierText == null) yield break;
+        Vector3 origGraphPos = graphContainer.localPosition;
+        Vector3 origTextPos = multiplierText.transform.localPosition;
+        
         float elapsed = 0f;
         while (elapsed < 0.5f)
         {
-            transform.position = originalPos + (Vector3)Random.insideUnitCircle * 10f;
+            float intensity = (0.5f - elapsed) * 60f; 
+            graphContainer.localPosition = origGraphPos + (Vector3)Random.insideUnitCircle * intensity;
+            multiplierText.transform.localPosition = origTextPos + (Vector3)Random.insideUnitCircle * intensity;
             elapsed += Time.deltaTime;
             yield return null;
         }
-        transform.position = originalPos;
+        graphContainer.localPosition = origGraphPos;
+        multiplierText.transform.localPosition = origTextPos;
     }
 }
