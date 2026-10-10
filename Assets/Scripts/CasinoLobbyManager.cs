@@ -9,6 +9,8 @@ public class CasinoLobbyManager : MonoBehaviour
     public GameObject slotsPanel;
     public GameObject minesPanel;
     public GameObject plinkoPanel;
+    public GameObject dicePanel;
+    public GameObject blackjackPanel;
     [Header("Lobby UI")]
     public Text lobbyBalanceText;
     public Button playCrashButton;
@@ -16,6 +18,8 @@ public class CasinoLobbyManager : MonoBehaviour
     public Button playSlotsButton;
     public Button playMinesButton;
     public Button playPlinkoButton;
+    public Button playDiceButton;
+    public Button playBlackjackButton;
 
     [Header("Top Bar Buttons (Auto-Wired)")]
     public Button loginBtn;
@@ -32,8 +36,10 @@ public class CasinoLobbyManager : MonoBehaviour
         if (playSlotsButton != null) playSlotsButton.onClick.AddListener(StartSlots);
         if (playMinesButton != null) playMinesButton.onClick.AddListener(StartMines);
         if (playPlinkoButton != null) playPlinkoButton.onClick.AddListener(StartPlinko);
+        if (playDiceButton != null) playDiceButton.onClick.AddListener(StartDice);
+        if (playBlackjackButton != null) playBlackjackButton.onClick.AddListener(StartBlackjack);
 
-        // UI Buttons are now wired by CasinoSetupWizard dynamically!
+
     }
     void Update()
     {
@@ -50,6 +56,8 @@ public class CasinoLobbyManager : MonoBehaviour
         if(slotsPanel) slotsPanel.SetActive(false);
         if(minesPanel) minesPanel.SetActive(false);
         if(plinkoPanel) plinkoPanel.SetActive(false);
+        if(dicePanel) dicePanel.SetActive(false);
+        if(blackjackPanel) blackjackPanel.SetActive(false);
     }
     private bool CheckLogin()
     {
@@ -69,6 +77,8 @@ public class CasinoLobbyManager : MonoBehaviour
         if(slotsPanel) slotsPanel.SetActive(false);
         if(minesPanel) minesPanel.SetActive(false);
         if(plinkoPanel) plinkoPanel.SetActive(false);
+        if(dicePanel) dicePanel.SetActive(false);
+        if(blackjackPanel) blackjackPanel.SetActive(false);
     }
     public void StartRoulette()
     {
@@ -79,6 +89,8 @@ public class CasinoLobbyManager : MonoBehaviour
         if(slotsPanel) slotsPanel.SetActive(false);
         if(minesPanel) minesPanel.SetActive(false);
         if(plinkoPanel) plinkoPanel.SetActive(false);
+        if(dicePanel) dicePanel.SetActive(false);
+        if(blackjackPanel) blackjackPanel.SetActive(false);
     }
     public void StartSlots()
     {
@@ -89,6 +101,8 @@ public class CasinoLobbyManager : MonoBehaviour
         if(slotsPanel) slotsPanel.SetActive(true);
         if(minesPanel) minesPanel.SetActive(false);
         if(plinkoPanel) plinkoPanel.SetActive(false);
+        if(dicePanel) dicePanel.SetActive(false);
+        if(blackjackPanel) blackjackPanel.SetActive(false);
     }
     public void StartMines()
     {
@@ -99,6 +113,8 @@ public class CasinoLobbyManager : MonoBehaviour
         if(slotsPanel) slotsPanel.SetActive(false);
         if(minesPanel) minesPanel.SetActive(true);
         if(plinkoPanel) plinkoPanel.SetActive(false);
+        if(dicePanel) dicePanel.SetActive(false);
+        if(blackjackPanel) blackjackPanel.SetActive(false);
     }
     public void StartPlinko()
     {
@@ -109,5 +125,31 @@ public class CasinoLobbyManager : MonoBehaviour
         if(slotsPanel) slotsPanel.SetActive(false);
         if(minesPanel) minesPanel.SetActive(false);
         if(plinkoPanel) plinkoPanel.SetActive(true);
+        if(dicePanel) dicePanel.SetActive(false);
+        if(blackjackPanel) blackjackPanel.SetActive(false);
+    }
+    public void StartDice()
+    {
+        if (!CheckLogin()) return;
+        if(lobbyPanel) lobbyPanel.SetActive(false);
+        if(crashPanel) crashPanel.SetActive(false);
+        if(roulettePanel) roulettePanel.SetActive(false);
+        if(slotsPanel) slotsPanel.SetActive(false);
+        if(minesPanel) minesPanel.SetActive(false);
+        if(plinkoPanel) plinkoPanel.SetActive(false);
+        if(dicePanel) dicePanel.SetActive(true);
+        if(blackjackPanel) blackjackPanel.SetActive(false);
+    }
+    public void StartBlackjack()
+    {
+        if (!CheckLogin()) return;
+        if(lobbyPanel) lobbyPanel.SetActive(false);
+        if(crashPanel) crashPanel.SetActive(false);
+        if(roulettePanel) roulettePanel.SetActive(false);
+        if(slotsPanel) slotsPanel.SetActive(false);
+        if(minesPanel) minesPanel.SetActive(false);
+        if(plinkoPanel) plinkoPanel.SetActive(false);
+        if(dicePanel) dicePanel.SetActive(false);
+        if(blackjackPanel) blackjackPanel.SetActive(true);
     }
 }

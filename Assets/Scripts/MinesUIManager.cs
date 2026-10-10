@@ -143,11 +143,13 @@ public class MinesUIManager : MonoBehaviour
         
         if (isMine)
         {
+            if (CasinoAudio.Instance) CasinoAudio.Instance.PlayExplosion();
             tileTexts[index].text = "💣";
             tileButtons[index].GetComponent<Image>().color = mineColor;
         }
         else
         {
+            if (CasinoAudio.Instance) CasinoAudio.Instance.PlayCoin();
             tileTexts[index].text = "💎";
             tileButtons[index].GetComponent<Image>().color = gemColor;
             currentMultiplierText.text = $"{newMultiplier:F2}x";
@@ -171,6 +173,7 @@ public class MinesUIManager : MonoBehaviour
     {
         if (payout > 0)
         {
+            if (CasinoAudio.Instance) CasinoAudio.Instance.PlayWin();
             statusText.text = $"<color=#00FFAA>YOU WON ${payout:F2}!</color>";
         }
         else

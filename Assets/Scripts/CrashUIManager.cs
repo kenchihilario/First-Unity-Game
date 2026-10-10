@@ -105,6 +105,7 @@ public class CrashUIManager : MonoBehaviour
             multiplierText.text = mult.ToString("F2") + "x";
             float scale = 1f + (Mathf.Sin(Time.time * 20f) * 0.05f * Mathf.Clamp01(mult / 5f));
             multiplierText.transform.localScale = new Vector3(scale, scale, 1f);
+            if (Time.frameCount % 10 == 0 && CasinoAudio.Instance) CasinoAudio.Instance.PlayTick();
         }
         if (lineRenderer != null && CrashGameManager.Instance.currentState == CrashGameManager.GameState.Playing)
         {
@@ -169,6 +170,7 @@ public class CrashUIManager : MonoBehaviour
                 actionButton.interactable = false;
                 backgroundImage.color = bgCrashed;
                 if (rocketDot != null) rocketDot.SetActive(false);
+                if (CasinoAudio.Instance) CasinoAudio.Instance.PlayExplosion();
                 StartCoroutine(ScreenShake());
                 break;
         }

@@ -43,14 +43,11 @@ public class SlotsGameManager : MonoBehaviour
             OnSpinResult?.Invoke(result);
             float payout = 0;
             if (result[0] == result[1] && result[1] == result[2]) {
-                if (result[0] == 4) payout = currentBet * 100f; 
-                else if (result[0] == 3) payout = currentBet * 50f; 
-                else if (result[0] == 2) payout = currentBet * 20f; 
-                else if (result[0] == 1) payout = currentBet * 10f; 
+                if (result[0] == 4) payout = currentBet * 500f; 
+                else if (result[0] == 3) payout = currentBet * 100f; 
+                else if (result[0] == 2) payout = currentBet * 25f; 
+                else if (result[0] == 1) payout = currentBet * 15f; 
                 else payout = currentBet * 5f; 
-            }
-            else if (result[0] == result[1] || result[1] == result[2] || result[0] == result[2]) {
-                payout = currentBet * 1.5f;
             }
             if (payout > 0)
             {

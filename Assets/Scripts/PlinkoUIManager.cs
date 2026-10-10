@@ -62,7 +62,7 @@ public class PlinkoUIManager : MonoBehaviour
     }
     void UpdateState(PlinkoGameManager.GameState state)
     {
-        // Removed state logic so users can drop multiple balls!
+
         Text actionText = actionButton.transform.GetChild(0).GetComponent<Text>();
         actionText.text = "DROP BALL";
         actionButton.GetComponent<Image>().color = new Color(0f, 0.9f, 0.0f, 1f); 
@@ -110,6 +110,7 @@ public class PlinkoUIManager : MonoBehaviour
             }
             
             ballRt.localScale = new Vector3(1.3f, 0.7f, 1f);
+            if (CasinoAudio.Instance) CasinoAudio.Instance.PlayTick();
             yield return new WaitForSeconds(0.015f);
             ballRt.localScale = Vector3.one;
 
@@ -142,13 +143,14 @@ public class PlinkoUIManager : MonoBehaviour
             }
         }
         
-        // Final bounce in slot
+
         ballRt.localScale = new Vector3(1.3f, 0.7f, 1f);
         if (slotTexts[currentCol] != null)
         {
             slotTexts[currentCol].transform.localScale = new Vector3(1.5f, 1.5f, 1f);
             slotTexts[currentCol].color = activeSlotColor;
         }
+        if (CasinoAudio.Instance) CasinoAudio.Instance.PlayCoin();
         
         yield return new WaitForSeconds(0.1f);
         ballRt.localScale = Vector3.one;

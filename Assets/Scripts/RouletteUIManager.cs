@@ -124,9 +124,10 @@ public class RouletteUIManager : MonoBehaviour
             tickerContainer.anchoredPosition = Vector2.Lerp(startPos, endPos, easeT);
             yield return null;
         }
+        if (CasinoAudio.Instance) CasinoAudio.Instance.PlayWin();
         statusText.text = result == 0 ? "<color=#00FFAA>GREEN WINS (14x)</color>" : (result <= 7 ? "<color=#FF4444>RED WINS (2x)</color>" : "<color=#AAAAAA>BLACK WINS (2x)</color>");
         
-        // Winning Bounce
+
         float bounceDuration = 0.5f;
         elapsed = 0f;
         while(elapsed < bounceDuration)
