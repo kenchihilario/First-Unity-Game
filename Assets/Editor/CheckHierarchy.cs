@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 public class CheckHierarchy
 {
-    [MenuItem("Casino/Debug Hierarchy")]
+    [MenuItem("Casino/Legacy & Dev Tools/Debug Hierarchy", priority = 100)]
     public static void Run()
     {
         Debug.Log("--- SCENE HIERARCHY ---");

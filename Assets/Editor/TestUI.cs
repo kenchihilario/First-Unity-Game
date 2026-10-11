@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using UnityEditor;
 public class TestUI
 {
-    [MenuItem("Casino/Test UI")]
+    [MenuItem("Casino/Legacy & Dev Tools/Test UI", priority = 100)]
     public static void Run()
     {
         GameObject c = new GameObject("TestCanvas", typeof(RectTransform));

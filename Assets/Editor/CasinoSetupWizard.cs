@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public class CasinoSetupWizard
 {
-    [MenuItem("Casino/Fix and Auto-Login Now")]
+    [MenuItem("Casino/Legacy & Dev Tools/Fix and Auto-Login Now", priority = 100)]
     public static void FixAndAutoLoginMenu()
     {
         PlayerPrefs.SetString("User_Kenchi", "1234");
@@ -48,14 +48,14 @@ public class CasinoSetupWizard
         Debug.Log("Casino: Auto-login and thumbnails fixed! Logged in as Kenchi with $10,000 balance.");
     }
 
-    [MenuItem("Casino/Reimport Thumbnail Images")]
+    [MenuItem("Casino/Legacy & Dev Tools/Reimport Thumbnail Images", priority = 100)]
     public static void ReimportThumbsMenu()
     {
         EnsureThumbsImportedAsSprites();
         Debug.Log("Casino: Thumbnail images successfully imported as Sprites!");
     }
 
-    [MenuItem("Casino/Rebuild Credible Lobby UI")]
+    [MenuItem("Casino/Legacy & Dev Tools/Rebuild Credible Lobby UI", priority = 100)]
     public static void RebuildCredibleLobbyMenu()
     {
         EnsureThumbsImportedAsSprites();
@@ -153,7 +153,7 @@ public class CasinoSetupWizard
         Debug.Log("Casino: Rebuilt Clean Modern PHP Lobby UI successfully!");
     }
 
-    [MenuItem("Casino/Build WebGL for Vercel")]
+    [MenuItem("Casino/Build WebGL for Vercel", priority = 1)]
     public static void BuildWebGLForVercel()
     {
         PlayerSettings.WebGL.template = "PROJECT:FullScreen";
@@ -201,7 +201,7 @@ public class CasinoSetupWizard
         }
     }
 
-    [MenuItem("Casino/Update Thumbnails in Current Scene")]
+    [MenuItem("Casino/Legacy & Dev Tools/Update Thumbnails in Current Scene", priority = 100)]
     public static void UpdateCurrentSceneThumbs()
     {
         EnsureThumbsImportedAsSprites();
@@ -245,7 +245,7 @@ public class CasinoSetupWizard
         Debug.Log($"Casino: Updated {count} thumbnails in current scene with new images!");
     }
 
-    [MenuItem("Casino/Setup Mobile WebGL Casino")]
+    [MenuItem("Casino/Legacy & Dev Tools/Setup Mobile WebGL Casino", priority = 100)]
     public static void SetupCasino()
     {
         EnsureThumbsImportedAsSprites();

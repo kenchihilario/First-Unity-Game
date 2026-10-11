@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 public class CheckSize
 {
-    [MenuItem("Casino/Check Size")]
+    [MenuItem("Casino/Legacy & Dev Tools/Check Size", priority = 100)]
     public static void Run()
     {
         var p = GameObject.Find("LobbyPanel").GetComponent<RectTransform>();
