@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[ExecuteAlways]
 public class CasinoLobbyManager : MonoBehaviour
 {
     [Header("Panels")]
@@ -34,29 +33,25 @@ public class CasinoLobbyManager : MonoBehaviour
     public Button logoutBtn;
 
     private bool _hasInitialized = false;
+    private bool _isStyling = false;
+    private bool _buttonsWired = false;
 
     void Awake()
     {
-        AutoWireButtons();
-        StyleCredibleLobbyUI();
     }
 
     void Start()
     {
+        if (_hasInitialized) return;
+        _hasInitialized = true;
+
+        EnsurePanelsFound();
         ShowLobby();
         AutoWireButtons();
-        StyleCredibleLobbyUI();
     }
 
     void Update()
     {
-        if (!_hasInitialized)
-        {
-            _hasInitialized = true;
-            AutoWireButtons();
-            StyleCredibleLobbyUI();
-        }
-
         if (PlayerManager.Instance != null && lobbyBalanceText != null)
         {
             lobbyBalanceText.text = $"<color=#94A3B8>PHP</color>  <b><color=#00FFAA>₱{PlayerManager.Instance.balance:N2}</color></b>";
@@ -65,6 +60,10 @@ public class CasinoLobbyManager : MonoBehaviour
 
     public void StyleCredibleLobbyUI()
     {
+        if (_isStyling) return;
+        _isStyling = true;
+        try
+        {
         CanvasScaler scaler = FindAnyObjectByType<CanvasScaler>();
         if (scaler != null)
         {
@@ -433,10 +432,18 @@ public class CasinoLobbyManager : MonoBehaviour
         {
             bottomBar.SetActive(false);
         }
+        }
+        finally
+        {
+            _isStyling = false;
+        }
     }
 
     public void AutoWireButtons()
     {
+        if (_buttonsWired) return;
+        _buttonsWired = true;
+
         Button[] allButtons = FindObjectsByType<Button>(FindObjectsInactive.Include);
         foreach (var b in allButtons)
         {
@@ -514,11 +521,6 @@ public class CasinoLobbyManager : MonoBehaviour
             {
                 if (g.gameObject != b.gameObject) g.raycastTarget = false;
             }
-        }
-
-        if (AuthUIManager.Instance != null)
-        {
-            AuthUIManager.Instance.WireAllButtons();
         }
 
         if (playCrashButton != null) { playCrashButton.onClick.RemoveListener(StartCrash); playCrashButton.onClick.AddListener(StartCrash); }

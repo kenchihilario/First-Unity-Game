@@ -52,6 +52,7 @@ public class AuthManager : MonoBehaviour
     // auto login previous user session
     public void AutoLogin()
     {
+        if (IsLoggedIn) return;
         string username = PlayerPrefs.GetString("LastLoggedInUser", "Kenchi");
         if (string.IsNullOrEmpty(username)) username = "Kenchi";
         string pass = PlayerPrefs.GetString("User_" + username, "1234");
@@ -88,6 +89,11 @@ public class AuthManager : MonoBehaviour
         if (string.IsNullOrEmpty(password)) password = "1234";
         phoneNumber = phoneNumber.Trim();
         password = password.Trim();
+
+        if (IsLoggedIn && CurrentPhoneNumber == phoneNumber)
+        {
+            return true;
+        }
 
         PlayerPrefs.SetString("User_" + phoneNumber, password);
 

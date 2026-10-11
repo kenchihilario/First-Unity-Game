@@ -37,10 +37,11 @@ public class AuthUIManager : MonoBehaviour
     public GameObject loggedInGroup;
     public Text profileText;
 
+    private bool _wired = false;
+
     void Awake()
     {
         if (Instance == null) Instance = this;
-        WireAllButtons();
     }
 
     void Start()
@@ -69,6 +70,9 @@ public class AuthUIManager : MonoBehaviour
 
     public void WireAllButtons()
     {
+        if (_wired) return;
+        _wired = true;
+
         Button[] allButtons = FindObjectsByType<Button>(FindObjectsInactive.Include);
         foreach (var btn in allButtons)
         {
@@ -192,7 +196,6 @@ public class AuthUIManager : MonoBehaviour
         if (loginErrorText) loginErrorText.text = "";
         if (loginPhoneInput != null && string.IsNullOrEmpty(loginPhoneInput.text)) loginPhoneInput.text = "Kenchi";
         if (loginPasswordInput != null && string.IsNullOrEmpty(loginPasswordInput.text)) loginPasswordInput.text = "1234";
-        WireAllButtons();
     }
 
     public void ShowRegister()
@@ -203,11 +206,10 @@ public class AuthUIManager : MonoBehaviour
         if (registerErrorText) registerErrorText.text = "";
         if (registerPhoneInput != null && string.IsNullOrEmpty(registerPhoneInput.text)) registerPhoneInput.text = "Kenchi";
         if (registerPasswordInput != null && string.IsNullOrEmpty(registerPasswordInput.text)) registerPasswordInput.text = "1234";
-        WireAllButtons();
     }
 
-    public void ShowDeposit() { CloseAll(); if(bankOverlay) { bankOverlay.SetActive(true); bankOverlay.transform.SetAsLastSibling(); } if(depositPanel) { depositPanel.SetActive(true); depositPanel.transform.SetAsLastSibling(); } if(bankErrorText) bankErrorText.text = ""; WireAllButtons(); }
-    public void ShowWithdraw() { CloseAll(); if(bankOverlay) { bankOverlay.SetActive(true); bankOverlay.transform.SetAsLastSibling(); } if(withdrawPanel) { withdrawPanel.SetActive(true); withdrawPanel.transform.SetAsLastSibling(); } if(bankErrorText) bankErrorText.text = ""; WireAllButtons(); }
+    public void ShowDeposit() { CloseAll(); if(bankOverlay) { bankOverlay.SetActive(true); bankOverlay.transform.SetAsLastSibling(); } if(depositPanel) { depositPanel.SetActive(true); depositPanel.transform.SetAsLastSibling(); } if(bankErrorText) bankErrorText.text = ""; }
+    public void ShowWithdraw() { CloseAll(); if(bankOverlay) { bankOverlay.SetActive(true); bankOverlay.transform.SetAsLastSibling(); } if(withdrawPanel) { withdrawPanel.SetActive(true); withdrawPanel.transform.SetAsLastSibling(); } if(bankErrorText) bankErrorText.text = ""; }
     public void ShowAccountSettings() { CloseAll(); if(accSettingsOverlay) { accSettingsOverlay.SetActive(true); accSettingsOverlay.transform.SetAsLastSibling(); } }
 
     public void CloseAll()
