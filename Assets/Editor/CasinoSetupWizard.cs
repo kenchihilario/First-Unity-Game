@@ -74,9 +74,11 @@ public class CasinoSetupWizard
     [MenuItem("Casino/Build WebGL for Vercel")]
     public static void BuildWebGLForVercel()
     {
+        PlayerSettings.WebGL.template = "APPLICATION:Default";
         PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
         PlayerSettings.WebGL.decompressionFallback = true;
         PlayerSettings.WebGL.dataCaching = true;
+        PlayerSettings.WebGL.emscriptenArgs = "--bind";
 
         string buildDir = System.IO.Path.Combine(Application.dataPath, "..", "WebGLBuild");
         if (!System.IO.Directory.Exists(buildDir))
