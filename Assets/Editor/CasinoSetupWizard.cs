@@ -176,7 +176,8 @@ public class CasinoSetupWizard
         PlayerSettings.WebGL.template = "PROJECT:FullScreen";
         PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
         PlayerSettings.WebGL.decompressionFallback = true;
-        PlayerSettings.WebGL.dataCaching = true;
+        PlayerSettings.WebGL.dataCaching = false;
+        PlayerSettings.SetManagedStrippingLevel(NamedBuildTarget.WebGL, ManagedStrippingLevel.Minimal);
         PlayerSettings.WebGL.emscriptenArgs = "--bind";
 
         string buildDir = System.IO.Path.Combine(Application.dataPath, "..", "WebGLBuild");
@@ -204,9 +205,9 @@ public class CasinoSetupWizard
   ""cleanUrls"": true,
   ""headers"": [
     {
-      ""source"": ""/Build/(.*)"",
+      ""source"": ""/(.*)"",
       ""headers"": [
-        { ""key"": ""Cache-Control"", ""value"": ""public, max-age=31536000, immutable"" }
+        { ""key"": ""Cache-Control"", ""value"": ""no-cache, no-store, must-revalidate"" }
       ]
     }
   ]

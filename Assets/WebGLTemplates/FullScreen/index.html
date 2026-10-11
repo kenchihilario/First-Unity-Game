@@ -45,13 +45,14 @@
         updateBannerVisibility();
       }
 
+      var v = "20261011_" + Date.now();
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
+      var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}?v=" + v;
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
-        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
-        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}?v=" + v,
+        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}?v=" + v,
+        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}?v=" + v,
 #if MEMORY_FILENAME
         memoryUrl: buildUrl + "/{{{ MEMORY_FILENAME }}}",
 #endif

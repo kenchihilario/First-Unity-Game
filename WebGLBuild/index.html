@@ -45,13 +45,14 @@
         updateBannerVisibility();
       }
 
+      var v = "20261011_" + Date.now();
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/WebGLBuild.loader.js";
+      var loaderUrl = buildUrl + "/WebGLBuild.loader.js?v=" + v;
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/WebGLBuild.data",
-        frameworkUrl: buildUrl + "/WebGLBuild.framework.js",
-        codeUrl: buildUrl + "/WebGLBuild.wasm",
+        dataUrl: buildUrl + "/WebGLBuild.data?v=" + v,
+        frameworkUrl: buildUrl + "/WebGLBuild.framework.js?v=" + v,
+        codeUrl: buildUrl + "/WebGLBuild.wasm?v=" + v,
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "My project",

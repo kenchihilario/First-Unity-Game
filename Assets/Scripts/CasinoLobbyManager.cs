@@ -355,21 +355,34 @@ public class CasinoLobbyManager : MonoBehaviour
             }
         }
 
-        var cardMeta = new Dictionary<string, (string title, string tag, string sub, string hexColor)>()
+        struct CardMetaItem
         {
-            { "CRASH", ("CRASH", "99% RTP", "Multiplier", "10B981") },
-            { "ROULETTE", ("ROULETTE", "14X MAX", "European", "EF4444") },
-            { "SLOTS", ("SLOTS", "JACKPOT", "3-Reel Classic", "A855F7") },
-            { "MINES", ("MINES", "99% RTP", "Gem Grid", "10B981") },
-            { "PLINKO", ("PLINKO", "1000X", "Peg Drop", "6366F1") },
-            { "DICE", ("DICE", "FAIR", "Over / Under", "F59E0B") },
-            { "BLACKJACK", ("BLACKJACK", "3:2 PAY", "Table 21", "059669") }
+            public string key;
+            public string title;
+            public string tag;
+            public string sub;
+            public string hexColor;
+            public CardMetaItem(string k, string t, string tg, string s, string h)
+            {
+                key = k; title = t; tag = tg; sub = s; hexColor = h;
+            }
+        }
+
+        CardMetaItem[] cardItems = new CardMetaItem[]
+        {
+            new CardMetaItem("CRASH", "CRASH", "99% RTP", "Multiplier", "10B981"),
+            new CardMetaItem("ROULETTE", "ROULETTE", "14X MAX", "European", "EF4444"),
+            new CardMetaItem("SLOTS", "SLOTS", "JACKPOT", "3-Reel Classic", "A855F7"),
+            new CardMetaItem("MINES", "MINES", "99% RTP", "Gem Grid", "10B981"),
+            new CardMetaItem("PLINKO", "PLINKO", "1000X", "Peg Drop", "6366F1"),
+            new CardMetaItem("DICE", "DICE", "FAIR", "Over / Under", "F59E0B"),
+            new CardMetaItem("BLACKJACK", "BLACKJACK", "3:2 PAY", "Table 21", "059669")
         };
 
-        foreach (var kvp in cardMeta)
+        for (int i = 0; i < cardItems.Length; i++)
         {
-            string gKey = kvp.Key;
-            var data = kvp.Value;
+            var data = cardItems[i];
+            string gKey = data.key;
             GameObject cardGo = GameObject.Find(gKey + "Thumb");
             if (cardGo == null) continue;
 
