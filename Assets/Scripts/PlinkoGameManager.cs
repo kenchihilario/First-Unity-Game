@@ -11,11 +11,13 @@ public class PlinkoGameManager : MonoBehaviour
     public float[] multipliers = new float[] { 29f, 4f, 1.5f, 0.3f, 0.2f, 0.3f, 1.5f, 4f, 29f };
     public event Action<float, int[]> OnBallPathGenerated;
     public event Action<float> OnBallLanded;
+    // drop ball from top peg
     public void DropBall(float betAmount)
     {
         if (betAmount <= 0) return;
         if (PlayerManager.Instance.PlaceBet(betAmount))
         {
+            // decide bounce path at each peg row (0 = left, 1 = right)
             int[] path = new int[rows];
             int finalSlot = 0;
             for (int i = 0; i < rows; i++)
@@ -27,6 +29,8 @@ public class PlinkoGameManager : MonoBehaviour
             OnBallPathGenerated?.Invoke(betAmount, path);
         }
     }
+
+    // ball landed in a bottom multiplier slot
     public void BallReachedBottom(float betAmount, int finalSlot)
     {
         float mult = multipliers[finalSlot];

@@ -48,6 +48,7 @@ public class AuthManager : MonoBehaviour
     {
     }
 
+    // auto login previous user session
     public void AutoLogin()
     {
         string username = PlayerPrefs.GetString("LastLoggedInUser", "Kenchi");
@@ -62,6 +63,7 @@ public class AuthManager : MonoBehaviour
         Login(username, "1234");
     }
 
+    // register a new account with starting balance
     public bool Register(string phoneNumber, string password)
     {
         if (string.IsNullOrEmpty(phoneNumber)) phoneNumber = "Kenchi";
@@ -78,6 +80,7 @@ public class AuthManager : MonoBehaviour
         return true;
     }
 
+    // login with username and password
     public bool Login(string phoneNumber, string password)
     {
         if (string.IsNullOrEmpty(phoneNumber)) phoneNumber = "Kenchi";
@@ -105,6 +108,7 @@ public class AuthManager : MonoBehaviour
         return true;
     }
 
+    // guest quick play login
     public void GuestLogin()
     {
         string guestNum = "Guest_" + UnityEngine.Random.Range(1000, 9999);
@@ -112,6 +116,7 @@ public class AuthManager : MonoBehaviour
         Login(guestNum, "guest");
     }
 
+    // logout and save progress
     public void Logout()
     {
         SaveBalance();
@@ -120,6 +125,7 @@ public class AuthManager : MonoBehaviour
         OnLoginStateChanged?.Invoke(false);
     }
 
+    // save current balance to playerprefs
     public void SaveBalance()
     {
         if (IsLoggedIn && PlayerManager.Instance != null)

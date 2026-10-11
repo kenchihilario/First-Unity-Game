@@ -156,7 +156,7 @@ public class CasinoSetupWizard
     [MenuItem("Casino/Build WebGL for Vercel")]
     public static void BuildWebGLForVercel()
     {
-        PlayerSettings.WebGL.template = "APPLICATION:Default";
+        PlayerSettings.WebGL.template = "PROJECT:FullScreen";
         PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
         PlayerSettings.WebGL.decompressionFallback = true;
         PlayerSettings.WebGL.dataCaching = true;
@@ -967,7 +967,7 @@ public class CasinoSetupWizard
 
     static void CreateGameHeaderBar(GameObject parentPanel, Font font, string gameTitle, UnityEngine.Events.UnityAction onBack)
     {
-        // Unified TopBar navigation handles game title and back button without collision
+        // header and back button are handled in the top bar now
     }
 
     static void CreateBetSidebarMobile(GameObject parentPanel, Font font, out InputField betInput, out Button halfBtn, out Button doubleBtn, out Button actionBtn)

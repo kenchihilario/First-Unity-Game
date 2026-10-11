@@ -23,18 +23,23 @@ public class CrashGameManager : MonoBehaviour
     {
         StartCoroutine(GameLoop());
     }
+    // main game loop for rounds
     IEnumerator GameLoop()
     {
         while (true)
         {
+            // wait 5 seconds before starting next round
             currentState = GameState.Waiting;
             currentMultiplier = 1.0f;
             OnGameStateChanged?.Invoke(currentState);
             OnMultiplierUpdated?.Invoke(currentMultiplier);
             yield return new WaitForSeconds(5f);
+
             currentState = GameState.Playing;
             OnGameStateChanged?.Invoke(currentState);
             hasCashedOut = false;
+
+            // calculate crash point (2% chance of instant crash at 1.00x)
             float rand = Random.Range(0f, 100f);
             if (rand < 2f)
             {
@@ -44,6 +49,8 @@ public class CrashGameManager : MonoBehaviour
             {
                 targetCrashMultiplier = 100f / (100f - Random.Range(0f, 99f));
             }
+
+            // rise multiplier over time using exponential curve
             timeSinceStart = 0f;
             while (currentMultiplier < targetCrashMultiplier)
             {
@@ -57,6 +64,8 @@ public class CrashGameManager : MonoBehaviour
                 OnMultiplierUpdated?.Invoke(currentMultiplier);
                 yield return null;
             }
+
+            // round crashed
             currentState = GameState.Crashed;
             OnGameStateChanged?.Invoke(currentState);
             if (!hasCashedOut && currentBetAmount > 0)
@@ -67,6 +76,8 @@ public class CrashGameManager : MonoBehaviour
         }
     }
     public bool HasBet => currentBetAmount > 0 && !hasCashedOut;
+
+    // place bet during countdown
     public bool PlaceBet(float amount)
     {
         if (currentState == GameState.Waiting && currentBetAmount == 0)
@@ -79,6 +90,8 @@ public class CrashGameManager : MonoBehaviour
         }
         return false;
     }
+
+    // player cash out before rocket crashes
     public bool CashOut()
     {
         if (currentState == GameState.Playing && currentBetAmount > 0 && !hasCashedOut)

@@ -16,6 +16,7 @@ public class SlotsGameManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
+    // spin the reels with current bet
     public void Spin(float amount)
     {
         if (currentState == GameState.Idle && PlayerManager.Instance.PlaceBet(amount))
@@ -31,6 +32,7 @@ public class SlotsGameManager : MonoBehaviour
         yield return new WaitForSeconds(3f);
         try
         {
+            // pick random symbols for all 3 reels with weighted odds
             int[] result = new int[3];
             for(int i=0; i<3; i++) {
                 float r = Random.value;
@@ -41,16 +43,19 @@ public class SlotsGameManager : MonoBehaviour
                 else result[i] = 4;
             }
             OnSpinResult?.Invoke(result);
+
+            // check if all 3 reels match for a jackpot
             float payout = 0;
             if (result[0] == result[1] && result[1] == result[2]) {
-                if (result[0] == 4) payout = currentBet * 500f;
-                else if (result[0] == 3) payout = currentBet * 100f;
-                else if (result[0] == 2) payout = currentBet * 25f;
-                else if (result[0] == 1) payout = currentBet * 15f;
-                else payout = currentBet * 5f;
+                if (result[0] == 4) payout = currentBet * 500f; // 7 7 7 jackpot
+                else if (result[0] == 3) payout = currentBet * 100f; // diamonds
+                else if (result[0] == 2) payout = currentBet * 25f; // cherries
+                else if (result[0] == 1) payout = currentBet * 15f; // lemons
+                else payout = currentBet * 5f; // apples
             }
             if (payout > 0)
             {
+                // add payout to player balance
                 PlayerManager.Instance.AddWinnings(payout);
             }
             currentState = GameState.Result;

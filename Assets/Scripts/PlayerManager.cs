@@ -18,6 +18,7 @@ public class PlayerManager : MonoBehaviour
     public string CurrencySymbol => "₱";
     public string FormatCurrency(float amt) => $"₱{amt:N2}";
 
+    // load saved balance from playerprefs on start
     void Awake()
     {
         if (_instance == null) _instance = this;
@@ -31,6 +32,8 @@ public class PlayerManager : MonoBehaviour
         float savedBal = PlayerPrefs.GetFloat("Balance_" + user, 10000f);
         balance = savedBal > 0 ? savedBal : 10000f;
     }
+
+    // check if player has enough money to bet
     public bool PlaceBet(float amount)
     {
         if (amount <= 0) return false;
@@ -42,6 +45,8 @@ public class PlayerManager : MonoBehaviour
         }
         return false;
     }
+
+    // add win amount to balance
     public void AddWinnings(float amount)
     {
         if (amount > 0)

@@ -13,6 +13,7 @@ public class MinesGameManager : MonoBehaviour
     public event Action<GameState> OnStateChanged;
     public event Action<int, bool, float> OnTileRevealed;
     public event Action<float> OnCashOut;
+    // start a new mines round and randomly place mines on the 5x5 grid
     public void StartGame(float betAmount, int minesCount)
     {
         if (currentState != GameState.Idle || betAmount <= 0) return;
@@ -26,6 +27,8 @@ public class MinesGameManager : MonoBehaviour
                 grid[i] = false;
                 revealed[i] = false;
             }
+
+            // randomly place mines
             int minesPlaced = 0;
             while (minesPlaced < totalMines)
             {
@@ -40,6 +43,8 @@ public class MinesGameManager : MonoBehaviour
             OnStateChanged?.Invoke(currentState);
         }
     }
+
+    // player clicked a tile
     public void ClickTile(int index)
     {
         if (currentState != GameState.Playing || revealed[index]) return;
@@ -47,6 +52,7 @@ public class MinesGameManager : MonoBehaviour
         bool isMine = grid[index];
         if (isMine)
         {
+            // hit a mine, player loses
             currentState = GameState.Result;
             OnTileRevealed?.Invoke(index, true, 0);
             OnCashOut?.Invoke(0);
@@ -54,6 +60,7 @@ public class MinesGameManager : MonoBehaviour
         }
         else
         {
+            // found a gem, update multiplier
             gemsFound++;
             float multiplier = CalculateMultiplier(gemsFound, totalMines);
             OnTileRevealed?.Invoke(index, false, multiplier);
@@ -63,6 +70,8 @@ public class MinesGameManager : MonoBehaviour
             }
         }
     }
+
+    // take current winnings
     public void CashOut()
     {
         if (currentState != GameState.Playing || gemsFound == 0) return;
@@ -73,6 +82,8 @@ public class MinesGameManager : MonoBehaviour
         OnCashOut?.Invoke(payout);
         OnStateChanged?.Invoke(currentState);
     }
+
+    // calculate multiplier based on probability
     public float CalculateMultiplier(int gems, int mines)
     {
         if (gems == 0) return 1.0f;
