@@ -52,22 +52,21 @@ html, body {
   transform: translate(-50%, -50%);
 }
 #unity-logo {
-  width: 154px;
-  height: 130px;
-  background: url('unity-logo-dark.png') no-repeat center;
+  display: none;
 }
 #unity-progress-bar-empty {
-  width: 141px;
-  height: 18px;
-  margin-top: 10px;
-  margin-left: 6.5px;
-  background: url('progress-bar-empty-dark.png') no-repeat center;
+  width: 280px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
 }
 #unity-progress-bar-full {
   width: 0%;
-  height: 18px;
-  margin-top: 10px;
-  background: url('progress-bar-full-dark.png') no-repeat center;
+  height: 100%;
+  background: linear-gradient(90deg, #10B981, #00FFAA);
+  border-radius: 4px;
+  transition: width 0.2s ease;
 }
 #unity-footer {
   display: none !important;
