@@ -46,6 +46,7 @@ public class AuthManager : MonoBehaviour
 
     void Start()
     {
+        AutoLogin();
     }
 
     // auto login previous user session
