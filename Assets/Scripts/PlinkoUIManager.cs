@@ -110,7 +110,7 @@ public class PlinkoUIManager : MonoBehaviour
             }
 
             ballRt.localScale = new Vector3(1.3f, 0.7f, 1f);
-            if (CasinoAudio.Instance) CasinoAudio.Instance.PlayTick();
+            if (gameObject.activeInHierarchy && CasinoAudio.Instance) CasinoAudio.Instance.PlayTick();
             yield return new WaitForSeconds(0.015f);
             ballRt.localScale = Vector3.one;
 
@@ -149,7 +149,11 @@ public class PlinkoUIManager : MonoBehaviour
             slotTexts[currentCol].transform.localScale = new Vector3(1.5f, 1.5f, 1f);
             slotTexts[currentCol].color = activeSlotColor;
         }
-        if (CasinoAudio.Instance) CasinoAudio.Instance.PlayCoin();
+        if (gameObject.activeInHierarchy && CasinoAudio.Instance)
+        {
+            if (currentCol == 0 || currentCol == gameManager.rows) CasinoAudio.Instance.PlayWin();
+            else CasinoAudio.Instance.PlayCoin();
+        }
 
         yield return new WaitForSeconds(0.1f);
         ballRt.localScale = Vector3.one;

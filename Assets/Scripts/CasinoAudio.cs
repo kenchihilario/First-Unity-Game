@@ -9,6 +9,8 @@ public class CasinoAudio : MonoBehaviour
     private AudioClip coinClip;
     private AudioClip explosionClip;
     private AudioClip winClip;
+    private AudioClip cardClip;
+    private AudioClip lossClip;
 
     void Awake()
     {
@@ -21,6 +23,8 @@ public class CasinoAudio : MonoBehaviour
             coinClip = CreateTone(0.3f, 1200f, 2200f, 0.15f, 2);
             explosionClip = CreateNoise(0.8f, 0.4f);
             winClip = CreateArpeggio(0.8f, new float[]{523.25f, 659.25f, 783.99f, 1046.50f}, 0.2f);
+            cardClip = CreateTone(0.04f, 1800f, 900f, 0.1f, 1);
+            lossClip = CreateTone(0.3f, 420f, 160f, 0.18f, 1);
         }
     }
 
@@ -28,6 +32,8 @@ public class CasinoAudio : MonoBehaviour
     public void PlayCoin() { if(src) src.PlayOneShot(coinClip); }
     public void PlayExplosion() { if(src) src.PlayOneShot(explosionClip); }
     public void PlayWin() { if(src) src.PlayOneShot(winClip); }
+    public void PlayCard() { if(src) src.PlayOneShot(cardClip); }
+    public void PlayLoss() { if(src) src.PlayOneShot(lossClip); }
 
     private AudioClip CreateTone(float duration, float startFreq, float endFreq, float volume, int type)
     {

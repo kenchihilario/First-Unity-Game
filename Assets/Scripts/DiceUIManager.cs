@@ -111,7 +111,7 @@ public class DiceUIManager : MonoBehaviour
                 if (Time.frameCount % 5 == 0)
                 {
                     colorIdx = (colorIdx + 1) % flashColors.Length;
-                    if (CasinoAudio.Instance) CasinoAudio.Instance.PlayTick();
+                    if (gameObject.activeInHierarchy && CasinoAudio.Instance) CasinoAudio.Instance.PlayTick();
                 }
                 resultText.color = flashColors[colorIdx];
 
@@ -124,8 +124,8 @@ public class DiceUIManager : MonoBehaviour
 
         if (resultText != null)
         {
-            if (won && CasinoAudio.Instance) CasinoAudio.Instance.PlayWin();
-            else if (!won && CasinoAudio.Instance) CasinoAudio.Instance.PlayExplosion();
+            if (won && gameObject.activeInHierarchy && CasinoAudio.Instance) CasinoAudio.Instance.PlayWin();
+            else if (!won && gameObject.activeInHierarchy && CasinoAudio.Instance) CasinoAudio.Instance.PlayLoss();
 
             resultText.text = finalResult.ToString("F2");
             resultText.color = won ? Color.green : Color.red;

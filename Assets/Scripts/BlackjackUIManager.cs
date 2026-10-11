@@ -77,6 +77,7 @@ public class BlackjackUIManager : MonoBehaviour
     void HandleGameStart(List<BlackjackGameManager.Card> pHand, List<BlackjackGameManager.Card> dHand, bool dHidden)
     {
         SetPlayState(true);
+        if (gameObject.activeInHierarchy && CasinoAudio.Instance) CasinoAudio.Instance.PlayCard();
         if (playerCardsText) playerCardsText.text = FormatHand(pHand);
         if (playerScoreText) playerScoreText.text = BlackjackGameManager.Instance.GetScore(pHand).ToString();
 
@@ -86,6 +87,7 @@ public class BlackjackUIManager : MonoBehaviour
 
     void HandlePlayerHit(List<BlackjackGameManager.Card> pHand, int score)
     {
+        if (gameObject.activeInHierarchy && CasinoAudio.Instance) CasinoAudio.Instance.PlayCard();
         if (playerCardsText) playerCardsText.text = FormatHand(pHand);
         if (playerScoreText) playerScoreText.text = score.ToString();
     }
@@ -100,14 +102,17 @@ public class BlackjackUIManager : MonoBehaviour
         {
             if (payout > 0 && payout == BlackjackGameManager.Instance.currentBet)
             {
+                if (gameObject.activeInHierarchy && CasinoAudio.Instance) CasinoAudio.Instance.PlayCoin();
                 statusText.text = $"<color=yellow>PUSH</color>";
             }
             else if (playerWon)
             {
+                if (gameObject.activeInHierarchy && CasinoAudio.Instance) CasinoAudio.Instance.PlayWin();
                 statusText.text = $"<color=#00FFAA>WON ${payout:F2}!</color>";
             }
             else
             {
+                if (gameObject.activeInHierarchy && CasinoAudio.Instance) CasinoAudio.Instance.PlayLoss();
                 statusText.text = $"<color=#FF3333>BUST / LOST</color>";
             }
         }

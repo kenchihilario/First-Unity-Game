@@ -82,37 +82,112 @@ public class CasinoLobbyManager : MonoBehaviour
             {
                 logo.text = "<b><color=#F59E0B>✦</color> <color=#FFFFFF>KENCHI</color> <color=#00FFAA>CASINO</color></b>";
                 logo.raycastTarget = false;
+                RectTransform lRt = logo.GetComponent<RectTransform>();
+                if (lRt != null)
+                {
+                    lRt.anchorMin = new Vector2(0, 0.5f); lRt.anchorMax = new Vector2(0, 0.5f);
+                    lRt.pivot = new Vector2(0, 0.5f); lRt.anchoredPosition = new Vector2(25, 0);
+                    lRt.sizeDelta = new Vector2(320, 100);
+                }
             }
 
-            Button depBtn = topBar.transform.Find("LoggedInGroup/DepositBtn")?.GetComponent<Button>();
-            if (depBtn != null)
+            Transform loggedInGroup = topBar.transform.Find("LoggedInGroup");
+            if (loggedInGroup != null)
             {
-                Image depImg = depBtn.GetComponent<Image>();
-                if (depImg != null) depImg.color = new Color(0.063f, 0.725f, 0.506f, 1f);
-                Text depTxt = depBtn.GetComponentInChildren<Text>();
-                if (depTxt != null) { depTxt.text = "<b>+ DEPOSIT</b>"; depTxt.raycastTarget = false; }
-                if (depBtn.GetComponent<ButtonHoverJuice>() == null) depBtn.gameObject.AddComponent<ButtonHoverJuice>();
+                RectTransform ligRt = loggedInGroup.GetComponent<RectTransform>();
+                if (ligRt != null)
+                {
+                    ligRt.anchorMin = new Vector2(1, 0.5f); ligRt.anchorMax = new Vector2(1, 0.5f);
+                    ligRt.pivot = new Vector2(1, 0.5f); ligRt.anchoredPosition = new Vector2(-20, 0);
+                    ligRt.sizeDelta = new Vector2(720, 90);
+                }
+
+                Transform balBg = loggedInGroup.Find("BalanceBg");
+                if (balBg != null)
+                {
+                    Image balImg = balBg.GetComponent<Image>();
+                    if (balImg != null) balImg.color = new Color(0.067f, 0.094f, 0.153f, 1f);
+                    RectTransform balRt = balBg.GetComponent<RectTransform>();
+                    if (balRt != null)
+                    {
+                        balRt.anchorMin = new Vector2(0, 0.5f); balRt.anchorMax = new Vector2(0, 0.5f);
+                        balRt.pivot = new Vector2(0, 0.5f); balRt.anchoredPosition = new Vector2(0, 0);
+                        balRt.sizeDelta = new Vector2(240, 75);
+                    }
+                }
+
+                Button depBtn = loggedInGroup.Find("DepositBtn")?.GetComponent<Button>();
+                if (depBtn != null)
+                {
+                    Image depImg = depBtn.GetComponent<Image>();
+                    if (depImg != null) depImg.color = new Color(0.063f, 0.725f, 0.506f, 1f);
+                    Text depTxt = depBtn.GetComponentInChildren<Text>();
+                    if (depTxt != null) { depTxt.text = "<b>+ DEPOSIT</b>"; depTxt.raycastTarget = false; }
+                    RectTransform depRt = depBtn.GetComponent<RectTransform>();
+                    if (depRt != null)
+                    {
+                        depRt.anchorMin = new Vector2(0, 0.5f); depRt.anchorMax = new Vector2(0, 0.5f);
+                        depRt.pivot = new Vector2(0, 0.5f); depRt.anchoredPosition = new Vector2(255, 0);
+                        depRt.sizeDelta = new Vector2(165, 75);
+                    }
+                    if (depBtn.GetComponent<ButtonHoverJuice>() == null) depBtn.gameObject.AddComponent<ButtonHoverJuice>();
+                }
+
+                Button withBtn = loggedInGroup.Find("WithdrawBtn")?.GetComponent<Button>();
+                if (withBtn != null)
+                {
+                    Image withImg = withBtn.GetComponent<Image>();
+                    if (withImg != null) withImg.color = new Color(0.122f, 0.161f, 0.216f, 1f);
+                    Text withTxt = withBtn.GetComponentInChildren<Text>();
+                    if (withTxt != null) { withTxt.text = "<b>WITHDRAW</b>"; withTxt.raycastTarget = false; }
+                    RectTransform withRt = withBtn.GetComponent<RectTransform>();
+                    if (withRt != null)
+                    {
+                        withRt.anchorMin = new Vector2(0, 0.5f); withRt.anchorMax = new Vector2(0, 0.5f);
+                        withRt.pivot = new Vector2(0, 0.5f); withRt.anchoredPosition = new Vector2(430, 0);
+                        withRt.sizeDelta = new Vector2(140, 75);
+                    }
+                    if (withBtn.GetComponent<ButtonHoverJuice>() == null) withBtn.gameObject.AddComponent<ButtonHoverJuice>();
+                }
+
+                Button logoutBtn = loggedInGroup.Find("LogoutBtn")?.GetComponent<Button>();
+                if (logoutBtn != null)
+                {
+                    RectTransform logRt = logoutBtn.GetComponent<RectTransform>();
+                    if (logRt != null)
+                    {
+                        logRt.anchorMin = new Vector2(0, 0.5f); logRt.anchorMax = new Vector2(0, 0.5f);
+                        logRt.pivot = new Vector2(0, 0.5f); logRt.anchoredPosition = new Vector2(580, 0);
+                        logRt.sizeDelta = new Vector2(70, 75);
+                    }
+                }
+
+                Button lbBtn = loggedInGroup.Find("LeaderboardBtn")?.GetComponent<Button>();
+                if (lbBtn != null) lbBtn.gameObject.SetActive(false);
             }
 
-            Button withBtn = topBar.transform.Find("LoggedInGroup/WithdrawBtn")?.GetComponent<Button>();
-            if (withBtn != null)
+            Transform loggedOutGroup = topBar.transform.Find("LoggedOutGroup");
+            if (loggedOutGroup != null)
             {
-                Image withImg = withBtn.GetComponent<Image>();
-                if (withImg != null) withImg.color = new Color(0.122f, 0.161f, 0.216f, 1f);
-                Text withTxt = withBtn.GetComponentInChildren<Text>();
-                if (withTxt != null) { withTxt.text = "<b>WITHDRAW</b>"; withTxt.raycastTarget = false; }
-                RectTransform withRt = withBtn.GetComponent<RectTransform>();
-                if (withRt != null) withRt.sizeDelta = new Vector2(160, 80);
-                if (withBtn.GetComponent<ButtonHoverJuice>() == null) withBtn.gameObject.AddComponent<ButtonHoverJuice>();
-            }
-
-            Transform balBg = topBar.transform.Find("LoggedInGroup/BalanceBg");
-            if (balBg != null)
-            {
-                Image balImg = balBg.GetComponent<Image>();
-                if (balImg != null) balImg.color = new Color(0.067f, 0.094f, 0.153f, 1f);
-                RectTransform balRt = balBg.GetComponent<RectTransform>();
-                if (balRt != null) balRt.sizeDelta = new Vector2(280, 80);
+                RectTransform logRt = loggedOutGroup.GetComponent<RectTransform>();
+                if (logRt != null)
+                {
+                    logRt.anchorMin = new Vector2(1, 0.5f); logRt.anchorMax = new Vector2(1, 0.5f);
+                    logRt.pivot = new Vector2(1, 0.5f); logRt.anchoredPosition = new Vector2(-20, 0);
+                    logRt.sizeDelta = new Vector2(400, 90);
+                }
+                Button loginB = loggedOutGroup.Find("LoginBtn")?.GetComponent<Button>();
+                if (loginB != null)
+                {
+                    RectTransform rt = loginB.GetComponent<RectTransform>();
+                    if (rt != null) { rt.anchoredPosition = new Vector2(-205, 0); rt.sizeDelta = new Vector2(190, 75); }
+                }
+                Button regB = loggedOutGroup.Find("RegisterBtn")?.GetComponent<Button>();
+                if (regB != null)
+                {
+                    RectTransform rt = regB.GetComponent<RectTransform>();
+                    if (rt != null) { rt.anchoredPosition = new Vector2(0, 0); rt.sizeDelta = new Vector2(190, 75); }
+                }
             }
         }
 
@@ -172,18 +247,18 @@ public class CasinoLobbyManager : MonoBehaviour
             GridLayoutGroup layout = grid.GetComponent<GridLayoutGroup>();
             if (layout != null)
             {
-                layout.cellSize = new Vector2(340, 420);
-                layout.spacing = new Vector2(28, 28);
-                layout.padding = new RectOffset(30, 30, 20, 50);
+                layout.cellSize = new Vector2(490, 420);
+                layout.spacing = new Vector2(30, 30);
+                layout.padding = new RectOffset(35, 35, 20, 60);
                 layout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-                layout.constraintCount = 4;
+                layout.constraintCount = 2;
                 layout.childAlignment = TextAnchor.UpperCenter;
             }
 
             RectTransform gRt = grid.GetComponent<RectTransform>();
             if (gRt != null)
             {
-                gRt.sizeDelta = new Vector2(0, 1200);
+                gRt.sizeDelta = new Vector2(0, 1800);
             }
         }
 
@@ -273,6 +348,17 @@ public class CasinoLobbyManager : MonoBehaviour
             RectTransform bbRt = bottomBar.GetComponent<RectTransform>();
             if (bbRt != null) bbRt.sizeDelta = new Vector2(0, 150);
 
+            HorizontalLayoutGroup navLayout = bottomBar.GetComponent<HorizontalLayoutGroup>();
+            if (navLayout != null)
+            {
+                navLayout.spacing = 8;
+                navLayout.padding = new RectOffset(15, 15, 15, 15);
+                navLayout.childControlWidth = true;
+                navLayout.childControlHeight = true;
+                navLayout.childForceExpandWidth = true;
+                navLayout.childForceExpandHeight = true;
+            }
+
             var navBtns = bottomBar.GetComponentsInChildren<Button>(true);
             foreach (var nb in navBtns)
             {
@@ -283,6 +369,8 @@ public class CasinoLobbyManager : MonoBehaviour
                 if (txt != null)
                 {
                     txt.color = Color.white;
+                    txt.fontSize = 20;
+                    txt.alignment = TextAnchor.MiddleCenter;
                     txt.raycastTarget = false;
                 }
                 if (nb.GetComponent<ButtonHoverJuice>() == null) nb.gameObject.AddComponent<ButtonHoverJuice>();
@@ -408,11 +496,124 @@ public class CasinoLobbyManager : MonoBehaviour
         StyleCredibleLobbyUI();
     }
 
+    public void SetupGameHeaderAndBack(GameObject panel, string gameTitle)
+    {
+        if (panel == null) return;
+
+        Transform existingHeader = panel.transform.Find("GameHeader");
+        if (existingHeader == null)
+        {
+            GameObject headerGo = new GameObject("GameHeader", typeof(RectTransform));
+            headerGo.transform.SetParent(panel.transform, false);
+            headerGo.transform.SetAsFirstSibling();
+
+            Image bg = headerGo.AddComponent<Image>();
+            bg.color = new Color(0.059f, 0.082f, 0.133f, 1f);
+
+            RectTransform hRt = headerGo.GetComponent<RectTransform>();
+            hRt.anchorMin = new Vector2(0, 1);
+            hRt.anchorMax = new Vector2(1, 1);
+            hRt.pivot = new Vector2(0.5f, 1);
+            hRt.anchoredPosition = Vector2.zero;
+            hRt.sizeDelta = new Vector2(0, 100);
+
+            Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            if (font == null) font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+
+            GameObject backGo = new GameObject("BackBtn", typeof(RectTransform));
+            backGo.transform.SetParent(headerGo.transform, false);
+            Image backImg = backGo.AddComponent<Image>();
+            backImg.color = new Color(0.122f, 0.161f, 0.216f, 1f);
+            Button backBtn = backGo.AddComponent<Button>();
+            backBtn.onClick.AddListener(ShowLobby);
+            backGo.AddComponent<ButtonHoverJuice>();
+
+            RectTransform bRt = backGo.GetComponent<RectTransform>();
+            bRt.anchorMin = new Vector2(0, 0.5f);
+            bRt.anchorMax = new Vector2(0, 0.5f);
+            bRt.pivot = new Vector2(0, 0.5f);
+            bRt.anchoredPosition = new Vector2(25, 0);
+            bRt.sizeDelta = new Vector2(220, 70);
+
+            GameObject backTxtGo = new GameObject("Text", typeof(RectTransform));
+            backTxtGo.transform.SetParent(backGo.transform, false);
+            Text backTxt = backTxtGo.AddComponent<Text>();
+            backTxt.font = font;
+            backTxt.fontSize = 28;
+            backTxt.fontStyle = FontStyle.Bold;
+            backTxt.alignment = TextAnchor.MiddleCenter;
+            backTxt.text = "<b><color=#00FFAA>←</color> LOBBY</b>";
+            backTxt.color = Color.white;
+            RectTransform btRt = backTxtGo.GetComponent<RectTransform>();
+            btRt.anchorMin = Vector2.zero;
+            btRt.anchorMax = Vector2.one;
+            btRt.offsetMin = Vector2.zero;
+            btRt.offsetMax = Vector2.zero;
+
+            GameObject titleGo = new GameObject("Title", typeof(RectTransform));
+            titleGo.transform.SetParent(headerGo.transform, false);
+            Text tText = titleGo.AddComponent<Text>();
+            tText.font = font;
+            tText.fontSize = 34;
+            tText.fontStyle = FontStyle.Bold;
+            tText.alignment = TextAnchor.MiddleCenter;
+            tText.text = $"<b>{gameTitle}</b>";
+            tText.color = Color.white;
+            RectTransform tRt = titleGo.GetComponent<RectTransform>();
+            tRt.anchorMin = new Vector2(0.5f, 0.5f);
+            tRt.anchorMax = new Vector2(0.5f, 0.5f);
+            tRt.pivot = new Vector2(0.5f, 0.5f);
+            tRt.anchoredPosition = Vector2.zero;
+            tRt.sizeDelta = new Vector2(350, 70);
+
+            GameObject balGo = new GameObject("Balance", typeof(RectTransform));
+            balGo.transform.SetParent(headerGo.transform, false);
+            Text balTxt = balGo.AddComponent<Text>();
+            balTxt.font = font;
+            balTxt.fontSize = 28;
+            balTxt.fontStyle = FontStyle.Bold;
+            balTxt.alignment = TextAnchor.MiddleRight;
+            balTxt.text = PlayerManager.Instance != null ? $"<b><color=#00FFAA>${PlayerManager.Instance.balance:F2}</color></b>" : "$0.00";
+            balTxt.color = Color.white;
+            RectTransform balRt = balGo.GetComponent<RectTransform>();
+            balRt.anchorMin = new Vector2(1, 0.5f);
+            balRt.anchorMax = new Vector2(1, 0.5f);
+            balRt.pivot = new Vector2(1, 0.5f);
+            balRt.anchoredPosition = new Vector2(-25, 0);
+            balRt.sizeDelta = new Vector2(260, 70);
+        }
+        else
+        {
+            Text balTxt = existingHeader.Find("Balance")?.GetComponent<Text>();
+            if (balTxt != null && PlayerManager.Instance != null)
+            {
+                balTxt.text = $"<b><color=#00FFAA>${PlayerManager.Instance.balance:F2}</color></b>";
+            }
+        }
+
+        Transform betPanel = panel.transform.Find("BetPanel");
+        if (betPanel != null)
+        {
+            RectTransform bpRt = betPanel.GetComponent<RectTransform>();
+            if (bpRt != null)
+            {
+                bpRt.anchorMin = new Vector2(0, 1);
+                bpRt.anchorMax = new Vector2(1, 1);
+                bpRt.pivot = new Vector2(0.5f, 1);
+                bpRt.anchoredPosition = new Vector2(0, -100);
+            }
+        }
+    }
+
     private bool CheckLogin()
     {
         if (AuthManager.Instance != null && !AuthManager.Instance.IsLoggedIn)
         {
-            AuthManager.Instance.AutoLogin();
+            if (AuthUIManager.Instance != null)
+            {
+                AuthUIManager.Instance.ShowLogin();
+            }
+            return false;
         }
         return true;
     }
@@ -421,7 +622,7 @@ public class CasinoLobbyManager : MonoBehaviour
     {
         if (!CheckLogin()) return;
         if(lobbyPanel) lobbyPanel.SetActive(false);
-        if(crashPanel) crashPanel.SetActive(true);
+        if(crashPanel) { crashPanel.SetActive(true); SetupGameHeaderAndBack(crashPanel, "CRASH"); }
         if(roulettePanel) roulettePanel.SetActive(false);
         if(slotsPanel) slotsPanel.SetActive(false);
         if(minesPanel) minesPanel.SetActive(false);
@@ -435,7 +636,7 @@ public class CasinoLobbyManager : MonoBehaviour
         if (!CheckLogin()) return;
         if(lobbyPanel) lobbyPanel.SetActive(false);
         if(crashPanel) crashPanel.SetActive(false);
-        if(roulettePanel) roulettePanel.SetActive(true);
+        if(roulettePanel) { roulettePanel.SetActive(true); SetupGameHeaderAndBack(roulettePanel, "ROULETTE"); }
         if(slotsPanel) slotsPanel.SetActive(false);
         if(minesPanel) minesPanel.SetActive(false);
         if(plinkoPanel) plinkoPanel.SetActive(false);
@@ -449,7 +650,7 @@ public class CasinoLobbyManager : MonoBehaviour
         if(lobbyPanel) lobbyPanel.SetActive(false);
         if(crashPanel) crashPanel.SetActive(false);
         if(roulettePanel) roulettePanel.SetActive(false);
-        if(slotsPanel) slotsPanel.SetActive(true);
+        if(slotsPanel) { slotsPanel.SetActive(true); SetupGameHeaderAndBack(slotsPanel, "SLOTS"); }
         if(minesPanel) minesPanel.SetActive(false);
         if(plinkoPanel) plinkoPanel.SetActive(false);
         if(dicePanel) dicePanel.SetActive(false);
@@ -463,7 +664,7 @@ public class CasinoLobbyManager : MonoBehaviour
         if(crashPanel) crashPanel.SetActive(false);
         if(roulettePanel) roulettePanel.SetActive(false);
         if(slotsPanel) slotsPanel.SetActive(false);
-        if(minesPanel) minesPanel.SetActive(true);
+        if(minesPanel) { minesPanel.SetActive(true); SetupGameHeaderAndBack(minesPanel, "MINES"); }
         if(plinkoPanel) plinkoPanel.SetActive(false);
         if(dicePanel) dicePanel.SetActive(false);
         if(blackjackPanel) blackjackPanel.SetActive(false);
@@ -477,7 +678,7 @@ public class CasinoLobbyManager : MonoBehaviour
         if(roulettePanel) roulettePanel.SetActive(false);
         if(slotsPanel) slotsPanel.SetActive(false);
         if(minesPanel) minesPanel.SetActive(false);
-        if(plinkoPanel) plinkoPanel.SetActive(true);
+        if(plinkoPanel) { plinkoPanel.SetActive(true); SetupGameHeaderAndBack(plinkoPanel, "PLINKO"); }
         if(dicePanel) dicePanel.SetActive(false);
         if(blackjackPanel) blackjackPanel.SetActive(false);
     }
@@ -491,7 +692,7 @@ public class CasinoLobbyManager : MonoBehaviour
         if(slotsPanel) slotsPanel.SetActive(false);
         if(minesPanel) minesPanel.SetActive(false);
         if(plinkoPanel) plinkoPanel.SetActive(false);
-        if(dicePanel) dicePanel.SetActive(true);
+        if(dicePanel) { dicePanel.SetActive(true); SetupGameHeaderAndBack(dicePanel, "DICE"); }
         if(blackjackPanel) blackjackPanel.SetActive(false);
     }
 
@@ -505,6 +706,6 @@ public class CasinoLobbyManager : MonoBehaviour
         if(minesPanel) minesPanel.SetActive(false);
         if(plinkoPanel) plinkoPanel.SetActive(false);
         if(dicePanel) dicePanel.SetActive(false);
-        if(blackjackPanel) blackjackPanel.SetActive(true);
+        if(blackjackPanel) { blackjackPanel.SetActive(true); SetupGameHeaderAndBack(blackjackPanel, "BLACKJACK"); }
     }
 }

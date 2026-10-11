@@ -16,8 +16,8 @@ public class AuthManager : MonoBehaviour
         }
     }
 
-    public bool IsLoggedIn { get; private set; } = true;
-    public string CurrentPhoneNumber { get; private set; } = "Kenchi";
+    public bool IsLoggedIn { get; private set; } = false;
+    public string CurrentPhoneNumber { get; private set; } = "";
     public string currentUser => CurrentPhoneNumber;
 
     public Action<bool> OnLoginStateChanged;
@@ -42,14 +42,10 @@ public class AuthManager : MonoBehaviour
             PlayerPrefs.SetFloat("Balance_demo", 1000f);
         }
         PlayerPrefs.Save();
-
-        AutoLogin();
     }
 
     void Start()
     {
-
-        AutoLogin();
     }
 
     public void AutoLogin()

@@ -117,15 +117,21 @@ public class RouletteUIManager : MonoBehaviour
         targetX += Random.Range(-30f, 30f);
         Vector2 startPos = Vector2.zero;
         Vector2 endPos = new Vector2(targetX, 0);
+        float lastTick = 0f;
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
             float easeT = 1f - Mathf.Pow(1f - t, 3f);
             tickerContainer.anchoredPosition = Vector2.Lerp(startPos, endPos, easeT);
+            if (gameObject.activeInHierarchy && elapsed - lastTick > 0.08f + (t * 0.18f))
+            {
+                lastTick = elapsed;
+                if (CasinoAudio.Instance) CasinoAudio.Instance.PlayTick();
+            }
             yield return null;
         }
-        if (CasinoAudio.Instance) CasinoAudio.Instance.PlayWin();
+        if (gameObject.activeInHierarchy && CasinoAudio.Instance) CasinoAudio.Instance.PlayWin();
         statusText.text = result == 0 ? "<color=#00FFAA>GREEN WINS (14x)</color>" : (result <= 7 ? "<color=#FF4444>RED WINS (2x)</color>" : "<color=#AAAAAA>BLACK WINS (2x)</color>");
 
         float bounceDuration = 0.5f;

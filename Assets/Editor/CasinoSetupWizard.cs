@@ -62,13 +62,22 @@ public class CasinoSetupWizard
         var lobbyMgr = Object.FindAnyObjectByType<CasinoLobbyManager>();
         if (lobbyMgr != null)
         {
+            lobbyMgr.SetupGameHeaderAndBack(lobbyMgr.crashPanel, "CRASH");
+            lobbyMgr.SetupGameHeaderAndBack(lobbyMgr.roulettePanel, "ROULETTE");
+            lobbyMgr.SetupGameHeaderAndBack(lobbyMgr.slotsPanel, "SLOTS");
+            lobbyMgr.SetupGameHeaderAndBack(lobbyMgr.minesPanel, "MINES");
+            lobbyMgr.SetupGameHeaderAndBack(lobbyMgr.plinkoPanel, "PLINKO");
+            lobbyMgr.SetupGameHeaderAndBack(lobbyMgr.dicePanel, "DICE");
+            lobbyMgr.SetupGameHeaderAndBack(lobbyMgr.blackjackPanel, "BLACKJACK");
+            lobbyMgr.ShowLobby();
             lobbyMgr.StyleCredibleLobbyUI();
             lobbyMgr.AutoWireButtons();
             lobbyMgr.RefreshThumbnails();
             EditorUtility.SetDirty(lobbyMgr);
         }
         UnityEditor.SceneManagement.EditorSceneManager.MarkAllScenesDirty();
-        Debug.Log("Casino: Rebuilt Credible Lobby UI successfully!");
+        UnityEditor.SceneManagement.EditorSceneManager.SaveOpenScenes();
+        Debug.Log("Casino: Rebuilt Credible Lobby UI and Headers successfully!");
     }
 
     [MenuItem("Casino/Build WebGL for Vercel")]
@@ -309,8 +318,8 @@ public class CasinoSetupWizard
         HorizontalLayoutGroup navLayout = bottomBar.AddComponent<HorizontalLayoutGroup>();
         navLayout.childAlignment = TextAnchor.MiddleCenter;
         navLayout.spacing = 10; navLayout.padding = new RectOffset(20, 20, 20, 20);
-        navLayout.childControlWidth = false; navLayout.childControlHeight = true;
-        navLayout.childForceExpandWidth = false; navLayout.childForceExpandHeight = true;
+        navLayout.childControlWidth = true; navLayout.childControlHeight = true;
+        navLayout.childForceExpandWidth = true; navLayout.childForceExpandHeight = true;
 
         GameObject btnHome = CreateNavBtn(bottomBar, "Home", "🏠\n<size=20>Home</size>", font);
         GameObject btnCrash = CreateNavBtn(bottomBar, "Crash", "🚀\n<size=20>Crash</size>", font);
@@ -462,17 +471,17 @@ public class CasinoSetupWizard
         RectTransform gRt = grid.GetComponent<RectTransform>();
         gRt.anchorMin = new Vector2(0, 1); gRt.anchorMax = new Vector2(1, 1); gRt.pivot = new Vector2(0.5f, 1);
         gRt.offsetMin = new Vector2(0, 0); gRt.offsetMax = new Vector2(0, 0);
-        gRt.sizeDelta = new Vector2(0, 1500);
+        gRt.sizeDelta = new Vector2(0, 1800);
 
         scrollRect.viewport = vRt;
         scrollRect.content = gRt;
 
         GridLayoutGroup layout = grid.AddComponent<GridLayoutGroup>();
-        layout.cellSize = new Vector2(340, 420);
-        layout.spacing = new Vector2(28, 28);
-        layout.padding = new RectOffset(30, 30, 20, 50);
+        layout.cellSize = new Vector2(490, 420);
+        layout.spacing = new Vector2(30, 30);
+        layout.padding = new RectOffset(35, 35, 20, 60);
         layout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-        layout.constraintCount = 4;
+        layout.constraintCount = 2;
         layout.childAlignment = TextAnchor.UpperCenter;
 
         CreateGameThumb(grid, "CRASH", "Thumbs/crash", font, lobbyManager.StartCrash);
@@ -487,6 +496,7 @@ public class CasinoSetupWizard
         crashPanel.transform.SetParent(contentArea.transform, false);
         AddImageWithSprite(crashPanel, bgDark);
         FillRect(crashPanel.GetComponent<RectTransform>());
+        CreateGameHeaderBar(crashPanel, font, "CRASH", lobbyManager.ShowLobby);
         CreateBetSidebarMobile(crashPanel, font, out InputField cBet, out Button cHalf, out Button cDouble, out Button cAction);
         GameObject graphC = new GameObject("GraphContainer", typeof(RectTransform));
         graphC.transform.SetParent(crashPanel.transform, false);
@@ -505,6 +515,7 @@ public class CasinoSetupWizard
         rPanel.transform.SetParent(contentArea.transform, false);
         AddImageWithSprite(rPanel, bgDark);
         FillRect(rPanel.GetComponent<RectTransform>());
+        CreateGameHeaderBar(rPanel, font, "ROULETTE", lobbyManager.ShowLobby);
         CreateBetSidebarMobile(rPanel, font, out InputField rBet, out Button rHalf, out Button rDouble, out Button rAction);
         Object.DestroyImmediate(rAction.gameObject);
 
@@ -554,6 +565,7 @@ public class CasinoSetupWizard
         sPanel.transform.SetParent(contentArea.transform, false);
         AddImageWithSprite(sPanel, bgDark);
         FillRect(sPanel.GetComponent<RectTransform>());
+        CreateGameHeaderBar(sPanel, font, "SLOTS", lobbyManager.ShowLobby);
         CreateBetSidebarMobile(sPanel, font, out InputField sBet, out Button sHalf, out Button sDouble, out Button sAction);
 
         Text sStatus = CreateText(sPanel, "StatusText", "READY TO SPIN!", font, 50, new Vector2(0, 400), new Vector2(1000, 100));
@@ -594,6 +606,7 @@ public class CasinoSetupWizard
         mPanel.transform.SetParent(contentArea.transform, false);
         AddImageWithSprite(mPanel, bgDark);
         FillRect(mPanel.GetComponent<RectTransform>());
+        CreateGameHeaderBar(mPanel, font, "MINES", lobbyManager.ShowLobby);
         CreateBetSidebarMobile(mPanel, font, out InputField mBet, out Button mHalf, out Button mDouble, out Button mAction);
 
         Text minesCountLabel = CreateText(mPanel, "MinesLabel", "<color=#888888>MINES COUNT</color>", font, 24, new Vector2(0, 310), new Vector2(1000, 40));
@@ -642,6 +655,7 @@ public class CasinoSetupWizard
         pPanel.transform.SetParent(contentArea.transform, false);
         AddImageWithSprite(pPanel, bgDark);
         FillRect(pPanel.GetComponent<RectTransform>());
+        CreateGameHeaderBar(pPanel, font, "PLINKO", lobbyManager.ShowLobby);
         CreateBetSidebarMobile(pPanel, font, out InputField pBet, out Button pHalf, out Button pDouble, out Button pAction);
 
         Text pStatus = CreateText(pPanel, "StatusText", "READY TO DROP", font, 50, new Vector2(0, 450), new Vector2(1000, 100));
@@ -686,6 +700,7 @@ public class CasinoSetupWizard
         dPanel.transform.SetParent(contentArea.transform, false);
         AddImageWithSprite(dPanel, bgDark);
         FillRect(dPanel.GetComponent<RectTransform>());
+        CreateGameHeaderBar(dPanel, font, "DICE", lobbyManager.ShowLobby);
         CreateBetSidebarMobile(dPanel, font, out InputField dBet, out Button dHalf, out Button dDouble, out Button dAction);
 
         Text dStatus = CreateText(dPanel, "StatusText", "READY TO ROLL", font, 50, new Vector2(0, 400), new Vector2(1000, 100));
@@ -742,6 +757,7 @@ public class CasinoSetupWizard
         bjPanel.transform.SetParent(contentArea.transform, false);
         AddImageWithSprite(bjPanel, bgDark);
         FillRect(bjPanel.GetComponent<RectTransform>());
+        CreateGameHeaderBar(bjPanel, font, "BLACKJACK", lobbyManager.ShowLobby);
         CreateBetSidebarMobile(bjPanel, font, out InputField bjBet, out Button bjHalf, out Button bjDouble, out Button bjAction);
 
         Text bjStatus = CreateText(bjPanel, "StatusText", "PLACE YOUR BET", font, 50, new Vector2(0, 400), new Vector2(1000, 100));
@@ -873,6 +889,26 @@ public class CasinoSetupWizard
         rt.pivot = new Vector2(0.5f, 0.5f);
     }
 
+    static void CreateGameHeaderBar(GameObject parentPanel, Font font, string gameTitle, UnityEngine.Events.UnityAction onBack)
+    {
+        GameObject header = new GameObject("GameHeader", typeof(RectTransform));
+        header.transform.SetParent(parentPanel.transform, false);
+        Image bg = AddImageWithSprite(header, new Color(0.059f, 0.082f, 0.133f, 1f));
+        RectTransform hRt = header.GetComponent<RectTransform>();
+        hRt.anchorMin = new Vector2(0, 1); hRt.anchorMax = new Vector2(1, 1);
+        hRt.pivot = new Vector2(0.5f, 1); hRt.anchoredPosition = Vector2.zero;
+        hRt.sizeDelta = new Vector2(0, 90);
+
+        GameObject backBtn = CreateButton(header, "BackBtn", "<b><color=#00FFAA>←</color> LOBBY</b>", font, new Vector2(25, 0), new Vector2(220, 64), new Color(0.122f, 0.161f, 0.216f, 1f), 28);
+        RectTransform bRt = backBtn.GetComponent<RectTransform>();
+        bRt.anchorMin = new Vector2(0, 0.5f); bRt.anchorMax = new Vector2(0, 0.5f); bRt.pivot = new Vector2(0, 0.5f);
+        backBtn.GetComponent<Button>().onClick.AddListener(onBack);
+        backBtn.AddComponent<ButtonHoverJuice>();
+
+        Text titleText = CreateText(header, "Title", $"<b>{gameTitle}</b>", font, 34, Vector2.zero, new Vector2(350, 70));
+        AnchorToCenter(titleText.gameObject);
+    }
+
     static void CreateBetSidebarMobile(GameObject parentPanel, Font font, out InputField betInput, out Button halfBtn, out Button doubleBtn, out Button actionBtn)
     {
         GameObject betPanel = new GameObject("BetPanel", typeof(RectTransform));
@@ -880,7 +916,7 @@ public class CasinoSetupWizard
         Image bg = AddImageWithSprite(betPanel, new Color(0.11f, 0.13f, 0.17f, 1f));
         RectTransform rt = betPanel.GetComponent<RectTransform>();
         rt.anchorMin = new Vector2(0, 1); rt.anchorMax = new Vector2(1, 1);
-        rt.pivot = new Vector2(0.5f, 1); rt.sizeDelta = new Vector2(0, 200); rt.anchoredPosition = Vector2.zero;
+        rt.pivot = new Vector2(0.5f, 1); rt.sizeDelta = new Vector2(0, 200); rt.anchoredPosition = new Vector2(0, -90);
 
         Text label = CreateText(betPanel, "BetLabel", "Bet Amount", font, 30, new Vector2(20, -40), new Vector2(400, 40));
         label.GetComponent<RectTransform>().anchorMin = new Vector2(0, 1); label.GetComponent<RectTransform>().anchorMax = new Vector2(0, 1);

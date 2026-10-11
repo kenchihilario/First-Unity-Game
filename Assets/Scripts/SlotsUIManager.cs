@@ -97,7 +97,7 @@ public class SlotsUIManager : MonoBehaviour
                     reels[i].transform.localScale = new Vector3(1f, 1.3f, 1f);
                 }
             }
-            if (CasinoAudio.Instance) CasinoAudio.Instance.PlayTick();
+            if (gameObject.activeInHierarchy && CasinoAudio.Instance) CasinoAudio.Instance.PlayTick();
             yield return new WaitForSeconds(0.04f);
         }
     }
@@ -134,11 +134,12 @@ public class SlotsUIManager : MonoBehaviour
     {
         if (payout > 0)
         {
-            if (CasinoAudio.Instance) CasinoAudio.Instance.PlayWin();
+            if (gameObject.activeInHierarchy && CasinoAudio.Instance) CasinoAudio.Instance.PlayWin();
             statusText.text = $"<color=#00FFAA>YOU WON ${payout}!</color>";
         }
         else
         {
+            if (gameObject.activeInHierarchy && CasinoAudio.Instance) CasinoAudio.Instance.PlayLoss();
             statusText.text = $"<color=#FF4444>NO WIN. TRY AGAIN.</color>";
         }
     }
