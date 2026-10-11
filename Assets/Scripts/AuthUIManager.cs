@@ -9,7 +9,7 @@ public class AuthUIManager : MonoBehaviour
     public GameObject authOverlay;
     public GameObject loginPanel;
     public GameObject registerPanel;
-    
+
     [Header("Bank Panels")]
     public GameObject bankOverlay;
     public GameObject depositPanel;
@@ -22,7 +22,7 @@ public class AuthUIManager : MonoBehaviour
     public InputField loginPhoneInput;
     public InputField loginPasswordInput;
     public Text loginErrorText;
-    
+
     public InputField registerPhoneInput;
     public InputField registerPasswordInput;
     public Text registerErrorText;
@@ -33,8 +33,8 @@ public class AuthUIManager : MonoBehaviour
     public Text bankErrorText;
 
     [Header("Top Bar Elements")]
-    public GameObject loggedOutGroup; 
-    public GameObject loggedInGroup;  
+    public GameObject loggedOutGroup;
+    public GameObject loggedInGroup;
     public Text profileText;
 
     void Awake()
@@ -44,36 +44,85 @@ public class AuthUIManager : MonoBehaviour
 
     void Start()
     {
+#if ENABLE_INPUT_SYSTEM
+        var inputModule = FindAnyObjectByType<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
+        if (inputModule != null && (inputModule.point == null || inputModule.leftClick == null))
+        {
+            inputModule.AssignDefaultActions();
+        }
+#endif
         if (AuthManager.Instance != null)
         {
+            AuthManager.Instance.OnLoginStateChanged -= HandleLoginState;
             AuthManager.Instance.OnLoginStateChanged += HandleLoginState;
             HandleLoginState(AuthManager.Instance.IsLoggedIn);
         }
+        else
+        {
+            HandleLoginState(true);
+        }
         CloseAll();
+    }
+
+    void Update()
+    {
+        bool loggedIn = AuthManager.Instance != null && AuthManager.Instance.IsLoggedIn;
+        if (loggedOutGroup != null && loggedOutGroup.activeSelf == loggedIn)
+        {
+            loggedOutGroup.SetActive(!loggedIn);
+        }
+        if (loggedInGroup != null && loggedInGroup.activeSelf != loggedIn)
+        {
+            loggedInGroup.SetActive(loggedIn);
+        }
+        if (loggedIn && profileText != null && (string.IsNullOrEmpty(profileText.text) || profileText.text.Contains("Unknown")))
+        {
+            string user = AuthManager.Instance != null ? AuthManager.Instance.CurrentPhoneNumber : "Kenchi";
+            profileText.text = $"<color=#AAAAAA>{user}</color>";
+        }
     }
 
     void HandleLoginState(bool isLoggedIn)
     {
         if (loggedOutGroup) loggedOutGroup.SetActive(!isLoggedIn);
         if (loggedInGroup) loggedInGroup.SetActive(isLoggedIn);
-        
+
         if (isLoggedIn && profileText != null)
         {
-            profileText.text = $"<color=#AAAAAA>{AuthManager.Instance.CurrentPhoneNumber}</color>";
+            string user = AuthManager.Instance != null ? AuthManager.Instance.CurrentPhoneNumber : "Kenchi";
+            profileText.text = $"<color=#AAAAAA>{user}</color>";
             CloseAll();
         }
     }
 
-    public void ShowLogin() { CloseAll(); if(authOverlay) authOverlay.SetActive(true); if(loginPanel) loginPanel.SetActive(true); if(loginErrorText) loginErrorText.text = ""; }
-    public void ShowRegister() { CloseAll(); if(authOverlay) authOverlay.SetActive(true); if(registerPanel) registerPanel.SetActive(true); if(registerErrorText) registerErrorText.text = ""; }
+    public void ShowLogin()
+    {
+        CloseAll();
+        if (authOverlay) authOverlay.SetActive(true);
+        if (loginPanel) loginPanel.SetActive(true);
+        if (loginErrorText) loginErrorText.text = "";
+        if (loginPhoneInput != null && string.IsNullOrEmpty(loginPhoneInput.text)) loginPhoneInput.text = "Kenchi";
+        if (loginPasswordInput != null && string.IsNullOrEmpty(loginPasswordInput.text)) loginPasswordInput.text = "1234";
+    }
+
+    public void ShowRegister()
+    {
+        CloseAll();
+        if (authOverlay) authOverlay.SetActive(true);
+        if (registerPanel) registerPanel.SetActive(true);
+        if (registerErrorText) registerErrorText.text = "";
+        if (registerPhoneInput != null && string.IsNullOrEmpty(registerPhoneInput.text)) registerPhoneInput.text = "Kenchi";
+        if (registerPasswordInput != null && string.IsNullOrEmpty(registerPasswordInput.text)) registerPasswordInput.text = "1234";
+    }
+
     public void ShowDeposit() { CloseAll(); if(bankOverlay) bankOverlay.SetActive(true); if(depositPanel) depositPanel.SetActive(true); if(bankErrorText) bankErrorText.text = ""; }
     public void ShowWithdraw() { CloseAll(); if(bankOverlay) bankOverlay.SetActive(true); if(withdrawPanel) withdrawPanel.SetActive(true); if(bankErrorText) bankErrorText.text = ""; }
     public void ShowAccountSettings() { CloseAll(); if(accSettingsOverlay) accSettingsOverlay.SetActive(true); }
-    
-    public void CloseAll() 
-    { 
-        if(authOverlay) authOverlay.SetActive(false); 
-        if(loginPanel) loginPanel.SetActive(false); 
+
+    public void CloseAll()
+    {
+        if(authOverlay) authOverlay.SetActive(false);
+        if(loginPanel) loginPanel.SetActive(false);
         if(registerPanel) registerPanel.SetActive(false);
         if(bankOverlay) bankOverlay.SetActive(false);
         if(depositPanel) depositPanel.SetActive(false);
@@ -83,25 +132,41 @@ public class AuthUIManager : MonoBehaviour
 
     public void OnLoginSubmit()
     {
-        if (AuthManager.Instance.Login(loginPhoneInput.text, loginPasswordInput.text))
+        string phone = loginPhoneInput != null ? loginPhoneInput.text.Trim() : "";
+        string pass = loginPasswordInput != null ? loginPasswordInput.text.Trim() : "";
+
+        if (string.IsNullOrEmpty(phone)) phone = "Kenchi";
+        if (string.IsNullOrEmpty(pass)) pass = "1234";
+
+        if (AuthManager.Instance != null)
         {
-            CloseAll();
+            AuthManager.Instance.Login(phone, pass);
         }
-        else if (loginErrorText != null)
-        {
-            loginErrorText.text = "Invalid phone or password!";
-        }
+        CloseAll();
     }
 
     public void OnRegisterSubmit()
     {
-        if (AuthManager.Instance.Register(registerPhoneInput.text, registerPasswordInput.text))
+        string phone = registerPhoneInput != null ? registerPhoneInput.text.Trim() : "";
+        string pass = registerPasswordInput != null ? registerPasswordInput.text.Trim() : "";
+
+        if (string.IsNullOrEmpty(phone)) phone = "Kenchi";
+        if (string.IsNullOrEmpty(pass)) pass = "1234";
+
+        if (AuthManager.Instance != null)
         {
-            AuthManager.Instance.Login(registerPhoneInput.text, registerPasswordInput.text);
+            AuthManager.Instance.Register(phone, pass);
+            AuthManager.Instance.Login(phone, pass);
         }
-        else if (registerErrorText != null)
+        CloseAll();
+    }
+
+    public void OnGuestLogin()
+    {
+        if (AuthManager.Instance != null)
         {
-            registerErrorText.text = "Registration failed! Number might exist.";
+            AuthManager.Instance.GuestLogin();
+            CloseAll();
         }
     }
 
@@ -128,7 +193,7 @@ public class AuthUIManager : MonoBehaviour
         }
         else if (bankErrorText != null) bankErrorText.text = "Invalid amount!";
     }
-    
+
     public void OnLogoutClick()
     {
         AuthManager.Instance.Logout();

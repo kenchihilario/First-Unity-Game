@@ -8,17 +8,17 @@ public class LeaderboardUIManager : MonoBehaviour
     public Text[] nameTexts = new Text[10];
     public Text[] balanceTexts = new Text[10];
     public Image[] rowBackgrounds = new Image[10];
-    
+
     public Button closeButton;
     public Button btnDaily;
     public Button btnWeekly;
     public Button btnAllTime;
-    
+
     public GameObject leaderboardPanel;
-    private int currentTab = 2; // 0=Daily, 1=Weekly, 2=AllTime
-    
+    private int currentTab = 2;
+
     private string[] randomAvatars = new string[] { "🤠", "🤖", "👽", "👻", "🐵", "🦁", "🦊", "🐯", "🐼", "😎" };
-    
+
     void Start()
     {
         if (closeButton != null)
@@ -28,25 +28,25 @@ public class LeaderboardUIManager : MonoBehaviour
                 leaderboardPanel.SetActive(false);
             });
         }
-        
+
         if (btnDaily != null) btnDaily.onClick.AddListener(() => SetTab(0));
         if (btnWeekly != null) btnWeekly.onClick.AddListener(() => SetTab(1));
         if (btnAllTime != null) btnAllTime.onClick.AddListener(() => SetTab(2));
     }
-    
+
     void SetTab(int index)
     {
         if (CasinoAudio.Instance) CasinoAudio.Instance.PlayTick();
         currentTab = index;
         RefreshLeaderboard();
     }
-    
+
     void OnEnable()
     {
         RefreshLeaderboard();
         StartCoroutine(AnimateRows());
     }
-    
+
     System.Collections.IEnumerator AnimateRows()
     {
         for (int i = 0; i < 10; i++)
@@ -55,8 +55,8 @@ public class LeaderboardUIManager : MonoBehaviour
             {
                 RectTransform rt = rowBackgrounds[i].GetComponent<RectTransform>();
                 Vector2 originalPos = rt.anchoredPosition;
-                rt.anchoredPosition = new Vector2(originalPos.x - 500f, originalPos.y); // slide from left
-                
+                rt.anchoredPosition = new Vector2(originalPos.x - 500f, originalPos.y);
+
                 float duration = 0.3f;
                 float elapsed = 0f;
                 while (elapsed < duration)
@@ -68,33 +68,31 @@ public class LeaderboardUIManager : MonoBehaviour
                     yield return null;
                 }
                 rt.anchoredPosition = originalPos;
-                if (CasinoAudio.Instance && i < 3) CasinoAudio.Instance.PlayTick(); 
+                if (CasinoAudio.Instance && i < 3) CasinoAudio.Instance.PlayTick();
             }
-            yield return new WaitForSeconds(0.05f); 
+            yield return new WaitForSeconds(0.05f);
         }
     }
-    
+
     public void RefreshLeaderboard()
     {
         if (LeaderboardManager.Instance == null) return;
-        
 
         if (btnDaily != null) btnDaily.GetComponent<Image>().color = currentTab == 0 ? new Color(0.2f, 0.6f, 1f) : new Color(0.2f, 0.2f, 0.3f);
         if (btnWeekly != null) btnWeekly.GetComponent<Image>().color = currentTab == 1 ? new Color(0.2f, 0.6f, 1f) : new Color(0.2f, 0.2f, 0.3f);
         if (btnAllTime != null) btnAllTime.GetComponent<Image>().color = currentTab == 2 ? new Color(0.2f, 0.6f, 1f) : new Color(0.2f, 0.2f, 0.3f);
-        
+
         List<LeaderboardManager.PlayerEntry> topPlayers = LeaderboardManager.Instance.GetTopPlayers(currentTab);
-        
+
         for (int i = 0; i < 10; i++)
         {
             if (i < topPlayers.Count)
             {
                 rankTexts[i].text = $"#{i + 1}";
-                
+
                 string avatar = topPlayers[i].username.EndsWith("(You)") ? "😎" : randomAvatars[Mathf.Abs(topPlayers[i].username.GetHashCode()) % randomAvatars.Length];
                 nameTexts[i].text = $"{avatar}  {topPlayers[i].username}";
                 balanceTexts[i].text = $"${topPlayers[i].balance:F2}";
-                
 
                 if (topPlayers[i].username.EndsWith("(You)"))
                 {
@@ -108,13 +106,12 @@ public class LeaderboardUIManager : MonoBehaviour
                     nameTexts[i].color = new Color(0.8f, 0.8f, 0.8f);
                     balanceTexts[i].color = Color.white;
                 }
-                
 
-                if (i == 0) rankTexts[i].color = new Color(1f, 0.84f, 0f); // Gold
-                else if (i == 1) rankTexts[i].color = new Color(0.75f, 0.75f, 0.75f); // Silver
-                else if (i == 2) rankTexts[i].color = new Color(0.8f, 0.5f, 0.2f); // Bronze
+                if (i == 0) rankTexts[i].color = new Color(1f, 0.84f, 0f);
+                else if (i == 1) rankTexts[i].color = new Color(0.75f, 0.75f, 0.75f);
+                else if (i == 2) rankTexts[i].color = new Color(0.8f, 0.5f, 0.2f);
                 else rankTexts[i].color = new Color(0.5f, 0.5f, 0.5f);
-                
+
                 rowBackgrounds[i].gameObject.SetActive(true);
             }
             else

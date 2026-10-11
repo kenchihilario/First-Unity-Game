@@ -993,8 +993,8 @@ Sprite:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1024
-    height: 1024
+    width: 512
+    height: 512
   m_Offset: {x: 0, y: 0}
   m_Border: {x: 0, y: 0, z: 0, w: 0}
   m_PixelsToUnits: 100
@@ -1094,8 +1094,8 @@ Sprite:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 1024
-      height: 1024
+      width: 512
+      height: 512
     textureRectOffset: {x: 0, y: 0}
     atlasRectOffset: {x: -1, y: -1}
     settingsRaw: 3136
@@ -1190,8 +1190,8 @@ Sprite:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 1024
-      height: 1024
+      width: 512
+      height: 512
     textureRectOffset: {x: 0, y: 0}
     atlasRectOffset: {x: -1, y: -1}
     settingsRaw: 3136
@@ -3297,7 +3297,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 792827389}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -4258,8 +4258,8 @@ Sprite:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1024
-    height: 1024
+    width: 512
+    height: 512
   m_Offset: {x: 0, y: 0}
   m_Border: {x: 0, y: 0, z: 0, w: 0}
   m_PixelsToUnits: 100
@@ -4359,8 +4359,8 @@ Sprite:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 1024
-      height: 1024
+      width: 512
+      height: 512
     textureRectOffset: {x: 0, y: 0}
     atlasRectOffset: {x: -1, y: -1}
     settingsRaw: 3136
@@ -4455,8 +4455,8 @@ Sprite:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 1024
-      height: 1024
+      width: 512
+      height: 512
     textureRectOffset: {x: 0, y: 0}
     atlasRectOffset: {x: -1, y: -1}
     settingsRaw: 3136
@@ -6362,7 +6362,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39afe90a21505924bb472349a5ee6e4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerManager
-  balance: 0
+  balance: 10000
 --- !u!4 &393464317
 Transform:
   m_ObjectHideFlags: 0
@@ -6390,8 +6390,8 @@ Sprite:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1024
-    height: 1024
+    width: 512
+    height: 512
   m_Offset: {x: 0, y: 0}
   m_Border: {x: 0, y: 0, z: 0, w: 0}
   m_PixelsToUnits: 100
@@ -6491,8 +6491,8 @@ Sprite:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 1024
-      height: 1024
+      width: 512
+      height: 512
     textureRectOffset: {x: 0, y: 0}
     atlasRectOffset: {x: -1, y: -1}
     settingsRaw: 3136
@@ -6587,8 +6587,8 @@ Sprite:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 1024
-      height: 1024
+      width: 512
+      height: 512
     textureRectOffset: {x: 0, y: 0}
     atlasRectOffset: {x: -1, y: -1}
     settingsRaw: 3136
@@ -6830,7 +6830,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 282548080}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -10118,8 +10118,8 @@ Sprite:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1024
-    height: 1024
+    width: 512
+    height: 512
   m_Offset: {x: 0, y: 0}
   m_Border: {x: 0, y: 0, z: 0, w: 0}
   m_PixelsToUnits: 100
@@ -10219,8 +10219,8 @@ Sprite:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 1024
-      height: 1024
+      width: 512
+      height: 512
     textureRectOffset: {x: 0, y: 0}
     atlasRectOffset: {x: -1, y: -1}
     settingsRaw: 3136
@@ -10315,8 +10315,8 @@ Sprite:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 1024
-      height: 1024
+      width: 512
+      height: 512
     textureRectOffset: {x: 0, y: 0}
     atlasRectOffset: {x: -1, y: -1}
     settingsRaw: 3136
@@ -10902,17 +10902,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GridLayoutGroup
   m_Padding:
-    m_Left: 40
-    m_Right: 40
-    m_Top: 40
-    m_Bottom: 40
+    m_Left: 30
+    m_Right: 30
+    m_Top: 20
+    m_Bottom: 50
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 400, y: 400}
-  m_Spacing: {x: 40, y: 40}
-  m_Constraint: 0
-  m_ConstraintCount: 2
+  m_CellSize: {x: 340, y: 420}
+  m_Spacing: {x: 28, y: 28}
+  m_Constraint: 1
+  m_ConstraintCount: 4
 --- !u!1 &645267387
 GameObject:
   m_ObjectHideFlags: 0
@@ -13142,8 +13142,8 @@ Sprite:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1024
-    height: 1024
+    width: 512
+    height: 512
   m_Offset: {x: 0, y: 0}
   m_Border: {x: 0, y: 0, z: 0, w: 0}
   m_PixelsToUnits: 100
@@ -13243,8 +13243,8 @@ Sprite:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 1024
-      height: 1024
+      width: 512
+      height: 512
     textureRectOffset: {x: 0, y: 0}
     atlasRectOffset: {x: -1, y: -1}
     settingsRaw: 3136
@@ -13339,8 +13339,8 @@ Sprite:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 1024
-      height: 1024
+      width: 512
+      height: 512
     textureRectOffset: {x: 0, y: 0}
     atlasRectOffset: {x: -1, y: -1}
     settingsRaw: 3136
@@ -17313,7 +17313,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 393660824}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -22119,7 +22119,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'User: Unknown'
+  m_Text: '<color=#AAAAAA>Kenchi</color>'
 --- !u!222 &1381581510
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -23019,7 +23019,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1460546635
 RectTransform:
   m_ObjectHideFlags: 0
@@ -23411,7 +23411,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 622181745}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -23690,8 +23690,8 @@ Sprite:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1024
-    height: 1024
+    width: 512
+    height: 512
   m_Offset: {x: 0, y: 0}
   m_Border: {x: 0, y: 0, z: 0, w: 0}
   m_PixelsToUnits: 100
@@ -23791,8 +23791,8 @@ Sprite:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 1024
-      height: 1024
+      width: 512
+      height: 512
     textureRectOffset: {x: 0, y: 0}
     atlasRectOffset: {x: -1, y: -1}
     settingsRaw: 3136
@@ -23887,8 +23887,8 @@ Sprite:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 1024
-      height: 1024
+      width: 512
+      height: 512
     textureRectOffset: {x: 0, y: 0}
     atlasRectOffset: {x: -1, y: -1}
     settingsRaw: 3136
@@ -26429,7 +26429,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1738620085
 RectTransform:
   m_ObjectHideFlags: 0
@@ -27474,7 +27474,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1767616293
 RectTransform:
   m_ObjectHideFlags: 0
@@ -27715,7 +27715,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 98332626}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -30066,7 +30066,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Provably Fair. Instant Crypto. Top Games.
+  m_Text: <b><color=#FF4444>HOUSE ALWAYS WINS</color> • <color=#F59E0B>PERSONAL GITHUB PROJECT</color> • <color=#94A3B8>JUST MADE FOR FUN</color></b>
 --- !u!222 &1911425465
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -32329,7 +32329,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 1511433611}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -33283,7 +33283,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: $0.00
+  m_Text: '<color=#00FFAA>$10000.00</color>'
 --- !u!222 &2101000744
 CanvasRenderer:
   m_ObjectHideFlags: 0

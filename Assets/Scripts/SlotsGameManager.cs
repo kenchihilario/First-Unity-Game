@@ -8,7 +8,7 @@ public class SlotsGameManager : MonoBehaviour
     public enum GameState { Idle, Spinning, Result }
     public GameState currentState = GameState.Idle;
     public Action<GameState> OnStateChanged;
-    public Action<int[]> OnSpinResult; 
+    public Action<int[]> OnSpinResult;
     public Action<float> OnPayout;
     private float currentBet = 0f;
     void Awake()
@@ -34,20 +34,20 @@ public class SlotsGameManager : MonoBehaviour
             int[] result = new int[3];
             for(int i=0; i<3; i++) {
                 float r = Random.value;
-                if (r < 0.40f) result[i] = 0;      
-                else if (r < 0.70f) result[i] = 1; 
-                else if (r < 0.90f) result[i] = 2; 
-                else if (r < 0.98f) result[i] = 3; 
-                else result[i] = 4;                
+                if (r < 0.40f) result[i] = 0;
+                else if (r < 0.70f) result[i] = 1;
+                else if (r < 0.90f) result[i] = 2;
+                else if (r < 0.98f) result[i] = 3;
+                else result[i] = 4;
             }
             OnSpinResult?.Invoke(result);
             float payout = 0;
             if (result[0] == result[1] && result[1] == result[2]) {
-                if (result[0] == 4) payout = currentBet * 500f; 
-                else if (result[0] == 3) payout = currentBet * 100f; 
-                else if (result[0] == 2) payout = currentBet * 25f; 
-                else if (result[0] == 1) payout = currentBet * 15f; 
-                else payout = currentBet * 5f; 
+                if (result[0] == 4) payout = currentBet * 500f;
+                else if (result[0] == 3) payout = currentBet * 100f;
+                else if (result[0] == 2) payout = currentBet * 25f;
+                else if (result[0] == 1) payout = currentBet * 15f;
+                else payout = currentBet * 5f;
             }
             if (payout > 0)
             {
@@ -64,7 +64,7 @@ public class SlotsGameManager : MonoBehaviour
     }
     IEnumerator ResetIdleRoutine()
     {
-        yield return new WaitForSeconds(2f); 
+        yield return new WaitForSeconds(2f);
         currentState = GameState.Idle;
         OnStateChanged?.Invoke(currentState);
     }

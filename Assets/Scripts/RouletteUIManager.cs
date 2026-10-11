@@ -8,7 +8,7 @@ public class RouletteUIManager : MonoBehaviour
     public Button betRedBtn;
     public Button betBlackBtn;
     public Button betGreenBtn;
-    public RectTransform tickerContainer; 
+    public RectTransform tickerContainer;
     public InputField betAmountInput;
     public Button halfBetBtn;
     public Button doubleBetBtn;
@@ -57,7 +57,7 @@ public class RouletteUIManager : MonoBehaviour
             rt.anchorMin = new Vector2(0, 0);
             rt.anchorMax = new Vector2(0, 1);
             rt.pivot = new Vector2(0.5f, 0.5f);
-            rt.sizeDelta = new Vector2(blockWidth - 4f, 0); 
+            rt.sizeDelta = new Vector2(blockWidth - 4f, 0);
             rt.anchoredPosition = new Vector2(i * blockWidth + (blockWidth/2f), 0);
             blocks[i] = img;
         }
@@ -90,8 +90,8 @@ public class RouletteUIManager : MonoBehaviour
         if (state == RouletteGameManager.GameState.Betting)
         {
             UpdateBetDisplay();
-            tickerContainer.anchoredPosition = Vector2.zero; 
-            SetupTickerBlocks(); 
+            tickerContainer.anchoredPosition = Vector2.zero;
+            SetupTickerBlocks();
         }
     }
     void UpdateTimer(float time)
@@ -101,7 +101,8 @@ public class RouletteUIManager : MonoBehaviour
     }
     void SpinTicker(int result)
     {
-        statusText.text = "<color=#00FFAA>SPINNING!</color>";
+        if (statusText != null) statusText.text = "<color=#00FFAA>SPINNING!</color>";
+        if (!isActiveAndEnabled) return;
         StopAllCoroutines();
         StartCoroutine(AnimateSpin(result));
     }
@@ -126,7 +127,6 @@ public class RouletteUIManager : MonoBehaviour
         }
         if (CasinoAudio.Instance) CasinoAudio.Instance.PlayWin();
         statusText.text = result == 0 ? "<color=#00FFAA>GREEN WINS (14x)</color>" : (result <= 7 ? "<color=#FF4444>RED WINS (2x)</color>" : "<color=#AAAAAA>BLACK WINS (2x)</color>");
-        
 
         float bounceDuration = 0.5f;
         elapsed = 0f;
@@ -134,7 +134,7 @@ public class RouletteUIManager : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float t = elapsed / bounceDuration;
-            float scale = 1f + Mathf.Sin(t * Mathf.PI) * 0.3f; // scale to 1.3 then back
+            float scale = 1f + Mathf.Sin(t * Mathf.PI) * 0.3f;
             blocks[targetIndex].transform.localScale = Vector3.one * scale;
             yield return null;
         }

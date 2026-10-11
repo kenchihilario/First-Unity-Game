@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 public class SlotsUIManager : MonoBehaviour
 {
-    public Text[] reels = new Text[3]; 
+    public Text[] reels = new Text[3];
     public Text statusText;
     public Text balanceText;
     public Button spinButton;
@@ -11,12 +11,12 @@ public class SlotsUIManager : MonoBehaviour
     public Button halfBetBtn;
     public Button doubleBetBtn;
     private float betAmount = 10f;
-    private string[] symbolEmojis = new string[] { 
-        "<color=#FF4444>APPLE</color>", 
-        "<color=#FFFF00>LEMON</color>", 
-        "<color=#FF0055>CHERRY</color>", 
-        "<color=#FF5500><b>7 7 7</b></color>", 
-        "<color=#00FFFF><b>DIAMOND</b></color>" 
+    private string[] symbolEmojis = new string[] {
+        "<color=#FF4444>APPLE</color>",
+        "<color=#FFFF00>LEMON</color>",
+        "<color=#FF0055>CHERRY</color>",
+        "<color=#FF5500><b>7 7 7</b></color>",
+        "<color=#00FFFF><b>DIAMOND</b></color>"
     };
     void Start()
     {
@@ -94,16 +94,16 @@ public class SlotsUIManager : MonoBehaviour
                 {
                     reels[i].text = symbolEmojis[Random.Range(0, 5)];
                     reels[i].transform.localPosition = new Vector3(0, Random.Range(-20f, 20f), 0);
-                    reels[i].transform.localScale = new Vector3(1f, 1.3f, 1f); 
+                    reels[i].transform.localScale = new Vector3(1f, 1.3f, 1f);
                 }
             }
             if (CasinoAudio.Instance) CasinoAudio.Instance.PlayTick();
-            yield return new WaitForSeconds(0.04f); 
+            yield return new WaitForSeconds(0.04f);
         }
     }
     void SetFinalReels(int[] result)
     {
-        isSpinning = false; 
+        isSpinning = false;
         StartCoroutine(SnapReel(0, result[0], 0f));
         StartCoroutine(SnapReel(1, result[1], 0.2f));
         StartCoroutine(SnapReel(2, result[2], 0.4f));
@@ -114,10 +114,10 @@ public class SlotsUIManager : MonoBehaviour
         if (reels[index] == null) yield break;
         reels[index].text = symbolEmojis[resultSymbol];
         reels[index].transform.localScale = Vector3.one;
-        
+
         Vector3 startPos = new Vector3(0, 80f, 0);
         Vector3 endPos = Vector3.zero;
-        
+
         float duration = 0.4f;
         float elapsed = 0f;
         while(elapsed < duration)
@@ -137,7 +137,7 @@ public class SlotsUIManager : MonoBehaviour
             if (CasinoAudio.Instance) CasinoAudio.Instance.PlayWin();
             statusText.text = $"<color=#00FFAA>YOU WON ${payout}!</color>";
         }
-        else 
+        else
         {
             statusText.text = $"<color=#FF4444>NO WIN. TRY AGAIN.</color>";
         }

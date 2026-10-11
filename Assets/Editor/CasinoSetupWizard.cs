@@ -5,43 +5,199 @@ using UnityEngine.EventSystems;
 
 public class CasinoSetupWizard
 {
+    [MenuItem("Casino/Fix and Auto-Login Now")]
+    public static void FixAndAutoLoginMenu()
+    {
+        PlayerPrefs.SetString("User_Kenchi", "1234");
+        PlayerPrefs.SetFloat("Balance_Kenchi", 10000f);
+        PlayerPrefs.SetString("LastLoggedInUser", "Kenchi");
+        PlayerPrefs.Save();
+
+        var authManagers = Object.FindObjectsByType<AuthManager>(FindObjectsInactive.Include);
+        foreach (var am in authManagers)
+        {
+            am.AutoLogin();
+        }
+
+        var playerManagers = Object.FindObjectsByType<PlayerManager>(FindObjectsInactive.Include);
+        foreach (var pm in playerManagers)
+        {
+            pm.balance = 10000f;
+        }
+
+        var allGOs = Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include);
+        foreach (var go in allGOs)
+        {
+            if (go.name == "LoggedOutGroup") go.SetActive(false);
+            if (go.name == "LoggedInGroup") go.SetActive(true);
+            if (go.name == "AuthOverlay") go.SetActive(false);
+            if (go.name == "BankOverlay") go.SetActive(false);
+            if (go.name == "AccountSettingsOverlay") go.SetActive(false);
+        }
+
+        var authUIs = Object.FindObjectsByType<AuthUIManager>(FindObjectsInactive.Include);
+        foreach (var ui in authUIs)
+        {
+            ui.CloseAll();
+            if (ui.profileText != null) ui.profileText.text = "<color=#AAAAAA>Kenchi</color>";
+        }
+
+        UpdateCurrentSceneThumbs();
+
+        UnityEditor.SceneManagement.EditorSceneManager.MarkAllScenesDirty();
+        Debug.Log("Casino: Auto-login and thumbnails fixed! Logged in as Kenchi with $10,000 balance.");
+    }
+
+    [MenuItem("Casino/Reimport Thumbnail Images")]
+    public static void ReimportThumbsMenu()
+    {
+        EnsureThumbsImportedAsSprites();
+        Debug.Log("Casino: Thumbnail images successfully imported as Sprites!");
+    }
+
+    [MenuItem("Casino/Rebuild Credible Lobby UI")]
+    public static void RebuildCredibleLobbyMenu()
+    {
+        EnsureThumbsImportedAsSprites();
+        var lobbyMgr = Object.FindAnyObjectByType<CasinoLobbyManager>();
+        if (lobbyMgr != null)
+        {
+            lobbyMgr.StyleCredibleLobbyUI();
+            lobbyMgr.AutoWireButtons();
+            lobbyMgr.RefreshThumbnails();
+            EditorUtility.SetDirty(lobbyMgr);
+        }
+        UnityEditor.SceneManagement.EditorSceneManager.MarkAllScenesDirty();
+        Debug.Log("Casino: Rebuilt Credible Lobby UI successfully!");
+    }
+
+    [MenuItem("Casino/Build WebGL for Vercel")]
+    public static void BuildWebGLForVercel()
+    {
+        PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
+        PlayerSettings.WebGL.decompressionFallback = true;
+        PlayerSettings.WebGL.dataCaching = true;
+
+        string buildDir = System.IO.Path.Combine(Application.dataPath, "..", "WebGLBuild");
+        if (!System.IO.Directory.Exists(buildDir))
+        {
+            System.IO.Directory.CreateDirectory(buildDir);
+        }
+
+        string[] scenes = { "Assets/Scenes/SampleScene.unity" };
+
+        BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
+        buildPlayerOptions.scenes = scenes;
+        buildPlayerOptions.locationPathName = buildDir;
+        buildPlayerOptions.target = BuildTarget.WebGL;
+        buildPlayerOptions.options = BuildOptions.None;
+
+        Debug.Log("Casino: Starting WebGL build for Vercel...");
+        var report = BuildPipeline.BuildPlayer(buildPlayerOptions);
+        if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
+        {
+            string vercelJson = @"{
+  ""cleanUrls"": true,
+  ""headers"": [
+    {
+      ""source"": ""/Build/(.*)"",
+      ""headers"": [
+        { ""key"": ""Cache-Control"", ""value"": ""public, max-age=31536000, immutable"" }
+      ]
+    }
+  ]
+}";
+            System.IO.File.WriteAllText(System.IO.Path.Combine(buildDir, "vercel.json"), vercelJson);
+            Debug.Log($"Casino: WebGL Build succeeded! Ready to deploy to Vercel at: {buildDir}");
+            EditorUtility.RevealInFinder(buildDir);
+        }
+        else
+        {
+            Debug.LogError($"Casino: WebGL Build failed with {report.summary.totalErrors} errors.");
+        }
+    }
+
+    [MenuItem("Casino/Update Thumbnails in Current Scene")]
+    public static void UpdateCurrentSceneThumbs()
+    {
+        EnsureThumbsImportedAsSprites();
+        var lobbyMgr = Object.FindAnyObjectByType<CasinoLobbyManager>();
+        if (lobbyMgr != null)
+        {
+            lobbyMgr.StyleCredibleLobbyUI();
+            lobbyMgr.AutoWireButtons();
+            lobbyMgr.RefreshThumbnails();
+            EditorUtility.SetDirty(lobbyMgr);
+        }
+
+        var allImages = Object.FindObjectsByType<Image>(FindObjectsInactive.Include);
+        string[] games = { "CRASH", "ROULETTE", "SLOTS", "MINES", "PLINKO", "DICE", "BLACKJACK" };
+        int count = 0;
+        foreach (var img in allImages)
+        {
+            foreach (var g in games)
+            {
+                if (img.gameObject.name.Equals(g + "Thumb", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    Sprite sp = LoadGameSprite(g);
+                    if (sp != null)
+                    {
+                        img.sprite = sp;
+                        img.type = Image.Type.Simple;
+                        img.preserveAspect = true;
+                        img.color = Color.white;
+                        EditorUtility.SetDirty(img);
+                        count++;
+                        Debug.Log($"Casino: Updated {g} thumbnail!");
+                    }
+                    else
+                    {
+                        Debug.LogError($"Casino: FAILED to load sprite for {g}!");
+                    }
+                }
+            }
+        }
+        UnityEditor.SceneManagement.EditorSceneManager.MarkAllScenesDirty();
+        Debug.Log($"Casino: Updated {count} thumbnails in current scene with new images!");
+    }
+
     [MenuItem("Casino/Setup Mobile WebGL Casino")]
     public static void SetupCasino()
     {
+        EnsureThumbsImportedAsSprites();
 
-        var oldManagers = Object.FindObjectsByType<CrashGameManager>(FindObjectsSortMode.None);
+        var oldManagers = Object.FindObjectsByType<CrashGameManager>(FindObjectsInactive.Include);
         foreach (var m in oldManagers) Object.DestroyImmediate(m.gameObject);
-        var oldR = Object.FindObjectsByType<RouletteGameManager>(FindObjectsSortMode.None);
+        var oldR = Object.FindObjectsByType<RouletteGameManager>(FindObjectsInactive.Include);
         foreach (var r in oldR) Object.DestroyImmediate(r.gameObject);
-        var oldS = Object.FindObjectsByType<SlotsGameManager>(FindObjectsSortMode.None);
+        var oldS = Object.FindObjectsByType<SlotsGameManager>(FindObjectsInactive.Include);
         foreach (var s in oldS) Object.DestroyImmediate(s.gameObject);
-        var oldLobbies = Object.FindObjectsByType<CasinoLobbyManager>(FindObjectsSortMode.None);
+        var oldLobbies = Object.FindObjectsByType<CasinoLobbyManager>(FindObjectsInactive.Include);
         foreach (var l in oldLobbies) Object.DestroyImmediate(l.gameObject);
-        var oldUIs = Object.FindObjectsByType<CrashUIManager>(FindObjectsSortMode.None);
+        var oldUIs = Object.FindObjectsByType<CrashUIManager>(FindObjectsInactive.Include);
         foreach (var u in oldUIs) Object.DestroyImmediate(u.gameObject);
-        var oldRUI = Object.FindObjectsByType<RouletteUIManager>(FindObjectsSortMode.None);
+        var oldRUI = Object.FindObjectsByType<RouletteUIManager>(FindObjectsInactive.Include);
         foreach (var r in oldRUI) Object.DestroyImmediate(r.gameObject);
-        var oldSUI = Object.FindObjectsByType<SlotsUIManager>(FindObjectsSortMode.None);
+        var oldSUI = Object.FindObjectsByType<SlotsUIManager>(FindObjectsInactive.Include);
         foreach (var s in oldSUI) Object.DestroyImmediate(s.gameObject);
-        var oldMUI = Object.FindObjectsByType<MinesUIManager>(FindObjectsSortMode.None);
+        var oldMUI = Object.FindObjectsByType<MinesUIManager>(FindObjectsInactive.Include);
         foreach (var m in oldMUI) Object.DestroyImmediate(m.gameObject);
-        var oldDUI = Object.FindObjectsByType<DiceUIManager>(FindObjectsSortMode.None);
+        var oldDUI = Object.FindObjectsByType<DiceUIManager>(FindObjectsInactive.Include);
         foreach (var d in oldDUI) Object.DestroyImmediate(d.gameObject);
-        var oldDGM = Object.FindObjectsByType<DiceGameManager>(FindObjectsSortMode.None);
+        var oldDGM = Object.FindObjectsByType<DiceGameManager>(FindObjectsInactive.Include);
         foreach (var dg in oldDGM) Object.DestroyImmediate(dg.gameObject);
-        var oldBUI = Object.FindObjectsByType<BlackjackUIManager>(FindObjectsSortMode.None);
+        var oldBUI = Object.FindObjectsByType<BlackjackUIManager>(FindObjectsInactive.Include);
         foreach (var b in oldBUI) Object.DestroyImmediate(b.gameObject);
-        var oldBGM = Object.FindObjectsByType<BlackjackGameManager>(FindObjectsSortMode.None);
+        var oldBGM = Object.FindObjectsByType<BlackjackGameManager>(FindObjectsInactive.Include);
         foreach (var bg in oldBGM) Object.DestroyImmediate(bg.gameObject);
-        var oldEvents = Object.FindObjectsByType<EventSystem>(FindObjectsSortMode.None);
+        var oldEvents = Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Include);
         foreach (var e in oldEvents) Object.DestroyImmediate(e.gameObject);
-        var oldCanvases = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+        var oldCanvases = Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include);
         foreach (var c in oldCanvases) Object.DestroyImmediate(c.gameObject);
-        var oldAuth = Object.FindObjectsByType<AuthManager>(FindObjectsSortMode.None);
+        var oldAuth = Object.FindObjectsByType<AuthManager>(FindObjectsInactive.Include);
         foreach (var a in oldAuth) Object.DestroyImmediate(a.gameObject);
-        var oldAuthUI = Object.FindObjectsByType<AuthUIManager>(FindObjectsSortMode.None);
+        var oldAuthUI = Object.FindObjectsByType<AuthUIManager>(FindObjectsInactive.Include);
         foreach (var a in oldAuthUI) Object.DestroyImmediate(a.gameObject);
-
 
         GameObject managers = new GameObject("CasinoManagers");
         managers.AddComponent<PlayerManager>();
@@ -57,45 +213,41 @@ public class CasinoSetupWizard
         managers.AddComponent<LeaderboardManager>();
         CasinoLobbyManager lobbyManager = managers.AddComponent<CasinoLobbyManager>();
 
-
         GameObject eventSystem = new GameObject("EventSystem");
         eventSystem.AddComponent<EventSystem>();
         var inputModule = eventSystem.AddComponent<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
+        inputModule.AssignDefaultActions();
         var inputAsset = AssetDatabase.LoadAssetAtPath<UnityEngine.InputSystem.InputActionAsset>("Assets/InputSystem_Actions.inputactions");
         if (inputAsset != null) {
             inputModule.actionsAsset = inputAsset;
-        } else {
-            Object.DestroyImmediate(inputModule);
-            eventSystem.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
         }
-
 
         GameObject canvasGO = new GameObject("CasinoCanvas", typeof(RectTransform));
         Canvas canvas = canvasGO.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        
+
         CanvasScaler scaler = canvasGO.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1080, 1920); // I set this to mobile portrait mode as the default layout.
+        scaler.referenceResolution = new Vector2(1080, 1920);
         scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-        scaler.matchWidthOrHeight = 1f; // Setting this to 1 matches the height perfectly, which guarantees it won't stretch weirdly on different phones or desktop!
-        
+        scaler.matchWidthOrHeight = 1f;
+
         if (canvasGO.GetComponent<GraphicRaycaster>() == null) canvasGO.AddComponent<GraphicRaycaster>();
-        
+
         Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         if (font == null) font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 
-        Color bgDark = new Color(0.05f, 0.06f, 0.08f, 1f);       
-        Color panelColor = new Color(0.11f, 0.13f, 0.17f, 1f);   
-        Color accentRed = new Color(1f, 0.13f, 0.33f, 1f);       
-        Color accentGreen = new Color(0f, 0.9f, 0.0f, 1f);       
-        Color accentGray = new Color(0.17f, 0.19f, 0.25f, 1f);   
+        Color bgDark = new Color(0.05f, 0.06f, 0.08f, 1f);
+        Color panelColor = new Color(0.11f, 0.13f, 0.17f, 1f);
+        Color accentRed = new Color(1f, 0.13f, 0.33f, 1f);
+        Color accentGreen = new Color(0f, 0.9f, 0.0f, 1f);
+        Color accentGray = new Color(0.17f, 0.19f, 0.25f, 1f);
         Color accentBlue = new Color(0.13f, 0.67f, 1f, 1f);
-
+        Color accentYellow = new Color(1f, 0.85f, 0.1f, 1f);
 
         GameObject topBar = new GameObject("TopBar", typeof(RectTransform));
         topBar.transform.SetParent(canvasGO.transform, false);
-        AddImageWithSprite(topBar, panelColor); 
+        AddImageWithSprite(topBar, panelColor);
         RectTransform topBarRt = topBar.GetComponent<RectTransform>();
         topBarRt.anchorMin = new Vector2(0, 1); topBarRt.anchorMax = new Vector2(1, 1);
         topBarRt.pivot = new Vector2(0.5f, 1); topBarRt.sizeDelta = new Vector2(0, 140);
@@ -106,30 +258,29 @@ public class CasinoSetupWizard
         logoText.GetComponent<RectTransform>().pivot = new Vector2(0, 0.5f);
         logoText.alignment = TextAnchor.MiddleLeft;
 
-
         GameObject loggedOutGroup = new GameObject("LoggedOutGroup", typeof(RectTransform));
         loggedOutGroup.transform.SetParent(topBar.transform, false);
         AnchorToRight(loggedOutGroup, -20);
-        
+        loggedOutGroup.SetActive(false);
+
         GameObject loginBtnGo = CreateButton(loggedOutGroup, "LoginBtn", "Log In", font, Vector2.zero, new Vector2(200, 80), accentGray, 30);
         AnchorToRight(loginBtnGo, -220);
         GameObject registerBtnGo = CreateButton(loggedOutGroup, "RegisterBtn", "Register", font, Vector2.zero, new Vector2(200, 80), accentBlue, 30);
         AnchorToRight(registerBtnGo, 0);
 
-
         GameObject loggedInGroup = new GameObject("LoggedInGroup", typeof(RectTransform));
         loggedInGroup.transform.SetParent(topBar.transform, false);
         AnchorToRight(loggedInGroup, -20);
-        
+        loggedInGroup.SetActive(true);
+
         GameObject logoutBtnGo = CreateButton(loggedInGroup, "LogoutBtn", "X", font, Vector2.zero, new Vector2(80, 80), accentRed, 30);
         AnchorToRight(logoutBtnGo, 0);
-        
+
         GameObject withdrawBtnGo = CreateButton(loggedInGroup, "WithdrawBtn", "W", font, Vector2.zero, new Vector2(80, 80), accentGray, 30);
         AnchorToRight(withdrawBtnGo, -100);
-        
+
         GameObject depositBtnGo = CreateButton(loggedInGroup, "DepositBtn", "Deposit", font, Vector2.zero, new Vector2(200, 80), accentGreen, 30);
         AnchorToRight(depositBtnGo, -200);
-
 
         GameObject profileBtnGo = CreateButton(loggedInGroup, "ProfileBtn", "👤", font, Vector2.zero, new Vector2(80, 80), accentBlue, 40);
         AnchorToRight(profileBtnGo, -420);
@@ -141,10 +292,9 @@ public class CasinoSetupWizard
         balBg.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 80);
         Text globalBalanceText = CreateText(balBg, "BalanceText", "$0.00", font, 35, Vector2.zero, new Vector2(230, 80));
         lobbyManager.lobbyBalanceText = globalBalanceText;
-        
+
         GameObject lbBtnGo = CreateButton(loggedInGroup, "LeaderboardBtn", "🏆", font, Vector2.zero, new Vector2(80, 80), new Color(1f, 0.8f, 0f), 40);
         AnchorToRight(lbBtnGo, -800);
-
 
         GameObject bottomBar = new GameObject("BottomNavBar", typeof(RectTransform));
         bottomBar.transform.SetParent(canvasGO.transform, false);
@@ -169,49 +319,52 @@ public class CasinoSetupWizard
         GameObject btnDice = CreateNavBtn(bottomBar, "Dice", "🎲\n<size=20>Dice</size>", font);
         GameObject btnBlackjack = CreateNavBtn(bottomBar, "Blackjack", "🃏\n<size=20>BJ</size>", font);
 
-
         GameObject contentArea = new GameObject("ContentArea", typeof(RectTransform));
         contentArea.transform.SetParent(canvasGO.transform, false);
         RectTransform caRt = contentArea.GetComponent<RectTransform>();
         caRt.anchorMin = Vector2.zero; caRt.anchorMax = Vector2.one;
-        caRt.offsetMin = new Vector2(0, 160); 
-        caRt.offsetMax = new Vector2(0, -140); 
+        caRt.offsetMin = new Vector2(0, 160);
+        caRt.offsetMax = new Vector2(0, -140);
         caRt.localScale = Vector3.one;
-
 
         GameObject overlays = new GameObject("Overlays", typeof(RectTransform));
         overlays.transform.SetParent(canvasGO.transform, false);
         FillRect(overlays.GetComponent<RectTransform>());
-        
+
         GameObject authOverlay = new GameObject("AuthOverlay", typeof(RectTransform));
         authOverlay.transform.SetParent(overlays.transform, false);
         FillRect(authOverlay.GetComponent<RectTransform>());
         AddImageWithSprite(authOverlay, new Color(0,0,0,0.8f));
-        
-        GameObject loginPanel = CreatePanel(authOverlay, "LoginPanel", new Vector2(700, 700), panelColor);
-        CreateText(loginPanel, "Title", "LOG IN", font, 50, new Vector2(0, 250), new Vector2(600, 80));
-        InputField loginPhone = CreateInputField(loginPanel, "PhoneInput", "Phone Number", font, new Vector2(0, 100));
-        InputField loginPass = CreateInputField(loginPanel, "PassInput", "Password", font, new Vector2(0, -20));
-        loginPass.inputType = InputField.InputType.Password;
-        Text loginErr = CreateText(loginPanel, "Error", "", font, 24, new Vector2(0, -120), new Vector2(600, 60));
-        loginErr.color = accentRed;
-        GameObject loginSubmit = CreateButton(loginPanel, "SubmitBtn", "Log In", font, new Vector2(0, -220), new Vector2(600, 100), accentGreen, 40);
-        GameObject closeLogin = CreateButton(loginPanel, "CloseBtn", "X", font, new Vector2(300, 300), new Vector2(60, 60), accentGray, 30);
+        authOverlay.SetActive(false);
 
-        GameObject registerPanel = CreatePanel(authOverlay, "RegisterPanel", new Vector2(700, 700), panelColor);
-        CreateText(registerPanel, "Title", "REGISTER", font, 50, new Vector2(0, 250), new Vector2(600, 80));
-        InputField regPhone = CreateInputField(registerPanel, "PhoneInput", "Phone Number", font, new Vector2(0, 100));
-        InputField regPass = CreateInputField(registerPanel, "PassInput", "Password", font, new Vector2(0, -20));
+        GameObject loginPanel = CreatePanel(authOverlay, "LoginPanel", new Vector2(700, 800), panelColor);
+        CreateText(loginPanel, "Title", "LOG IN", font, 50, new Vector2(0, 310), new Vector2(600, 80));
+        InputField loginPhone = CreateInputField(loginPanel, "PhoneInput", "Phone Number", font, new Vector2(0, 180));
+        InputField loginPass = CreateInputField(loginPanel, "PassInput", "Password", font, new Vector2(0, 70));
+        loginPass.inputType = InputField.InputType.Password;
+        Text loginErr = CreateText(loginPanel, "Error", "", font, 24, new Vector2(0, -10), new Vector2(600, 50));
+        loginErr.color = accentRed;
+        GameObject loginSubmit = CreateButton(loginPanel, "SubmitBtn", "Log In", font, new Vector2(0, -90), new Vector2(600, 90), accentGreen, 40);
+        GameObject guestSubmit = CreateButton(loginPanel, "GuestBtn", "Play as Guest", font, new Vector2(0, -190), new Vector2(600, 80), accentBlue, 32);
+        GameObject switchRegBtn = CreateButton(loginPanel, "SwitchRegBtn", "Need an account? Register", font, new Vector2(0, -280), new Vector2(600, 60), accentGray, 26);
+        GameObject closeLogin = CreateButton(loginPanel, "CloseBtn", "X", font, new Vector2(300, 350), new Vector2(60, 60), accentGray, 30);
+
+        GameObject registerPanel = CreatePanel(authOverlay, "RegisterPanel", new Vector2(700, 800), panelColor);
+        CreateText(registerPanel, "Title", "REGISTER", font, 50, new Vector2(0, 310), new Vector2(600, 80));
+        InputField regPhone = CreateInputField(registerPanel, "PhoneInput", "Phone Number", font, new Vector2(0, 180));
+        InputField regPass = CreateInputField(registerPanel, "PassInput", "Password", font, new Vector2(0, 70));
         regPass.inputType = InputField.InputType.Password;
-        Text regErr = CreateText(registerPanel, "Error", "", font, 24, new Vector2(0, -120), new Vector2(600, 60));
+        Text regErr = CreateText(registerPanel, "Error", "", font, 24, new Vector2(0, -10), new Vector2(600, 50));
         regErr.color = accentRed;
-        GameObject regSubmit = CreateButton(registerPanel, "SubmitBtn", "Register", font, new Vector2(0, -220), new Vector2(600, 100), accentBlue, 40);
-        GameObject closeReg = CreateButton(registerPanel, "CloseBtn", "X", font, new Vector2(300, 300), new Vector2(60, 60), accentGray, 30);
+        GameObject regSubmit = CreateButton(registerPanel, "SubmitBtn", "Register", font, new Vector2(0, -90), new Vector2(600, 90), accentBlue, 40);
+        GameObject switchLogBtn = CreateButton(registerPanel, "SwitchLogBtn", "Already have an account? Log In", font, new Vector2(0, -190), new Vector2(600, 60), accentGray, 26);
+        GameObject closeReg = CreateButton(registerPanel, "CloseBtn", "X", font, new Vector2(300, 350), new Vector2(60, 60), accentGray, 30);
 
         GameObject bankOverlay = new GameObject("BankOverlay", typeof(RectTransform));
         bankOverlay.transform.SetParent(overlays.transform, false);
         FillRect(bankOverlay.GetComponent<RectTransform>());
         AddImageWithSprite(bankOverlay, new Color(0,0,0,0.8f));
+        bankOverlay.SetActive(false);
 
         GameObject depPanel = CreatePanel(bankOverlay, "DepositPanel", new Vector2(700, 500), panelColor);
         CreateText(depPanel, "Title", "DEPOSIT", font, 50, new Vector2(0, 180), new Vector2(600, 80));
@@ -231,7 +384,6 @@ public class CasinoSetupWizard
         GameObject withSubmit = CreateButton(withPanel, "SubmitBtn", "Withdraw", font, new Vector2(0, -150), new Vector2(600, 100), accentGray, 40);
         GameObject closeWith = CreateButton(withPanel, "CloseBtn", "X", font, new Vector2(300, 200), new Vector2(60, 60), accentGray, 30);
 
-
         GameObject accSettingsOverlay = new GameObject("AccountSettingsOverlay", typeof(RectTransform));
         accSettingsOverlay.transform.SetParent(overlays.transform, false); FillRect(accSettingsOverlay.GetComponent<RectTransform>());
         AddImageWithSprite(accSettingsOverlay, new Color(0,0,0,0.9f)); accSettingsOverlay.SetActive(false);
@@ -247,9 +399,9 @@ public class CasinoSetupWizard
         aUI.loginPhoneInput = loginPhone; aUI.loginPasswordInput = loginPass; aUI.loginErrorText = loginErr;
         aUI.registerPhoneInput = regPhone; aUI.registerPasswordInput = regPass; aUI.registerErrorText = regErr;
         aUI.depositAmountInput = depAmount; aUI.withdrawAmountInput = withAmount;
-        aUI.loggedOutGroup = loggedOutGroup; aUI.loggedInGroup = loggedInGroup; 
+        aUI.loggedOutGroup = loggedOutGroup; aUI.loggedInGroup = loggedInGroup;
         aUI.accSettingsOverlay = accSettingsOverlay; aUI.profileText = profTxt;
-        
+
         loginBtnGo.GetComponent<Button>().onClick.AddListener(aUI.ShowLogin);
         registerBtnGo.GetComponent<Button>().onClick.AddListener(aUI.ShowRegister);
         depositBtnGo.GetComponent<Button>().onClick.AddListener(aUI.ShowDeposit);
@@ -257,6 +409,9 @@ public class CasinoSetupWizard
         profileBtnGo.GetComponent<Button>().onClick.AddListener(aUI.ShowAccountSettings);
         logoutBtnGo.GetComponent<Button>().onClick.AddListener(aUI.OnLogoutClick);
         loginSubmit.GetComponent<Button>().onClick.AddListener(aUI.OnLoginSubmit);
+        guestSubmit.GetComponent<Button>().onClick.AddListener(aUI.OnGuestLogin);
+        switchRegBtn.GetComponent<Button>().onClick.AddListener(aUI.ShowRegister);
+        switchLogBtn.GetComponent<Button>().onClick.AddListener(aUI.ShowLogin);
         regSubmit.GetComponent<Button>().onClick.AddListener(aUI.OnRegisterSubmit);
         depSubmit.GetComponent<Button>().onClick.AddListener(aUI.OnDepositSubmit);
         withSubmit.GetComponent<Button>().onClick.AddListener(() => { aUI.bankErrorText = bankErrW; aUI.OnWithdrawSubmit(); });
@@ -267,32 +422,29 @@ public class CasinoSetupWizard
         accCloseBtn.onClick.AddListener(aUI.CloseAll);
         accLogoutBtn.onClick.AddListener(() => { AuthManager.Instance.Logout(); aUI.CloseAll(); });
 
-
-
         GameObject lobbyPanel = new GameObject("LobbyPanel", typeof(RectTransform));
         lobbyPanel.transform.SetParent(contentArea.transform, false);
         AddImageWithSprite(lobbyPanel, bgDark);
         FillRect(lobbyPanel.GetComponent<RectTransform>());
-        
+
         GameObject heroBanner = new GameObject("HeroBanner", typeof(RectTransform));
         heroBanner.transform.SetParent(lobbyPanel.transform, false);
         AddImageWithSprite(heroBanner, new Color(0.05f, 0.06f, 0.08f, 1f));
         RectTransform hRt = heroBanner.GetComponent<RectTransform>();
         hRt.anchorMin = new Vector2(0, 1); hRt.anchorMax = new Vector2(1, 1); hRt.pivot = new Vector2(0.5f, 1);
         hRt.offsetMin = new Vector2(20, -220); hRt.offsetMax = new Vector2(-20, -20);
-        
+
         Text heroTitle = CreateText(heroBanner, "HeroTitle", "<b>KENCHI</b> CASINO", font, 60, new Vector2(0, 30), new Vector2(1000, 100));
         heroTitle.color = accentBlue;
-        CreateText(heroBanner, "HeroSub", "Provably Fair. Instant Crypto. Top Games.", font, 28, new Vector2(0, -40), new Vector2(1000, 50));
-        
+        CreateText(heroBanner, "HeroSub", "HOUSE ALWAYS WINS • PERSONAL GITHUB PROJECT • JUST MADE FOR FUN", font, 28, new Vector2(0, -40), new Vector2(1000, 50));
 
         GameObject scrollGO = new GameObject("GamesScrollView", typeof(RectTransform));
         scrollGO.transform.SetParent(lobbyPanel.transform, false);
         RectTransform scrollRt = scrollGO.GetComponent<RectTransform>();
         scrollRt.anchorMin = new Vector2(0, 0); scrollRt.anchorMax = new Vector2(1, 1);
         scrollRt.pivot = new Vector2(0.5f, 0.5f);
-        scrollRt.offsetMin = new Vector2(0, 0); scrollRt.offsetMax = new Vector2(0, -240); // space for smaller hero banner
-        
+        scrollRt.offsetMin = new Vector2(0, 0); scrollRt.offsetMax = new Vector2(0, -240);
+
         ScrollRect scrollRect = scrollGO.AddComponent<ScrollRect>();
         scrollRect.horizontal = false; scrollRect.vertical = true;
 
@@ -308,15 +460,17 @@ public class CasinoSetupWizard
         RectTransform gRt = grid.GetComponent<RectTransform>();
         gRt.anchorMin = new Vector2(0, 1); gRt.anchorMax = new Vector2(1, 1); gRt.pivot = new Vector2(0.5f, 1);
         gRt.offsetMin = new Vector2(0, 0); gRt.offsetMax = new Vector2(0, 0);
-        gRt.sizeDelta = new Vector2(0, 1500); // Allow scrolling down!
+        gRt.sizeDelta = new Vector2(0, 1500);
 
         scrollRect.viewport = vRt;
         scrollRect.content = gRt;
 
         GridLayoutGroup layout = grid.AddComponent<GridLayoutGroup>();
-        layout.cellSize = new Vector2(400, 400); // Big square icons
-        layout.spacing = new Vector2(40, 40);
-        layout.padding = new RectOffset(40, 40, 40, 40);
+        layout.cellSize = new Vector2(340, 420);
+        layout.spacing = new Vector2(28, 28);
+        layout.padding = new RectOffset(30, 30, 20, 50);
+        layout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        layout.constraintCount = 4;
         layout.childAlignment = TextAnchor.UpperCenter;
 
         CreateGameThumb(grid, "CRASH", "Thumbs/crash", font, lobbyManager.StartCrash);
@@ -327,8 +481,6 @@ public class CasinoSetupWizard
         CreateGameThumb(grid, "DICE", "Thumbs/dice", font, lobbyManager.StartDice);
         CreateGameThumb(grid, "BLACKJACK", "Thumbs/blackjack", font, lobbyManager.StartBlackjack);
 
-
-
         GameObject crashPanel = new GameObject("CrashPanel", typeof(RectTransform));
         crashPanel.transform.SetParent(contentArea.transform, false);
         AddImageWithSprite(crashPanel, bgDark);
@@ -337,24 +489,23 @@ public class CasinoSetupWizard
         GameObject graphC = new GameObject("GraphContainer", typeof(RectTransform));
         graphC.transform.SetParent(crashPanel.transform, false);
         RectTransform graphRect = graphC.GetComponent<RectTransform>();
-        FillRect(graphRect); graphRect.offsetMax = new Vector2(0, -350); 
+        FillRect(graphRect); graphRect.offsetMax = new Vector2(0, -350);
         Text multText = CreateText(graphC, "MultiplierText", "1.00x", font, 180, new Vector2(0, 100), new Vector2(1000, 300));
         Text crashStatusText = CreateText(graphC, "StatusText", "WAITING...", font, 50, new Vector2(0, -100), new Vector2(1000, 100));
-        
+
         CrashUIManager cUI = crashPanel.AddComponent<CrashUIManager>();
         cUI.multiplierText = multText; cUI.statusText = crashStatusText; cUI.actionButton = cAction;
         cUI.actionButtonText = cAction.transform.GetChild(0).GetComponent<Text>();
         cUI.backgroundImage = crashPanel.GetComponent<Image>(); cUI.graphContainer = graphC.transform;
         cUI.betAmountInput = cBet; cUI.halfBetBtn = cHalf; cUI.doubleBetBtn = cDouble;
 
-
         GameObject rPanel = new GameObject("RoulettePanel", typeof(RectTransform));
         rPanel.transform.SetParent(contentArea.transform, false);
         AddImageWithSprite(rPanel, bgDark);
         FillRect(rPanel.GetComponent<RectTransform>());
         CreateBetSidebarMobile(rPanel, font, out InputField rBet, out Button rHalf, out Button rDouble, out Button rAction);
-        Object.DestroyImmediate(rAction.gameObject); // I am deleting the default action button because Roulette needs 3 separate betting buttons (Red, Green, Black).
-        
+        Object.DestroyImmediate(rAction.gameObject);
+
         GameObject rTickerBg = new GameObject("TickerBg", typeof(RectTransform));
         rTickerBg.transform.SetParent(rPanel.transform, false);
         AddImageWithSprite(rTickerBg, panelColor);
@@ -363,47 +514,46 @@ public class CasinoSetupWizard
         rTickerBgRect.anchorMin = new Vector2(0.5f, 0.5f); rTickerBgRect.anchorMax = new Vector2(0.5f, 0.5f);
         rTickerBgRect.pivot = new Vector2(0.5f, 0.5f);
         rTickerBgRect.anchoredPosition = new Vector2(0, 100); rTickerBgRect.sizeDelta = new Vector2(1000, 150);
-        
+
         GameObject tickerContainerGO = new GameObject("TickerContainer", typeof(RectTransform));
         tickerContainerGO.transform.SetParent(rTickerBg.transform, false);
         RectTransform tickerContainerRect = tickerContainerGO.GetComponent<RectTransform>();
         FillRect(tickerContainerRect);
-        
+
         GameObject centerLine = new GameObject("CenterLine", typeof(RectTransform));
         centerLine.transform.SetParent(rTickerBg.transform, false);
         AddImageWithSprite(centerLine, Color.white);
         RectTransform centerLineRect = centerLine.GetComponent<RectTransform>();
         centerLineRect.anchoredPosition = Vector2.zero; centerLineRect.sizeDelta = new Vector2(6, 180);
-        
+
         Text rStatus = CreateText(rPanel, "StatusText", "ROLLING...", font, 50, new Vector2(0, 350), new Vector2(1000, 100));
         rStatus.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
         rStatus.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
-        
+
         GameObject rBtnGroup = new GameObject("RButtonGroup", typeof(RectTransform));
         rBtnGroup.transform.SetParent(rPanel.transform, false);
         RectTransform rBtnRt = rBtnGroup.GetComponent<RectTransform>();
         rBtnRt.anchorMin = new Vector2(0,1); rBtnRt.anchorMax = new Vector2(1,1);
         rBtnRt.pivot = new Vector2(0.5f, 1); rBtnRt.offsetMin = new Vector2(0,-350); rBtnRt.offsetMax = new Vector2(0,-250);
-        
+
         GameObject betRed = CreateButton(rBtnGroup, "BetRed", "<b>2X</b>\n<size=24>RED</size>", font, new Vector2(-350, 0), new Vector2(300, 90), accentRed, 35);
         AnchorToCenter(betRed);
         GameObject betGreen = CreateButton(rBtnGroup, "BetGreen", "<b>14X</b>\n<size=24>GREEN</size>", font, new Vector2(0, 0), new Vector2(300, 90), accentGreen, 35);
         AnchorToCenter(betGreen);
         GameObject betBlack = CreateButton(rBtnGroup, "BetBlack", "<b>2X</b>\n<size=24>BLACK</size>", font, new Vector2(350, 0), new Vector2(300, 90), accentGray, 35);
         AnchorToCenter(betBlack);
-        
+
         RouletteUIManager rUI = rPanel.AddComponent<RouletteUIManager>();
         rUI.statusText = rStatus; rUI.tickerContainer = tickerContainerRect;
         rUI.betRedBtn = betRed.GetComponent<Button>(); rUI.betBlackBtn = betBlack.GetComponent<Button>(); rUI.betGreenBtn = betGreen.GetComponent<Button>();
         rUI.betAmountInput = rBet; rUI.halfBetBtn = rHalf; rUI.doubleBetBtn = rDouble;
-
 
         GameObject sPanel = new GameObject("SlotsPanel", typeof(RectTransform));
         sPanel.transform.SetParent(contentArea.transform, false);
         AddImageWithSprite(sPanel, bgDark);
         FillRect(sPanel.GetComponent<RectTransform>());
         CreateBetSidebarMobile(sPanel, font, out InputField sBet, out Button sHalf, out Button sDouble, out Button sAction);
-        
+
         Text sStatus = CreateText(sPanel, "StatusText", "READY TO SPIN!", font, 50, new Vector2(0, 400), new Vector2(1000, 100));
         sStatus.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
         sStatus.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
@@ -414,8 +564,8 @@ public class CasinoSetupWizard
         RectTransform reelBgRect = reelBg.GetComponent<RectTransform>();
         reelBgRect.anchorMin = new Vector2(0.5f, 0.5f); reelBgRect.anchorMax = new Vector2(0.5f, 0.5f);
         reelBgRect.pivot = new Vector2(0.5f, 0.5f); reelBgRect.anchoredPosition = new Vector2(0, 100); reelBgRect.sizeDelta = new Vector2(950, 300);
-        
-        Color innerBgColor = new Color(0.05f, 0.06f, 0.08f, 1f); 
+
+        Color innerBgColor = new Color(0.05f, 0.06f, 0.08f, 1f);
         GameObject reel1Bg = new GameObject("Reel1Bg", typeof(RectTransform));
         reel1Bg.transform.SetParent(reelBg.transform, false);
         AddImageWithSprite(reel1Bg, innerBgColor);
@@ -428,50 +578,49 @@ public class CasinoSetupWizard
         reel3Bg.transform.SetParent(reelBg.transform, false);
         AddImageWithSprite(reel3Bg, innerBgColor);
         reel3Bg.GetComponent<RectTransform>().anchoredPosition = new Vector2(300, 0); reel3Bg.GetComponent<RectTransform>().sizeDelta = new Vector2(280, 240);
-        
+
         Text r1 = CreateText(reel1Bg, "Reel1", "<color=#FF0055>CHERRY</color>", font, 45, Vector2.zero, new Vector2(280, 240));
         Text r2 = CreateText(reel2Bg, "Reel2", "<color=#FF0055>CHERRY</color>", font, 45, Vector2.zero, new Vector2(280, 240));
         Text r3 = CreateText(reel3Bg, "Reel3", "<color=#FF0055>CHERRY</color>", font, 45, Vector2.zero, new Vector2(280, 240));
-        
+
         SlotsUIManager sUI = sPanel.AddComponent<SlotsUIManager>();
         sUI.statusText = sStatus; sUI.spinButton = sAction;
         sUI.reels[0] = r1; sUI.reels[1] = r2; sUI.reels[2] = r3;
         sUI.betAmountInput = sBet; sUI.halfBetBtn = sHalf; sUI.doubleBetBtn = sDouble;
-
 
         GameObject mPanel = new GameObject("MinesPanel", typeof(RectTransform));
         mPanel.transform.SetParent(contentArea.transform, false);
         AddImageWithSprite(mPanel, bgDark);
         FillRect(mPanel.GetComponent<RectTransform>());
         CreateBetSidebarMobile(mPanel, font, out InputField mBet, out Button mHalf, out Button mDouble, out Button mAction);
-        
+
         Text minesCountLabel = CreateText(mPanel, "MinesLabel", "<color=#888888>MINES COUNT</color>", font, 24, new Vector2(0, 310), new Vector2(1000, 40));
         AnchorToCenter(minesCountLabel.gameObject);
-        
+
         GameObject mCountBg = new GameObject("MinesInputBg", typeof(RectTransform));
         mCountBg.transform.SetParent(mPanel.transform, false);
         AddImageWithSprite(mCountBg, innerBgColor);
         RectTransform mCountBgRect = mCountBg.GetComponent<RectTransform>();
         AnchorToCenter(mCountBg); mCountBgRect.anchoredPosition = new Vector2(0, 250); mCountBgRect.sizeDelta = new Vector2(200, 60);
-        
+
         Text mCountText = CreateText(mCountBg, "Text", "3", font, 30, Vector2.zero, new Vector2(180, 60));
         InputField mCountInput = mCountBg.AddComponent<InputField>();
         mCountInput.textComponent = mCountText; mCountInput.text = "3"; mCountInput.targetGraphic = mCountBg.GetComponent<Image>();
-        
+
         Text mStatus = CreateText(mPanel, "StatusText", "READY TO PLAY", font, 50, new Vector2(0, 400), new Vector2(1000, 100));
         AnchorToCenter(mStatus.gameObject);
         Text multTextMines = CreateText(mPanel, "MultiplierText", "1.00x", font, 70, new Vector2(0, 500), new Vector2(1000, 100));
         multTextMines.color = accentGreen; AnchorToCenter(multTextMines.gameObject);
-        
+
         GameObject gridContainer = new GameObject("GridContainer", typeof(RectTransform));
         gridContainer.transform.SetParent(mPanel.transform, false);
         RectTransform gridRect = gridContainer.GetComponent<RectTransform>();
         AnchorToCenter(gridContainer); gridRect.anchoredPosition = new Vector2(0, -100); gridRect.sizeDelta = new Vector2(600, 600);
-        
+
         MinesUIManager mUI = mPanel.AddComponent<MinesUIManager>();
         mUI.statusText = mStatus; mUI.currentMultiplierText = multTextMines;
         mUI.betAmountInput = mBet; mUI.minesCountInput = mCountInput; mUI.halfBetBtn = mHalf; mUI.doubleBetBtn = mDouble; mUI.actionButton = mAction;
-        
+
         float tileSize = 110f; float spacing = 10f;
         for (int row = 0; row < 5; row++)
         {
@@ -487,23 +636,22 @@ public class CasinoSetupWizard
             }
         }
 
-
         GameObject pPanel = new GameObject("PlinkoPanel", typeof(RectTransform));
         pPanel.transform.SetParent(contentArea.transform, false);
         AddImageWithSprite(pPanel, bgDark);
         FillRect(pPanel.GetComponent<RectTransform>());
         CreateBetSidebarMobile(pPanel, font, out InputField pBet, out Button pHalf, out Button pDouble, out Button pAction);
-        
+
         Text pStatus = CreateText(pPanel, "StatusText", "READY TO DROP", font, 50, new Vector2(0, 450), new Vector2(1000, 100));
         AnchorToCenter(pStatus.gameObject);
         GameObject boardContainer = new GameObject("BoardContainer", typeof(RectTransform));
         boardContainer.transform.SetParent(pPanel.transform, false);
         RectTransform boardRect = boardContainer.GetComponent<RectTransform>();
         AnchorToCenter(boardContainer); boardRect.anchoredPosition = new Vector2(0, 0); boardRect.sizeDelta = new Vector2(800, 700);
-        
+
         PlinkoUIManager pUI = pPanel.AddComponent<PlinkoUIManager>();
         pUI.statusText = pStatus; pUI.betAmountInput = pBet; pUI.halfBetBtn = pHalf; pUI.doubleBetBtn = pDouble; pUI.boardContainer = boardContainer.transform; pUI.actionButton = pAction;
-        
+
         float startY = 400f; float ySpacing = 85f; float xSpacing = 80f; int rows = 8;
         for (int r = 0; r < rows; r++)
         {
@@ -532,13 +680,12 @@ public class CasinoSetupWizard
             sTxt.color = Color.white; pUI.slotTexts[c] = sTxt;
         }
 
-
         GameObject dPanel = new GameObject("DicePanel", typeof(RectTransform));
         dPanel.transform.SetParent(contentArea.transform, false);
         AddImageWithSprite(dPanel, bgDark);
         FillRect(dPanel.GetComponent<RectTransform>());
         CreateBetSidebarMobile(dPanel, font, out InputField dBet, out Button dHalf, out Button dDouble, out Button dAction);
-        
+
         Text dStatus = CreateText(dPanel, "StatusText", "READY TO ROLL", font, 50, new Vector2(0, 400), new Vector2(1000, 100));
         AnchorToCenter(dStatus.gameObject);
         Text dResult = CreateText(dPanel, "ResultText", "00.00", font, 120, new Vector2(0, 200), new Vector2(1000, 150));
@@ -549,24 +696,24 @@ public class CasinoSetupWizard
         AddImageWithSprite(sliderBg, panelColor);
         RectTransform sBgRt = sliderBg.GetComponent<RectTransform>();
         AnchorToCenter(sliderBg); sBgRt.anchoredPosition = new Vector2(0, 0); sBgRt.sizeDelta = new Vector2(800, 40);
-        
+
         GameObject sliderFillArea = new GameObject("FillArea", typeof(RectTransform));
         sliderFillArea.transform.SetParent(sliderBg.transform, false);
         RectTransform sfRt = sliderFillArea.GetComponent<RectTransform>(); FillRect(sfRt);
-        
+
         GameObject sliderFill = new GameObject("Fill", typeof(RectTransform));
         sliderFill.transform.SetParent(sliderFillArea.transform, false);
         AddImageWithSprite(sliderFill, accentGreen);
-        
+
         Slider slider = sliderBg.AddComponent<Slider>();
         slider.fillRect = sliderFill.GetComponent<RectTransform>();
         FillRect(slider.fillRect);
         sliderFill.GetComponent<RectTransform>().offsetMax = Vector2.zero;
-        
+
         GameObject handleArea = new GameObject("HandleArea", typeof(RectTransform));
         handleArea.transform.SetParent(sliderBg.transform, false);
         RectTransform hAreaRt = handleArea.GetComponent<RectTransform>(); FillRect(hAreaRt);
-        
+
         GameObject handle = new GameObject("Handle", typeof(RectTransform));
         handle.transform.SetParent(handleArea.transform, false);
         AddImageWithSprite(handle, Color.white);
@@ -589,16 +736,15 @@ public class CasinoSetupWizard
         dUI.targetText = tTarget; dUI.winChanceText = tChance; dUI.multiplierText = tMult;
         dUI.betAmountInput = dBet; dUI.halfBetBtn = dHalf; dUI.doubleBetBtn = dDouble; dUI.rollBtn = dAction;
 
-
         GameObject bjPanel = new GameObject("BlackjackPanel", typeof(RectTransform));
         bjPanel.transform.SetParent(contentArea.transform, false);
         AddImageWithSprite(bjPanel, bgDark);
         FillRect(bjPanel.GetComponent<RectTransform>());
         CreateBetSidebarMobile(bjPanel, font, out InputField bjBet, out Button bjHalf, out Button bjDouble, out Button bjAction);
-        
+
         Text bjStatus = CreateText(bjPanel, "StatusText", "PLACE YOUR BET", font, 50, new Vector2(0, 400), new Vector2(1000, 100));
         AnchorToCenter(bjStatus.gameObject);
-        
+
         Text tDealer = CreateText(bjPanel, "DealerTitle", "DEALER", font, 30, new Vector2(0, 250), new Vector2(400, 50));
         AnchorToCenter(tDealer.gameObject);
         Text dScore = CreateText(bjPanel, "DealerScore", "?", font, 40, new Vector2(250, 250), new Vector2(100, 50));
@@ -633,7 +779,7 @@ public class CasinoSetupWizard
         lobbyManager.dicePanel = dPanel;
         lobbyManager.blackjackPanel = bjPanel;
         lobbyManager.lobbyBalanceText = globalBalanceText;
-        
+
         btnHome.GetComponent<Button>().onClick.AddListener(lobbyManager.ShowLobby);
         btnCrash.GetComponent<Button>().onClick.AddListener(lobbyManager.StartCrash);
         btnRoulette.GetComponent<Button>().onClick.AddListener(lobbyManager.StartRoulette);
@@ -643,19 +789,17 @@ public class CasinoSetupWizard
         btnDice.GetComponent<Button>().onClick.AddListener(lobbyManager.StartDice);
         btnBlackjack.GetComponent<Button>().onClick.AddListener(lobbyManager.StartBlackjack);
 
-
         GameObject lbPanel = new GameObject("LeaderboardPanel", typeof(RectTransform));
-        lbPanel.transform.SetParent(canvasGO.transform, false); // On top of everything
+        lbPanel.transform.SetParent(canvasGO.transform, false);
         AddImageWithSprite(lbPanel, new Color(0f, 0f, 0f, 0.9f));
         FillRect(lbPanel.GetComponent<RectTransform>());
-        lbPanel.SetActive(false); // Hidden by default
-        
+        lbPanel.SetActive(false);
+
         Text lbTitle = CreateText(lbPanel, "LBTitle", "TOP PLAYERS", font, 60, new Vector2(0, 400), new Vector2(800, 100));
         AnchorToCenter(lbTitle.gameObject);
-        
+
         GameObject closeLbBtnGo = CreateButton(lbPanel, "CloseLBBtn", "X", font, new Vector2(0, -450), new Vector2(100, 100), accentRed, 40);
         AnchorToCenter(closeLbBtnGo);
-        
 
         GameObject tabDaily = CreateButton(lbPanel, "TabDaily", "Daily", font, new Vector2(-220, 300), new Vector2(200, 60), new Color(0.2f, 0.2f, 0.3f), 30);
         AnchorToCenter(tabDaily);
@@ -663,14 +807,13 @@ public class CasinoSetupWizard
         AnchorToCenter(tabWeekly);
         GameObject tabAllTime = CreateButton(lbPanel, "TabAllTime", "All-Time", font, new Vector2(220, 300), new Vector2(200, 60), new Color(0.2f, 0.6f, 1f), 30);
         AnchorToCenter(tabAllTime);
-        
+
         LeaderboardUIManager lbUI = lbPanel.AddComponent<LeaderboardUIManager>();
         lbUI.leaderboardPanel = lbPanel;
         lbUI.closeButton = closeLbBtnGo.GetComponent<Button>();
         lbUI.btnDaily = tabDaily.GetComponent<Button>();
         lbUI.btnWeekly = tabWeekly.GetComponent<Button>();
         lbUI.btnAllTime = tabAllTime.GetComponent<Button>();
-        
 
         lbBtnGo.GetComponent<Button>().onClick.AddListener(() => {
             if (CasinoAudio.Instance) CasinoAudio.Instance.PlayTick();
@@ -686,19 +829,19 @@ public class CasinoSetupWizard
             AnchorToCenter(row);
             rowRt.sizeDelta = new Vector2(700, 60);
             rowRt.anchoredPosition = new Vector2(0, 250 - (i * 70));
-            
+
             Text rRank = CreateText(row, "Rank", "#1", font, 35, new Vector2(50, 0), new Vector2(100, 60));
             rRank.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0.5f); rRank.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0.5f);
             rRank.GetComponent<RectTransform>().pivot = new Vector2(0, 0.5f); rRank.alignment = TextAnchor.MiddleLeft;
-            
+
             Text rName = CreateText(row, "Name", "Player", font, 35, new Vector2(150, 0), new Vector2(300, 60));
             rName.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0.5f); rName.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0.5f);
             rName.GetComponent<RectTransform>().pivot = new Vector2(0, 0.5f); rName.alignment = TextAnchor.MiddleLeft;
-            
+
             Text rBal = CreateText(row, "Balance", "$0.00", font, 35, new Vector2(-50, 0), new Vector2(250, 60));
             rBal.GetComponent<RectTransform>().anchorMin = new Vector2(1, 0.5f); rBal.GetComponent<RectTransform>().anchorMax = new Vector2(1, 0.5f);
             rBal.GetComponent<RectTransform>().pivot = new Vector2(1, 0.5f); rBal.alignment = TextAnchor.MiddleRight;
-            
+
             lbUI.rowBackgrounds[i] = rowBg;
             lbUI.rankTexts[i] = rRank;
             lbUI.nameTexts[i] = rName;
@@ -708,7 +851,6 @@ public class CasinoSetupWizard
         SetLayerRecursively(canvasGO, LayerMask.NameToLayer("UI"));
         canvasGO.SetActive(true);
         lobbyPanel.SetActive(true);
-        
 
         if(System.IO.File.Exists("Assets/Editor/CasinoFeaturesWizard.cs")) {
             System.IO.File.Delete("Assets/Editor/CasinoFeaturesWizard.cs");
@@ -737,26 +879,26 @@ public class CasinoSetupWizard
         RectTransform rt = betPanel.GetComponent<RectTransform>();
         rt.anchorMin = new Vector2(0, 1); rt.anchorMax = new Vector2(1, 1);
         rt.pivot = new Vector2(0.5f, 1); rt.sizeDelta = new Vector2(0, 200); rt.anchoredPosition = Vector2.zero;
-        
+
         Text label = CreateText(betPanel, "BetLabel", "Bet Amount", font, 30, new Vector2(20, -40), new Vector2(400, 40));
         label.GetComponent<RectTransform>().anchorMin = new Vector2(0, 1); label.GetComponent<RectTransform>().anchorMax = new Vector2(0, 1);
         label.GetComponent<RectTransform>().pivot = new Vector2(0, 1); label.alignment = TextAnchor.MiddleLeft; label.color = new Color(0.6f, 0.6f, 0.7f, 1f);
-        
+
         GameObject inputBgGO = new GameObject("InputBg", typeof(RectTransform));
         inputBgGO.transform.SetParent(betPanel.transform, false);
         Image inputBg = AddImageWithSprite(inputBgGO, new Color(0.08f, 0.09f, 0.12f, 1f));
         RectTransform inRt = inputBgGO.GetComponent<RectTransform>();
         inRt.anchorMin = new Vector2(0, 1); inRt.anchorMax = new Vector2(0, 1); inRt.pivot = new Vector2(0, 1);
         inRt.anchoredPosition = new Vector2(20, -100); inRt.sizeDelta = new Vector2(500, 80);
-        
+
         GameObject textGO = new GameObject("Text", typeof(RectTransform)); textGO.transform.SetParent(inputBgGO.transform, false);
         Text text = textGO.AddComponent<Text>(); text.font = font; text.fontSize = 35; text.color = Color.white; text.alignment = TextAnchor.MiddleLeft;
-        RectTransform textRect = textGO.GetComponent<RectTransform>(); textRect.anchorMin = Vector2.zero; textRect.anchorMax = Vector2.one; 
-        textRect.offsetMin = new Vector2(20, 0); textRect.offsetMax = new Vector2(-180, 0); 
-        
+        RectTransform textRect = textGO.GetComponent<RectTransform>(); textRect.anchorMin = Vector2.zero; textRect.anchorMax = Vector2.one;
+        textRect.offsetMin = new Vector2(20, 0); textRect.offsetMax = new Vector2(-180, 0);
+
         betInput = inputBgGO.AddComponent<InputField>();
         betInput.textComponent = text; betInput.text = "10.00"; betInput.contentType = InputField.ContentType.DecimalNumber;
-        
+
         GameObject halfGO = CreateButton(inputBgGO, "HalfBtn", "1/2", font, new Vector2(-95, 0), new Vector2(80, 60), new Color(0.17f, 0.19f, 0.25f, 1f), 24);
         AnchorToRight(halfGO, -95); halfBtn = halfGO.GetComponent<Button>();
         GameObject doubleGO = CreateButton(inputBgGO, "DoubleBtn", "2x", font, new Vector2(-10, 0), new Vector2(80, 60), new Color(0.17f, 0.19f, 0.25f, 1f), 24);
@@ -779,34 +921,158 @@ public class CasinoSetupWizard
         return go;
     }
 
+    public static Sprite LoadGameSprite(string gameName)
+    {
+        string lower = gameName.ToLower();
+        string[] exts = { ".jpg", ".png" };
+        foreach (var ext in exts)
+        {
+            string path = $"Assets/Resources/Thumbs/{lower}{ext}";
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+
+            Sprite direct = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            if (direct != null) return direct;
+
+            var subAssets = AssetDatabase.LoadAllAssetsAtPath(path);
+            if (subAssets != null)
+            {
+                foreach (var a in subAssets)
+                {
+                    if (a is Sprite sp) return sp;
+                }
+            }
+
+            string fullPath = System.IO.Path.Combine(Application.dataPath, "Resources", "Thumbs", $"{lower}{ext}");
+            if (System.IO.File.Exists(fullPath))
+            {
+                byte[] bytes = System.IO.File.ReadAllBytes(fullPath);
+                Texture2D tex = new Texture2D(512, 512, TextureFormat.RGB24, false);
+                if (tex.LoadImage(bytes))
+                {
+                    tex.wrapMode = TextureWrapMode.Clamp;
+                    return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+                }
+            }
+        }
+
+        Sprite res = Resources.Load<Sprite>($"Thumbs/{lower}");
+        if (res != null) return res;
+
+        Texture2D resTex = Resources.Load<Texture2D>($"Thumbs/{lower}");
+        if (resTex != null)
+        {
+            return Sprite.Create(resTex, new Rect(0, 0, resTex.width, resTex.height), new Vector2(0.5f, 0.5f));
+        }
+
+        return null;
+    }
+
+    static void EnsureThumbsImportedAsSprites()
+    {
+        string[] games = { "crash", "roulette", "slots", "mines", "plinko", "dice", "blackjack" };
+        string[] exts = { ".jpg", ".png" };
+        foreach (var g in games)
+        {
+            foreach (var ext in exts)
+            {
+                string path = $"Assets/Resources/Thumbs/{g}{ext}";
+                TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+                if (importer != null)
+                {
+                    bool changed = false;
+                    if (importer.textureType != TextureImporterType.Sprite)
+                    {
+                        importer.textureType = TextureImporterType.Sprite;
+                        importer.spriteImportMode = SpriteImportMode.Single;
+                        changed = true;
+                    }
+                    if (importer.spritePivot != new Vector2(0.5f, 0.5f))
+                    {
+                        importer.spritePivot = new Vector2(0.5f, 0.5f);
+                        changed = true;
+                    }
+                    if (importer.npotScale != TextureImporterNPOTScale.None)
+                    {
+                        importer.npotScale = TextureImporterNPOTScale.None;
+                        changed = true;
+                    }
+                    if (importer.wrapMode != TextureWrapMode.Clamp)
+                    {
+                        importer.wrapMode = TextureWrapMode.Clamp;
+                        changed = true;
+                    }
+                    if (!importer.alphaIsTransparency)
+                    {
+                        importer.alphaIsTransparency = true;
+                        changed = true;
+                    }
+                    if (changed)
+                    {
+                        importer.SaveAndReimport();
+                    }
+                }
+            }
+        }
+        AssetDatabase.Refresh();
+    }
+
     static GameObject CreateGameThumb(GameObject parent, string name, string resourcePath, Font font, UnityEngine.Events.UnityAction onClick)
     {
         GameObject btnGo = new GameObject(name + "Thumb", typeof(RectTransform));
         btnGo.transform.SetParent(parent.transform, false);
         Image img = btnGo.AddComponent<Image>();
-        
-        Texture2D tex = Resources.Load<Texture2D>(resourcePath);
-        if(tex != null) {
-            img.sprite = Sprite.Create(tex, new Rect(0,0,tex.width,tex.height), new Vector2(0.5f,0.5f));
+
+        Sprite sp = LoadGameSprite(name);
+
+        if (sp != null) {
+            img.sprite = sp;
+            img.type = Image.Type.Simple;
+            img.color = Color.white;
+            img.preserveAspect = false;
         } else {
-            img.color = new Color(0.1f, 0.12f, 0.16f); // Fallback dark gray
+            img.color = new Color(0.086f, 0.11f, 0.17f);
         }
-        
+        img.raycastTarget = true;
+
         Button btn = btnGo.AddComponent<Button>();
+        btn.targetGraphic = img;
         btn.onClick.AddListener(onClick);
 
+        var juice = btnGo.AddComponent<ButtonHoverJuice>();
+        juice.hoverScale = 1.04f;
+        juice.clickScale = 0.96f;
+        juice.speed = 18f;
 
         GameObject nameBg = new GameObject("NameBg", typeof(RectTransform));
         nameBg.transform.SetParent(btnGo.transform, false);
-        Image bgImg = nameBg.AddComponent<Image>(); bgImg.color = new Color(0,0,0,0.8f);
-        RectTransform nbRt = nameBg.GetComponent<RectTransform>();
-        nbRt.anchorMin = new Vector2(0,0); nbRt.anchorMax = new Vector2(1,0);
-        nbRt.pivot = new Vector2(0.5f,0); nbRt.sizeDelta = new Vector2(0, 80);
-        nbRt.anchoredPosition = Vector2.zero;
+        Image bgImg = nameBg.AddComponent<Image>();
+        bgImg.color = new Color(0.051f, 0.075f, 0.122f, 0.95f);
+        bgImg.raycastTarget = false;
 
-        Text t2 = CreateText(nameBg, "Name", name, font, 35, Vector2.zero, new Vector2(0, 80));
-        t2.GetComponent<RectTransform>().anchorMin = Vector2.zero; t2.GetComponent<RectTransform>().anchorMax = Vector2.one;
+        RectTransform nbRt = nameBg.GetComponent<RectTransform>();
+        nbRt.anchorMin = new Vector2(0, 0);
+        nbRt.anchorMax = new Vector2(1, 0.24f);
+        nbRt.pivot = new Vector2(0.5f, 0);
+        nbRt.offsetMin = Vector2.zero;
+        nbRt.offsetMax = Vector2.zero;
+
+        string subText = name switch {
+            "CRASH" => "<color=#10B981>99.0% RTP</color> • Multiplier",
+            "ROULETTE" => "<color=#EF4444>CLASSIC</color> • European",
+            "SLOTS" => "<color=#A855F7>JACKPOT</color> • 3-Reel",
+            "MINES" => "<color=#10B981>CUSTOM RISK</color> • 99% RTP",
+            "PLINKO" => "<color=#6366F1>1000X MAX</color> • Arcade",
+            "DICE" => "<color=#F59E0B>PROVABLY FAIR</color> • 99% RTP",
+            "BLACKJACK" => "<color=#059669>3:2 PAYOUT</color> • Table",
+            _ => "Kenchi Originals"
+        };
+
+        Text t2 = CreateText(nameBg, "Name", $"<b><size=28>{name}</size></b>\n<size=18>{subText}</size>", font, 24, Vector2.zero, Vector2.zero);
+        t2.alignment = TextAnchor.MiddleCenter;
+        t2.GetComponent<RectTransform>().anchorMin = Vector2.zero;
+        t2.GetComponent<RectTransform>().anchorMax = Vector2.one;
         t2.GetComponent<RectTransform>().sizeDelta = Vector2.zero;
+        t2.raycastTarget = false;
         return btnGo;
     }
 
@@ -825,16 +1091,16 @@ public class CasinoSetupWizard
         Image inputBg = AddImageWithSprite(inputBgGO, new Color(0.08f, 0.09f, 0.12f, 1f));
         RectTransform inRt = inputBgGO.GetComponent<RectTransform>();
         inRt.anchoredPosition = pos; inRt.sizeDelta = new Vector2(600, 90);
-        
+
         GameObject textGO = new GameObject("Text", typeof(RectTransform)); textGO.transform.SetParent(inputBgGO.transform, false);
         Text text = textGO.AddComponent<Text>(); text.font = font; text.fontSize = 35; text.color = Color.white; text.alignment = TextAnchor.MiddleLeft;
-        RectTransform textRect = textGO.GetComponent<RectTransform>(); textRect.anchorMin = Vector2.zero; textRect.anchorMax = Vector2.one; 
+        RectTransform textRect = textGO.GetComponent<RectTransform>(); textRect.anchorMin = Vector2.zero; textRect.anchorMax = Vector2.one;
         textRect.offsetMin = new Vector2(20, 0); textRect.offsetMax = new Vector2(-20, 0);
-        
+
         GameObject pTextGO = new GameObject("Placeholder", typeof(RectTransform)); pTextGO.transform.SetParent(inputBgGO.transform, false);
         Text pText = pTextGO.AddComponent<Text>(); pText.font = font; pText.fontSize = 35; pText.color = new Color(0.5f,0.5f,0.5f); pText.alignment = TextAnchor.MiddleLeft;
         pText.text = placeholder;
-        RectTransform pRect = pTextGO.GetComponent<RectTransform>(); pRect.anchorMin = Vector2.zero; pRect.anchorMax = Vector2.one; 
+        RectTransform pRect = pTextGO.GetComponent<RectTransform>(); pRect.anchorMin = Vector2.zero; pRect.anchorMax = Vector2.one;
         pRect.offsetMin = new Vector2(20, 0); pRect.offsetMax = new Vector2(-20, 0);
 
         InputField inputField = inputBgGO.AddComponent<InputField>();
@@ -873,7 +1139,7 @@ public class CasinoSetupWizard
         if (bgSprite != null) { img.sprite = bgSprite; img.type = Image.Type.Sliced; }
         return img;
     }
-    
+
     static void SetLayerRecursively(GameObject go, int layer) {
         go.layer = layer; foreach (Transform child in go.transform) SetLayerRecursively(child.gameObject, layer);
     }

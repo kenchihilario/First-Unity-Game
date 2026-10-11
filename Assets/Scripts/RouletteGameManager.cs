@@ -9,7 +9,7 @@ public class RouletteGameManager : MonoBehaviour
     public GameState currentState = GameState.Betting;
     public Action<GameState> OnStateChanged;
     public Action<float> OnTimerUpdated;
-    public Action<int> OnSpinResult; 
+    public Action<int> OnSpinResult;
     public float bettingTime = 10f;
     private float timer;
     private float redBet = 0f;
@@ -40,15 +40,15 @@ public class RouletteGameManager : MonoBehaviour
             }
             currentState = GameState.Spinning;
             OnStateChanged?.Invoke(currentState);
-            int result = Random.Range(0, 15); 
+            int result = Random.Range(0, 15);
             OnSpinResult?.Invoke(result);
-            yield return new WaitForSeconds(4f); 
+            yield return new WaitForSeconds(4f);
             currentState = GameState.Result;
             OnStateChanged?.Invoke(currentState);
             if (result == 0 && greenBet > 0) PlayerManager.Instance.AddWinnings(greenBet * 14f);
             else if (result >= 1 && result <= 7 && redBet > 0) PlayerManager.Instance.AddWinnings(redBet * 2f);
             else if (result >= 8 && result <= 14 && blackBet > 0) PlayerManager.Instance.AddWinnings(blackBet * 2f);
-            yield return new WaitForSeconds(3f); 
+            yield return new WaitForSeconds(3f);
         }
     }
     public void PlaceBet(int color, float amount)

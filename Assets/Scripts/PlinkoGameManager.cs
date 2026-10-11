@@ -9,7 +9,7 @@ public class PlinkoGameManager : MonoBehaviour
     public int rows = 8;
     public float currentBet = 0;
     public float[] multipliers = new float[] { 29f, 4f, 1.5f, 0.3f, 0.2f, 0.3f, 1.5f, 4f, 29f };
-    public event Action<float, int[]> OnBallPathGenerated; 
+    public event Action<float, int[]> OnBallPathGenerated;
     public event Action<float> OnBallLanded;
     public void DropBall(float betAmount)
     {

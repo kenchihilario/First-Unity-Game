@@ -31,24 +31,24 @@ public class CrashGameManager : MonoBehaviour
             currentMultiplier = 1.0f;
             OnGameStateChanged?.Invoke(currentState);
             OnMultiplierUpdated?.Invoke(currentMultiplier);
-            yield return new WaitForSeconds(5f); 
+            yield return new WaitForSeconds(5f);
             currentState = GameState.Playing;
             OnGameStateChanged?.Invoke(currentState);
             hasCashedOut = false;
             float rand = Random.Range(0f, 100f);
-            if (rand < 2f) 
+            if (rand < 2f)
             {
-                targetCrashMultiplier = 1.0f; 
+                targetCrashMultiplier = 1.0f;
             }
-            else 
+            else
             {
-                targetCrashMultiplier = 100f / (100f - Random.Range(0f, 99f)); 
+                targetCrashMultiplier = 100f / (100f - Random.Range(0f, 99f));
             }
             timeSinceStart = 0f;
             while (currentMultiplier < targetCrashMultiplier)
             {
                 timeSinceStart += Time.deltaTime;
-                currentMultiplier = Mathf.Pow(2.71828f, timeSinceStart * 0.15f); 
+                currentMultiplier = Mathf.Pow(2.71828f, timeSinceStart * 0.15f);
                 if (currentMultiplier >= targetCrashMultiplier)
                 {
                     currentMultiplier = targetCrashMultiplier;
@@ -63,7 +63,7 @@ public class CrashGameManager : MonoBehaviour
             {
                 currentBetAmount = 0f;
             }
-            yield return new WaitForSeconds(3f); 
+            yield return new WaitForSeconds(3f);
         }
     }
     public bool HasBet => currentBetAmount > 0 && !hasCashedOut;
@@ -89,7 +89,7 @@ public class CrashGameManager : MonoBehaviour
             {
                 PlayerManager.Instance.AddWinnings(winnings);
             }
-            currentBetAmount = 0f; 
+            currentBetAmount = 0f;
             return true;
         }
         return false;

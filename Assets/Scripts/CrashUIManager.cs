@@ -111,9 +111,9 @@ public class CrashUIManager : MonoBehaviour
         {
             int count = lineRenderer.positionCount;
             lineRenderer.positionCount = count + 1;
-            float duration = Mathf.Log(Mathf.Max(1f, mult)) / 0.15f; 
-            float rawX = (duration / 10f) * 800f; 
-            float rawY = (mult - 1f) * 50f; 
+            float duration = Mathf.Log(Mathf.Max(1f, mult)) / 0.15f;
+            float rawX = (duration / 10f) * 800f;
+            float rawY = (mult - 1f) * 50f;
             Vector3 pos = new Vector3(rawX - 400f, rawY - 150f, 0);
             lineRenderer.SetPosition(count, pos);
             if (rocketDot != null)
@@ -171,7 +171,7 @@ public class CrashUIManager : MonoBehaviour
                 backgroundImage.color = bgCrashed;
                 if (rocketDot != null) rocketDot.SetActive(false);
                 if (CasinoAudio.Instance) CasinoAudio.Instance.PlayExplosion();
-                StartCoroutine(ScreenShake());
+                if (isActiveAndEnabled) StartCoroutine(ScreenShake());
                 break;
         }
     }
@@ -180,11 +180,11 @@ public class CrashUIManager : MonoBehaviour
         if (graphContainer == null || multiplierText == null) yield break;
         Vector3 origGraphPos = graphContainer.localPosition;
         Vector3 origTextPos = multiplierText.transform.localPosition;
-        
+
         float elapsed = 0f;
         while (elapsed < 0.5f)
         {
-            float intensity = (0.5f - elapsed) * 60f; 
+            float intensity = (0.5f - elapsed) * 60f;
             graphContainer.localPosition = origGraphPos + (Vector3)Random.insideUnitCircle * intensity;
             multiplierText.transform.localPosition = origTextPos + (Vector3)Random.insideUnitCircle * intensity;
             elapsed += Time.deltaTime;

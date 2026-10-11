@@ -12,27 +12,27 @@ public class DiceUIManager : MonoBehaviour
     public Button toggleOverUnderBtn;
     public Text toggleOverUnderText;
     public Button rollBtn;
-    
+
     public InputField betAmountInput;
     public Button halfBetBtn;
     public Button doubleBetBtn;
-    
+
     private bool rollOver = true;
-    
+
     void Start()
     {
         if (DiceGameManager.Instance != null)
         {
             DiceGameManager.Instance.OnRollComplete += HandleRollComplete;
         }
-        
+
         if (rollBtn != null) rollBtn.onClick.AddListener(OnRollClicked);
         if (toggleOverUnderBtn != null) toggleOverUnderBtn.onClick.AddListener(ToggleOverUnder);
         if (targetSlider != null) targetSlider.onValueChanged.AddListener(UpdateTargetUI);
-        
+
         if (halfBetBtn != null) halfBetBtn.onClick.AddListener(() => AdjustBet(0.5f));
         if (doubleBetBtn != null) doubleBetBtn.onClick.AddListener(() => AdjustBet(2f));
-        
+
         if (targetSlider != null)
         {
             targetSlider.minValue = 2f;
@@ -46,10 +46,10 @@ public class DiceUIManager : MonoBehaviour
     {
         float target = (float)System.Math.Round(value, 2);
         if (targetText != null) targetText.text = "Target: " + target.ToString("F2");
-        
+
         float winChance = rollOver ? (100f - target) : target;
         if (winChanceText != null) winChanceText.text = "Chance: " + winChance.ToString("F2") + "%";
-        
+
         float multiplier = 99f / winChance;
         if (multiplierText != null) multiplierText.text = "Mult: " + multiplier.ToString("F2") + "x";
     }
@@ -89,39 +89,39 @@ public class DiceUIManager : MonoBehaviour
     {
         if (rollBtn != null) rollBtn.interactable = false;
         if (statusText != null) statusText.text = "ROLLING...";
-        
-        float duration = 1.0f; 
+
+        float duration = 1.0f;
         float elapsed = 0f;
-        
+
         Vector3 originalScale = resultText != null ? resultText.transform.localScale : Vector3.one;
         Vector3 originalPanelPos = transform.localPosition;
-        
+
         Color[] flashColors = new Color[] { Color.white, Color.yellow, Color.cyan, new Color(1f, 0.5f, 0f) };
         int colorIdx = 0;
 
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            
+
             if (resultText != null)
             {
                 float randomVal = UnityEngine.Random.Range(0f, 100f);
                 resultText.text = randomVal.ToString("F2");
-                
-                if (Time.frameCount % 5 == 0) 
+
+                if (Time.frameCount % 5 == 0)
                 {
                     colorIdx = (colorIdx + 1) % flashColors.Length;
                     if (CasinoAudio.Instance) CasinoAudio.Instance.PlayTick();
                 }
                 resultText.color = flashColors[colorIdx];
-                
+
                 float jitter = UnityEngine.Random.Range(0.9f, 1.1f);
                 resultText.transform.localScale = originalScale * jitter;
             }
-            
+
             yield return null;
         }
-        
+
         if (resultText != null)
         {
             if (won && CasinoAudio.Instance) CasinoAudio.Instance.PlayWin();
@@ -131,7 +131,7 @@ public class DiceUIManager : MonoBehaviour
             resultText.color = won ? Color.green : Color.red;
             resultText.transform.localScale = originalScale * 1.6f;
         }
-        
+
         if (statusText != null)
         {
             if (won)
@@ -143,35 +143,35 @@ public class DiceUIManager : MonoBehaviour
                 statusText.text = $"<color=#FF3333>LOST</color>";
             }
         }
-        
+
         float postDuration = 0.5f;
         float postElapsed = 0f;
         while (postElapsed < postDuration)
         {
             postElapsed += Time.deltaTime;
             float t = postElapsed / postDuration;
-            
+
             if (resultText != null)
             {
                 resultText.transform.localScale = Vector3.Lerp(originalScale * 1.6f, originalScale, t * t);
             }
-            
+
             if (won)
             {
-                float shakeAmt = (1f - t) * 15f; 
+                float shakeAmt = (1f - t) * 15f;
                 transform.localPosition = originalPanelPos + new Vector3(
                     UnityEngine.Random.Range(-shakeAmt, shakeAmt),
                     UnityEngine.Random.Range(-shakeAmt, shakeAmt),
                     0
                 );
             }
-            
+
             yield return null;
         }
-        
+
         if (resultText != null) resultText.transform.localScale = originalScale;
         transform.localPosition = originalPanelPos;
-        
+
         if (rollBtn != null) rollBtn.interactable = true;
     }
 }

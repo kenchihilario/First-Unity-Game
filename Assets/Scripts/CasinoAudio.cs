@@ -3,32 +3,32 @@ using UnityEngine;
 public class CasinoAudio : MonoBehaviour
 {
     public static CasinoAudio Instance;
-    
+
     private AudioSource src;
     private AudioClip tickClip;
     private AudioClip coinClip;
     private AudioClip explosionClip;
     private AudioClip winClip;
-    
+
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
             src = gameObject.AddComponent<AudioSource>();
-            
-            tickClip = CreateTone(0.05f, 1200f, 1200f, 0.1f, 1); // Tick (Sine)
-            coinClip = CreateTone(0.3f, 1200f, 2200f, 0.15f, 2); // Coin (Square)
-            explosionClip = CreateNoise(0.8f, 0.4f); // Explosion (White Noise)
-            winClip = CreateArpeggio(0.8f, new float[]{523.25f, 659.25f, 783.99f, 1046.50f}, 0.2f); // Win Chime (C major arp)
+
+            tickClip = CreateTone(0.05f, 1200f, 1200f, 0.1f, 1);
+            coinClip = CreateTone(0.3f, 1200f, 2200f, 0.15f, 2);
+            explosionClip = CreateNoise(0.8f, 0.4f);
+            winClip = CreateArpeggio(0.8f, new float[]{523.25f, 659.25f, 783.99f, 1046.50f}, 0.2f);
         }
     }
-    
+
     public void PlayTick() { if(src) src.PlayOneShot(tickClip); }
     public void PlayCoin() { if(src) src.PlayOneShot(coinClip); }
     public void PlayExplosion() { if(src) src.PlayOneShot(explosionClip); }
     public void PlayWin() { if(src) src.PlayOneShot(winClip); }
-    
+
     private AudioClip CreateTone(float duration, float startFreq, float endFreq, float volume, int type)
     {
         int sampleRate = 44100;
@@ -41,7 +41,7 @@ public class CasinoAudio : MonoBehaviour
             float freq = Mathf.Lerp(startFreq, endFreq, t);
             float env = 1f - t;
             if (type == 1) data[i] = Mathf.Sin(phase * 2 * Mathf.PI) * env * volume;
-            else if (type == 2) data[i] = (Mathf.Repeat(phase, 1f) < 0.5f ? 1f : -1f) * env * volume; 
+            else if (type == 2) data[i] = (Mathf.Repeat(phase, 1f) < 0.5f ? 1f : -1f) * env * volume;
             phase += freq / sampleRate;
         }
         AudioClip clip = AudioClip.Create("Tone", samples, 1, sampleRate, false);

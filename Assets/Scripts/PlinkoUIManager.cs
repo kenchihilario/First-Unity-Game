@@ -10,16 +10,16 @@ public class PlinkoUIManager : MonoBehaviour
     public InputField betAmountInput;
     public Button halfBetBtn;
     public Button doubleBetBtn;
-    public Transform boardContainer; 
-    public GameObject ballPrefab;    
+    public Transform boardContainer;
+    public GameObject ballPrefab;
     private PlinkoGameManager gameManager;
     private Vector2[][] pegPositions;
-    private Color ballColor = new Color(1f, 0.2f, 0.2f, 1f); 
+    private Color ballColor = new Color(1f, 0.2f, 0.2f, 1f);
     private Color activeSlotColor = new Color(0f, 0.9f, 0f, 1f);
     public Text[] slotTexts;
     void Start()
     {
-        gameManager = FindFirstObjectByType<PlinkoGameManager>();
+        gameManager = FindAnyObjectByType<PlinkoGameManager>();
         if (gameManager != null)
         {
             gameManager.OnBallPathGenerated += AnimateBall;
@@ -65,7 +65,7 @@ public class PlinkoUIManager : MonoBehaviour
 
         Text actionText = actionButton.transform.GetChild(0).GetComponent<Text>();
         actionText.text = "DROP BALL";
-        actionButton.GetComponent<Image>().color = new Color(0f, 0.9f, 0.0f, 1f); 
+        actionButton.GetComponent<Image>().color = new Color(0f, 0.9f, 0.0f, 1f);
     }
     void AnimateBall(float betAmount, int[] path)
     {
@@ -77,44 +77,44 @@ public class PlinkoUIManager : MonoBehaviour
         ball.transform.SetParent(boardContainer, false);
         Image img = ball.AddComponent<Image>();
         img.color = ballColor;
-        
+
         Transform topPeg = boardContainer.Find("Peg_0_0");
         if (topPeg != null) img.sprite = topPeg.GetComponent<Image>().sprite;
 
         UnityEngine.UI.Shadow shadow = ball.AddComponent<UnityEngine.UI.Shadow>();
         shadow.effectColor = new Color(1f, 0.5f, 0f, 0.5f);
-        shadow.effectDistance = new Vector2(0, -2); 
+        shadow.effectDistance = new Vector2(0, -2);
         RectTransform ballRt = ball.GetComponent<RectTransform>();
         ballRt.sizeDelta = new Vector2(28, 28);
         int currentCol = 0;
-        
-        float dropSpeed = 0.22f; 
+
+        float dropSpeed = 0.22f;
         float totalRotation = 0f;
         float ySpacingOffset = 60f;
         if (gameManager.rows > 1) ySpacingOffset = pegPositions[0][0].y - pegPositions[1][0].y;
-        
-        ballRt.anchoredPosition = pegPositions[0][0] + new Vector2(0, ySpacingOffset); 
-        
+
+        ballRt.anchoredPosition = pegPositions[0][0] + new Vector2(0, ySpacingOffset);
+
         for (int r = 0; r < gameManager.rows; r++)
         {
             Vector2 startPos = ballRt.anchoredPosition;
             Vector2 pegPos = pegPositions[r][currentCol];
             float t = 0;
-            
+
             while(t < 1f)
             {
                 t += Time.deltaTime / (dropSpeed * 0.6f);
-                float easeY = t * t; 
-                ballRt.anchoredPosition = Vector2.Lerp(startPos, pegPos + new Vector2(0, 14), easeY); 
+                float easeY = t * t;
+                ballRt.anchoredPosition = Vector2.Lerp(startPos, pegPos + new Vector2(0, 14), easeY);
                 yield return null;
             }
-            
+
             ballRt.localScale = new Vector3(1.3f, 0.7f, 1f);
             if (CasinoAudio.Instance) CasinoAudio.Instance.PlayTick();
             yield return new WaitForSeconds(0.015f);
             ballRt.localScale = Vector3.one;
 
-            int dir = path[r]; 
+            int dir = path[r];
             currentCol += dir;
             Vector2 endPos = pegPos;
             if (r < gameManager.rows - 1)
@@ -127,22 +127,21 @@ public class PlinkoUIManager : MonoBehaviour
                 if (slotObj != null) endPos = slotObj.GetComponent<RectTransform>().anchoredPosition;
                 else endPos = pegPos + new Vector2((dir == 1 ? 1 : -1) * (pegPositions[1][1].x - pegPositions[1][0].x), -ySpacingOffset);
             }
-            
+
             t = 0;
             float arcHeight = 35f;
-            
+
             while(t < 1f)
             {
                 t += Time.deltaTime / dropSpeed;
-                float arc = 4f * arcHeight * t * (1f - t); 
+                float arc = 4f * arcHeight * t * (1f - t);
                 ballRt.anchoredPosition = Vector2.Lerp(pegPos, endPos, t) + new Vector2(0, arc);
-                
+
                 totalRotation += (dir == 1 ? -1 : 1) * 500f * Time.deltaTime;
                 ballRt.localRotation = Quaternion.Euler(0, 0, totalRotation);
                 yield return null;
             }
         }
-        
 
         ballRt.localScale = new Vector3(1.3f, 0.7f, 1f);
         if (slotTexts[currentCol] != null)
@@ -151,12 +150,12 @@ public class PlinkoUIManager : MonoBehaviour
             slotTexts[currentCol].color = activeSlotColor;
         }
         if (CasinoAudio.Instance) CasinoAudio.Instance.PlayCoin();
-        
+
         yield return new WaitForSeconds(0.1f);
         ballRt.localScale = Vector3.one;
         if (slotTexts[currentCol] != null) slotTexts[currentCol].transform.localScale = Vector3.one;
 
-        Destroy(ball, 1f); 
+        Destroy(ball, 1f);
         gameManager.BallReachedBottom(betAmount, currentCol);
     }
     void HandleCashOut(float payout)

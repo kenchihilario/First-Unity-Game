@@ -11,8 +11,8 @@ public class MinesGameManager : MonoBehaviour
     public bool[] grid = new bool[25];
     public bool[] revealed = new bool[25];
     public event Action<GameState> OnStateChanged;
-    public event Action<int, bool, float> OnTileRevealed; 
-    public event Action<float> OnCashOut; 
+    public event Action<int, bool, float> OnTileRevealed;
+    public event Action<float> OnCashOut;
     public void StartGame(float betAmount, int minesCount)
     {
         if (currentState != GameState.Idle || betAmount <= 0) return;
@@ -86,7 +86,7 @@ public class MinesGameManager : MonoBehaviour
             remainingTotal--;
         }
         float multiplier = (float)(0.99 / probability);
-        return Mathf.Floor(multiplier * 100f) / 100f; 
+        return Mathf.Floor(multiplier * 100f) / 100f;
     }
     public void ResetGame()
     {

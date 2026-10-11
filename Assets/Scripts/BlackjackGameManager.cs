@@ -5,16 +5,17 @@ using System.Collections.Generic;
 public class BlackjackGameManager : MonoBehaviour
 {
     public static BlackjackGameManager Instance;
-    
+
     public enum Suit { Hearts, Diamonds, Clubs, Spades }
+    [System.Serializable]
     public struct Card
     {
-        public int value; // 1 (Ace) to 13 (King)
+        public int value;
         public Suit suit;
         public override string ToString()
         {
             string v = value == 1 ? "A" : value == 11 ? "J" : value == 12 ? "Q" : value == 13 ? "K" : value.ToString();
-            string s = suit == Suit.Hearts ? "<color=red>♥</color>" : suit == Suit.Diamonds ? "<color=red>♦</color>" : 
+            string s = suit == Suit.Hearts ? "<color=red>♥</color>" : suit == Suit.Diamonds ? "<color=red>♦</color>" :
                        suit == Suit.Clubs ? "<color=white>♣</color>" : "<color=white>♠</color>";
             return v + s;
         }
@@ -23,11 +24,11 @@ public class BlackjackGameManager : MonoBehaviour
     public List<Card> playerHand = new List<Card>();
     public List<Card> dealerHand = new List<Card>();
     private List<Card> deck = new List<Card>();
-    
-    public Action<List<Card>, List<Card>, bool> OnGameStarted; // playerHand, dealerHand, dealerHidden
-    public Action<List<Card>, int> OnPlayerHit; // playerHand, newScore
-    public Action<List<Card>, int, bool, float> OnGameOver; // dealerHand, finalScore, playerWon/Bust/Push, payout
-    
+
+    public Action<List<Card>, List<Card>, bool> OnGameStarted;
+    public Action<List<Card>, int> OnPlayerHit;
+    public Action<List<Card>, int, bool, float> OnGameOver;
+
     public float currentBet = 0;
     private bool gameActive = false;
 
@@ -94,21 +95,21 @@ public class BlackjackGameManager : MonoBehaviour
         PlayerManager.Instance.Withdraw(betAmount);
         currentBet = betAmount;
         gameActive = true;
-        
+
         InitializeDeck();
         playerHand.Clear();
         dealerHand.Clear();
-        
+
         playerHand.Add(DrawCard());
         dealerHand.Add(DrawCard());
         playerHand.Add(DrawCard());
-        dealerHand.Add(DrawCard()); // 2nd is hidden
-        
+        dealerHand.Add(DrawCard());
+
         OnGameStarted?.Invoke(playerHand, dealerHand, true);
-        
+
         if (GetScore(playerHand) == 21)
         {
-            EndGame(true, true); // Blackjack!
+            EndGame(true, true);
         }
     }
 
@@ -118,32 +119,31 @@ public class BlackjackGameManager : MonoBehaviour
         playerHand.Add(DrawCard());
         int score = GetScore(playerHand);
         OnPlayerHit?.Invoke(playerHand, score);
-        
+
         if (score > 21)
         {
-            EndGame(false, false); // Bust
+            EndGame(false, false);
         }
         else if (score == 21)
         {
-            Stand(); // Auto stand on 21
+            Stand();
         }
     }
 
     public void Stand()
     {
         if (!gameActive) return;
-        
 
         while(GetScore(dealerHand) < 17)
         {
             dealerHand.Add(DrawCard());
         }
-        
+
         int pScore = GetScore(playerHand);
         int dScore = GetScore(dealerHand);
-        
+
         if (dScore > 21 || pScore > dScore) EndGame(true, false);
-        else if (pScore == dScore) EndGame(true, true, true); // Push
+        else if (pScore == dScore) EndGame(true, true, true);
         else EndGame(false, false);
     }
 
@@ -153,7 +153,7 @@ public class BlackjackGameManager : MonoBehaviour
         float payout = 0;
         if (push)
         {
-            payout = currentBet; // return bet
+            payout = currentBet;
             PlayerManager.Instance.Deposit(payout);
         }
         else if (playerWon)
@@ -161,7 +161,7 @@ public class BlackjackGameManager : MonoBehaviour
             payout = blackjack ? currentBet * 2.5f : currentBet * 2f;
             PlayerManager.Instance.Deposit(payout);
         }
-        
+
         OnGameOver?.Invoke(dealerHand, GetScore(dealerHand), playerWon, payout);
     }
 }

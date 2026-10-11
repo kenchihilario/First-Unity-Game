@@ -6,7 +6,7 @@ public class MinesUIManager : MonoBehaviour
     [Header("UI Elements")]
     public Text statusText;
     public Text currentMultiplierText;
-    public Button actionButton; 
+    public Button actionButton;
     public InputField betAmountInput;
     public InputField minesCountInput;
     public Button halfBetBtn;
@@ -19,7 +19,7 @@ public class MinesUIManager : MonoBehaviour
     private Color mineColor = new Color(1f, 0.2f, 0.2f, 1f);
     void Start()
     {
-        gameManager = FindFirstObjectByType<MinesGameManager>();
+        gameManager = FindAnyObjectByType<MinesGameManager>();
         if (gameManager != null)
         {
             gameManager.OnStateChanged += UpdateState;
@@ -34,7 +34,7 @@ public class MinesUIManager : MonoBehaviour
         if (doubleBetBtn != null) doubleBetBtn.onClick.AddListener(() => ModifyBet(2f));
         for (int i = 0; i < 25; i++)
         {
-            int index = i; 
+            int index = i;
             if (tileButtons[i] != null)
             {
                 tileButtons[i].onClick.AddListener(() => gameManager.ClickTile(index));
@@ -80,7 +80,7 @@ public class MinesUIManager : MonoBehaviour
         if (state == MinesGameManager.GameState.Idle)
         {
             actionText.text = "BET";
-            actionButton.GetComponent<Image>().color = new Color(0f, 0.9f, 0.0f, 1f); 
+            actionButton.GetComponent<Image>().color = new Color(0f, 0.9f, 0.0f, 1f);
             statusText.text = "<color=#AAAAAA>READY TO PLAY</color>";
             currentMultiplierText.text = "1.00x";
             for (int i = 0; i < 25; i++) ResetTile(i);
@@ -88,23 +88,23 @@ public class MinesUIManager : MonoBehaviour
         else if (state == MinesGameManager.GameState.Playing)
         {
             actionText.text = "CASHOUT";
-            actionButton.GetComponent<Image>().color = new Color(1f, 0.6f, 0.0f, 1f); 
+            actionButton.GetComponent<Image>().color = new Color(1f, 0.6f, 0.0f, 1f);
             statusText.text = "<color=#FFFF00>PICK A TILE...</color>";
         }
         else if (state == MinesGameManager.GameState.Result)
         {
             actionText.text = "PLAY AGAIN";
-            actionButton.GetComponent<Image>().color = new Color(0.13f, 0.67f, 1f, 1f); 
+            actionButton.GetComponent<Image>().color = new Color(0.13f, 0.67f, 1f, 1f);
             for (int i = 0; i < 25; i++)
             {
                 if (!gameManager.revealed[i])
                 {
-                    if (gameManager.grid[i]) 
+                    if (gameManager.grid[i])
                     {
                         tileTexts[i].text = "💣";
                         tileButtons[i].GetComponent<Image>().color = new Color(mineColor.r, mineColor.g, mineColor.b, 0.3f);
                     }
-                    else 
+                    else
                     {
                         tileTexts[i].text = "💎";
                         tileButtons[i].GetComponent<Image>().color = new Color(gemColor.r, gemColor.g, gemColor.b, 0.3f);
@@ -132,7 +132,7 @@ public class MinesUIManager : MonoBehaviour
         float duration = 0.2f;
         float elapsed = 0f;
         RectTransform rt = tileButtons[index].GetComponent<RectTransform>();
-        
+
         while (elapsed < duration / 2f)
         {
             elapsed += Time.deltaTime;
@@ -140,7 +140,7 @@ public class MinesUIManager : MonoBehaviour
             rt.localRotation = Quaternion.Euler(0, Mathf.Lerp(0, 90f, t), 0);
             yield return null;
         }
-        
+
         if (isMine)
         {
             if (CasinoAudio.Instance) CasinoAudio.Instance.PlayExplosion();
@@ -155,7 +155,7 @@ public class MinesUIManager : MonoBehaviour
             currentMultiplierText.text = $"{newMultiplier:F2}x";
             statusText.text = $"<color=#00FFAA>GEMS FOUND: {gameManager.gemsFound}</color>";
         }
-        
+
         elapsed = 0f;
         while (elapsed < duration / 2f)
         {

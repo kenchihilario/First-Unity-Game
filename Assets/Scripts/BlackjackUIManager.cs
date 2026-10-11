@@ -8,16 +8,16 @@ public class BlackjackUIManager : MonoBehaviour
     public Button halfBetBtn;
     public Button doubleBetBtn;
     public Button dealBtn;
-    
+
     public Button hitBtn;
     public Button standBtn;
-    
+
     public Text statusText;
     public Text dealerCardsText;
     public Text playerCardsText;
     public Text dealerScoreText;
     public Text playerScoreText;
-    
+
     void Start()
     {
         if (BlackjackGameManager.Instance != null)
@@ -26,14 +26,14 @@ public class BlackjackUIManager : MonoBehaviour
             BlackjackGameManager.Instance.OnPlayerHit += HandlePlayerHit;
             BlackjackGameManager.Instance.OnGameOver += HandleGameOver;
         }
-        
+
         if (dealBtn != null) dealBtn.onClick.AddListener(OnDealClicked);
         if (hitBtn != null) hitBtn.onClick.AddListener(() => BlackjackGameManager.Instance.Hit());
         if (standBtn != null) standBtn.onClick.AddListener(() => BlackjackGameManager.Instance.Stand());
-        
+
         if (halfBetBtn != null) halfBetBtn.onClick.AddListener(() => AdjustBet(0.5f));
         if (doubleBetBtn != null) doubleBetBtn.onClick.AddListener(() => AdjustBet(2f));
-        
+
         SetPlayState(false);
         if (statusText) statusText.text = "PLACE YOUR BET";
     }
@@ -79,7 +79,7 @@ public class BlackjackUIManager : MonoBehaviour
         SetPlayState(true);
         if (playerCardsText) playerCardsText.text = FormatHand(pHand);
         if (playerScoreText) playerScoreText.text = BlackjackGameManager.Instance.GetScore(pHand).ToString();
-        
+
         if (dealerCardsText) dealerCardsText.text = FormatHand(dHand, true);
         if (dealerScoreText) dealerScoreText.text = "?";
     }
@@ -95,7 +95,7 @@ public class BlackjackUIManager : MonoBehaviour
         SetPlayState(false);
         if (dealerCardsText) dealerCardsText.text = FormatHand(dHand);
         if (dealerScoreText) dealerScoreText.text = dScore.ToString();
-        
+
         if (statusText)
         {
             if (payout > 0 && payout == BlackjackGameManager.Instance.currentBet)
