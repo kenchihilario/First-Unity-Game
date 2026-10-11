@@ -596,14 +596,18 @@ public class CasinoLobbyManager : MonoBehaviour
 
     private void EnsurePanelsFound()
     {
-        if (!lobbyPanel) lobbyPanel = GameObject.Find("LobbyPanel");
-        if (!crashPanel) crashPanel = GameObject.Find("CrashPanel");
-        if (!roulettePanel) roulettePanel = GameObject.Find("RoulettePanel");
-        if (!slotsPanel) slotsPanel = GameObject.Find("SlotsPanel");
-        if (!minesPanel) minesPanel = GameObject.Find("MinesPanel");
-        if (!plinkoPanel) plinkoPanel = GameObject.Find("PlinkoPanel");
-        if (!dicePanel) dicePanel = GameObject.Find("DicePanel");
-        if (!blackjackPanel) blackjackPanel = GameObject.Find("BlackjackPanel");
+        Transform contentArea = null;
+        GameObject canvas = GameObject.Find("CasinoCanvas");
+        if (canvas != null) contentArea = canvas.transform.Find("ContentArea");
+
+        if (!lobbyPanel) lobbyPanel = contentArea != null ? contentArea.Find("LobbyPanel")?.gameObject : GameObject.Find("LobbyPanel");
+        if (!crashPanel) crashPanel = contentArea != null ? contentArea.Find("CrashPanel")?.gameObject : GameObject.Find("CrashPanel");
+        if (!roulettePanel) roulettePanel = contentArea != null ? contentArea.Find("RoulettePanel")?.gameObject : GameObject.Find("RoulettePanel");
+        if (!slotsPanel) slotsPanel = contentArea != null ? contentArea.Find("SlotsPanel")?.gameObject : GameObject.Find("SlotsPanel");
+        if (!minesPanel) minesPanel = contentArea != null ? contentArea.Find("MinesPanel")?.gameObject : GameObject.Find("MinesPanel");
+        if (!plinkoPanel) plinkoPanel = contentArea != null ? contentArea.Find("PlinkoPanel")?.gameObject : GameObject.Find("PlinkoPanel");
+        if (!dicePanel) dicePanel = contentArea != null ? contentArea.Find("DicePanel")?.gameObject : GameObject.Find("DicePanel");
+        if (!blackjackPanel) blackjackPanel = contentArea != null ? contentArea.Find("BlackjackPanel")?.gameObject : GameObject.Find("BlackjackPanel");
     }
 
     public void ShowLobby()
