@@ -131,13 +131,13 @@ public class CasinoSetupWizard
         {
             if (t.gameObject.name == "HeroTitle")
             {
-                t.text = "<b>ORIGINALS & POPULAR GAMES</b>";
+                t.text = "<b>MY CASINO GAME I MADE FOR FUN</b>";
                 t.fontSize = 25;
                 EditorUtility.SetDirty(t);
             }
             else if (t.gameObject.name == "HeroSub")
             {
-                t.text = "<b><color=#10B981>Philippine Peso (PHP)</color>  •  <color=#94A3B8>7 Provably Fair Games  •  Fast Gameplay</color></b>";
+                t.text = "<b><color=#EF4444>⚠️ NOT REAL MONEY</color>  •  <color=#10B981>Philippine Peso (PHP) Simulation</color>  •  <color=#94A3B8>Just for Fun</color></b>";
                 t.fontSize = 15;
                 EditorUtility.SetDirty(t);
             }
@@ -521,9 +521,9 @@ public class CasinoSetupWizard
         hRt.anchorMin = new Vector2(0, 1); hRt.anchorMax = new Vector2(1, 1); hRt.pivot = new Vector2(0.5f, 1);
         hRt.offsetMin = new Vector2(60, -170); hRt.offsetMax = new Vector2(-60, -90);
 
-        Text heroTitle = CreateText(heroBanner, "HeroTitle", "<b>ORIGINALS & POPULAR GAMES</b>", font, 25, new Vector2(0, 12), new Vector2(1200, 36));
+        Text heroTitle = CreateText(heroBanner, "HeroTitle", "<b>MY CASINO GAME I MADE FOR FUN</b>", font, 25, new Vector2(0, 12), new Vector2(1200, 36));
         heroTitle.color = Color.white;
-        CreateText(heroBanner, "HeroSub", "<b><color=#10B981>Philippine Peso (PHP)</color>  •  <color=#94A3B8>7 Provably Fair Games  •  Fast Gameplay</color></b>", font, 15, new Vector2(0, -14), new Vector2(1200, 28));
+        CreateText(heroBanner, "HeroSub", "<b><color=#EF4444>⚠️ NOT REAL MONEY</color>  •  <color=#10B981>Philippine Peso (PHP) Simulation</color>  •  <color=#94A3B8>Just for Fun</color></b>", font, 15, new Vector2(0, -14), new Vector2(1200, 28));
 
         GameObject scrollGO = new GameObject("GamesScrollView", typeof(RectTransform));
         scrollGO.transform.SetParent(lobbyPanel.transform, false);

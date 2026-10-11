@@ -69,7 +69,7 @@ public class AuthUIManager : MonoBehaviour
 
     public void WireAllButtons()
     {
-        Button[] allButtons = FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        Button[] allButtons = FindObjectsByType<Button>(FindObjectsInactive.Include);
         foreach (var btn in allButtons)
         {
             string n = btn.gameObject.name;
