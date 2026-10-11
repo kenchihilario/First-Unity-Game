@@ -1272,6 +1272,7 @@ public class CasinoLobbyManager : MonoBehaviour
             Transform st = panel.transform.Find("StatusText");
             if (st != null)
             {
+                st.gameObject.SetActive(true);
                 RectTransform sRt = st.GetComponent<RectTransform>();
                 if (sRt != null)
                 {
@@ -1285,11 +1286,14 @@ public class CasinoLobbyManager : MonoBehaviour
             Transform dt = panel.transform.Find("DealerTitle");
             if (dt != null)
             {
+                dt.gameObject.SetActive(true);
                 RectTransform dtRt = dt.GetComponent<RectTransform>();
                 if (dtRt != null)
                 {
-                    dtRt.anchorMin = new Vector2(0.5f, 0.5f); dtRt.anchorMax = new Vector2(0.5f, 0.5f); dtRt.pivot = new Vector2(0.5f, 0.5f);
-                    dtRt.anchoredPosition = new Vector2(-75, 195); dtRt.sizeDelta = new Vector2(160, 38);
+                    dtRt.anchorMin = new Vector2(0.5f, 0.5f); dtRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    dtRt.pivot = new Vector2(1f, 0.5f);
+                    dtRt.anchoredPosition = new Vector2(-15, 195);
+                    dtRt.sizeDelta = new Vector2(200, 38);
                 }
                 Text dtTxt = dt.GetComponent<Text>();
                 if (dtTxt != null) { dtTxt.fontSize = 20; dtTxt.fontStyle = FontStyle.Bold; dtTxt.color = new Color(0.58f, 0.64f, 0.72f); dtTxt.alignment = TextAnchor.MiddleRight; dtTxt.text = "<b>DEALER</b>"; }
@@ -1298,11 +1302,14 @@ public class CasinoLobbyManager : MonoBehaviour
             Transform ds = panel.transform.Find("DealerScore");
             if (ds != null)
             {
+                ds.gameObject.SetActive(true);
                 RectTransform dsRt = ds.GetComponent<RectTransform>();
                 if (dsRt != null)
                 {
-                    dsRt.anchorMin = new Vector2(0.5f, 0.5f); dsRt.anchorMax = new Vector2(0.5f, 0.5f); dsRt.pivot = new Vector2(0.5f, 0.5f);
-                    dsRt.anchoredPosition = new Vector2(75, 195); dsRt.sizeDelta = new Vector2(160, 38);
+                    dsRt.anchorMin = new Vector2(0.5f, 0.5f); dsRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    dsRt.pivot = new Vector2(0f, 0.5f);
+                    dsRt.anchoredPosition = new Vector2(15, 195);
+                    dsRt.sizeDelta = new Vector2(200, 38);
                 }
                 Text dsTxt = ds.GetComponent<Text>();
                 if (dsTxt != null) { dsTxt.fontSize = 20; dsTxt.fontStyle = FontStyle.Bold; dsTxt.alignment = TextAnchor.MiddleLeft; dsTxt.supportRichText = true; }
@@ -1311,6 +1318,7 @@ public class CasinoLobbyManager : MonoBehaviour
             Transform dc = panel.transform.Find("DealerCards");
             if (dc != null)
             {
+                dc.gameObject.SetActive(true);
                 RectTransform dRt = dc.GetComponent<RectTransform>();
                 if (dRt != null)
                 {
@@ -1324,11 +1332,14 @@ public class CasinoLobbyManager : MonoBehaviour
             Transform pt = panel.transform.Find("PlayerTitle");
             if (pt != null)
             {
+                pt.gameObject.SetActive(true);
                 RectTransform ptRt = pt.GetComponent<RectTransform>();
                 if (ptRt != null)
                 {
-                    ptRt.anchorMin = new Vector2(0.5f, 0.5f); ptRt.anchorMax = new Vector2(0.5f, 0.5f); ptRt.pivot = new Vector2(0.5f, 0.5f);
-                    ptRt.anchoredPosition = new Vector2(-75, 15); ptRt.sizeDelta = new Vector2(160, 38);
+                    ptRt.anchorMin = new Vector2(0.5f, 0.5f); ptRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    ptRt.pivot = new Vector2(1f, 0.5f);
+                    ptRt.anchoredPosition = new Vector2(-15, 15);
+                    ptRt.sizeDelta = new Vector2(200, 38);
                 }
                 Text ptTxt = pt.GetComponent<Text>();
                 if (ptTxt != null) { ptTxt.fontSize = 20; ptTxt.fontStyle = FontStyle.Bold; ptTxt.color = new Color(0.58f, 0.64f, 0.72f); ptTxt.alignment = TextAnchor.MiddleRight; ptTxt.text = "<b>PLAYER</b>"; }
@@ -1337,11 +1348,14 @@ public class CasinoLobbyManager : MonoBehaviour
             Transform ps = panel.transform.Find("PlayerScore");
             if (ps != null)
             {
+                ps.gameObject.SetActive(true);
                 RectTransform psRt = ps.GetComponent<RectTransform>();
                 if (psRt != null)
                 {
-                    psRt.anchorMin = new Vector2(0.5f, 0.5f); psRt.anchorMax = new Vector2(0.5f, 0.5f); psRt.pivot = new Vector2(0.5f, 0.5f);
-                    psRt.anchoredPosition = new Vector2(75, 15); psRt.sizeDelta = new Vector2(160, 38);
+                    psRt.anchorMin = new Vector2(0.5f, 0.5f); psRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    psRt.pivot = new Vector2(0f, 0.5f);
+                    psRt.anchoredPosition = new Vector2(15, 15);
+                    psRt.sizeDelta = new Vector2(200, 38);
                 }
                 Text psTxt = ps.GetComponent<Text>();
                 if (psTxt != null) { psTxt.fontSize = 20; psTxt.fontStyle = FontStyle.Bold; psTxt.alignment = TextAnchor.MiddleLeft; psTxt.supportRichText = true; }
@@ -1350,6 +1364,7 @@ public class CasinoLobbyManager : MonoBehaviour
             Transform pc = panel.transform.Find("PlayerCards");
             if (pc != null)
             {
+                pc.gameObject.SetActive(true);
                 RectTransform pCardsRt = pc.GetComponent<RectTransform>();
                 if (pCardsRt != null)
                 {
@@ -1363,6 +1378,7 @@ public class CasinoLobbyManager : MonoBehaviour
             Transform hit = panel.transform.Find("HitBtn");
             if (hit != null)
             {
+                hit.gameObject.SetActive(true);
                 RectTransform hRt = hit.GetComponent<RectTransform>();
                 if (hRt != null)
                 {
@@ -1379,6 +1395,7 @@ public class CasinoLobbyManager : MonoBehaviour
             Transform stand = panel.transform.Find("StandBtn");
             if (stand != null)
             {
+                stand.gameObject.SetActive(true);
                 RectTransform sRt = stand.GetComponent<RectTransform>();
                 if (sRt != null)
                 {

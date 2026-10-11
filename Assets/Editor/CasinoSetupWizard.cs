@@ -836,26 +836,42 @@ public class CasinoSetupWizard
         CreateGameHeaderBar(bjPanel, font, "BLACKJACK", lobbyManager.ShowLobby);
         CreateBetSidebarMobile(bjPanel, font, out InputField bjBet, out Button bjHalf, out Button bjDouble, out Button bjAction);
 
-        Text bjStatus = CreateText(bjPanel, "StatusText", "PLACE YOUR BET", font, 50, new Vector2(0, 400), new Vector2(1000, 100));
+        Text bjStatus = CreateText(bjPanel, "StatusText", "PLACE YOUR BET", font, 24, new Vector2(0, 260), new Vector2(700, 46));
         AnchorToCenter(bjStatus.gameObject);
 
-        Text tDealer = CreateText(bjPanel, "DealerTitle", "DEALER", font, 30, new Vector2(0, 250), new Vector2(400, 50));
+        Text tDealer = CreateText(bjPanel, "DealerTitle", "<b>DEALER</b>", font, 20, new Vector2(-15, 195), new Vector2(200, 38));
         AnchorToCenter(tDealer.gameObject);
-        Text dScore = CreateText(bjPanel, "DealerScore", "?", font, 40, new Vector2(250, 250), new Vector2(100, 50));
-        AnchorToCenter(dScore.gameObject); dScore.color = accentYellow;
-        Text dCards = CreateText(bjPanel, "DealerCards", "", font, 60, new Vector2(0, 150), new Vector2(800, 100));
+        tDealer.alignment = TextAnchor.MiddleRight;
+        tDealer.color = new Color(0.58f, 0.64f, 0.72f);
+        tDealer.rectTransform.pivot = new Vector2(1f, 0.5f);
+
+        Text dScore = CreateText(bjPanel, "DealerScore", "<b>SCORE: <color=#94A3B8>-</color></b>", font, 20, new Vector2(15, 195), new Vector2(200, 38));
+        AnchorToCenter(dScore.gameObject);
+        dScore.alignment = TextAnchor.MiddleLeft;
+        dScore.supportRichText = true;
+        dScore.rectTransform.pivot = new Vector2(0f, 0.5f);
+
+        Text dCards = CreateText(bjPanel, "DealerCards", "", font, 44, new Vector2(0, 120), new Vector2(800, 75));
         AnchorToCenter(dCards.gameObject); dCards.supportRichText = true;
 
-        Text tPlayer = CreateText(bjPanel, "PlayerTitle", "PLAYER", font, 30, new Vector2(0, -50), new Vector2(400, 50));
+        Text tPlayer = CreateText(bjPanel, "PlayerTitle", "<b>PLAYER</b>", font, 20, new Vector2(-15, 15), new Vector2(200, 38));
         AnchorToCenter(tPlayer.gameObject);
-        Text pScore = CreateText(bjPanel, "PlayerScore", "0", font, 40, new Vector2(250, -50), new Vector2(100, 50));
-        AnchorToCenter(pScore.gameObject); pScore.color = accentYellow;
-        Text pCards = CreateText(bjPanel, "PlayerCards", "", font, 60, new Vector2(0, -150), new Vector2(800, 100));
+        tPlayer.alignment = TextAnchor.MiddleRight;
+        tPlayer.color = new Color(0.58f, 0.64f, 0.72f);
+        tPlayer.rectTransform.pivot = new Vector2(1f, 0.5f);
+
+        Text pScore = CreateText(bjPanel, "PlayerScore", "<b>SCORE: <color=#94A3B8>-</color></b>", font, 20, new Vector2(15, 15), new Vector2(200, 38));
+        AnchorToCenter(pScore.gameObject);
+        pScore.alignment = TextAnchor.MiddleLeft;
+        pScore.supportRichText = true;
+        pScore.rectTransform.pivot = new Vector2(0f, 0.5f);
+
+        Text pCards = CreateText(bjPanel, "PlayerCards", "", font, 44, new Vector2(0, -55), new Vector2(800, 75));
         AnchorToCenter(pCards.gameObject); pCards.supportRichText = true;
 
-        GameObject hitBtn = CreateButton(bjPanel, "HitBtn", "HIT", font, new Vector2(-220, -300), new Vector2(400, 100), accentGreen, 40);
+        GameObject hitBtn = CreateButton(bjPanel, "HitBtn", "<b>HIT</b>", font, new Vector2(-125, -155), new Vector2(220, 56), new Color(0.145f, 0.388f, 0.922f, 1f), 22);
         AnchorToCenter(hitBtn);
-        GameObject standBtn = CreateButton(bjPanel, "StandBtn", "STAND", font, new Vector2(220, -300), new Vector2(400, 100), accentRed, 40);
+        GameObject standBtn = CreateButton(bjPanel, "StandBtn", "<b>STAND</b>", font, new Vector2(125, -155), new Vector2(220, 56), new Color(0.85f, 0.47f, 0.02f, 1f), 22);
         AnchorToCenter(standBtn);
 
         BlackjackUIManager bjUI = bjPanel.AddComponent<BlackjackUIManager>();
