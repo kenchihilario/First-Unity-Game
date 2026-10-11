@@ -24,12 +24,10 @@ public class RouletteGameManager : MonoBehaviour
     {
         StartCoroutine(GameLoop());
     }
-    // main roulette round cycle
     IEnumerator GameLoop()
     {
         while (true)
         {
-            // countdown betting timer
             currentState = GameState.Betting;
             redBet = blackBet = greenBet = 0f;
             timer = bettingTime;
@@ -41,14 +39,13 @@ public class RouletteGameManager : MonoBehaviour
                 yield return null;
             }
 
-            // spin wheel and pick winning number (0 is green, 1-7 is red, 8-14 is black)
+            // 0 = green, 1-7 = red, 8-14 = black
             currentState = GameState.Spinning;
             OnStateChanged?.Invoke(currentState);
             int result = Random.Range(0, 15);
             OnSpinResult?.Invoke(result);
             yield return new WaitForSeconds(4f);
 
-            // calculate payouts (14x for green 0, 2x for red or black)
             currentState = GameState.Result;
             OnStateChanged?.Invoke(currentState);
             if (result == 0 && greenBet > 0) PlayerManager.Instance.AddWinnings(greenBet * 14f);
@@ -58,7 +55,6 @@ public class RouletteGameManager : MonoBehaviour
         }
     }
 
-    // place bet on color (0 = green, 1 = red, 2 = black)
     public void PlaceBet(int color, float amount)
     {
         if (currentState == GameState.Betting && PlayerManager.Instance.PlaceBet(amount))

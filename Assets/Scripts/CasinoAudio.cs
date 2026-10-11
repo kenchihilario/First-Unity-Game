@@ -12,7 +12,6 @@ public class CasinoAudio : MonoBehaviour
     private AudioClip cardClip;
     private AudioClip lossClip;
 
-    // create procedural sound effects so we don't need external audio asset files
     void Awake()
     {
         if (Instance == null)
@@ -20,7 +19,6 @@ public class CasinoAudio : MonoBehaviour
             Instance = this;
             src = gameObject.AddComponent<AudioSource>();
 
-            // generate sound clips for game events
             tickClip = CreateTone(0.05f, 1200f, 1200f, 0.1f, 1);
             coinClip = CreateTone(0.3f, 1200f, 2200f, 0.15f, 2);
             explosionClip = CreateNoise(0.8f, 0.4f);
@@ -30,7 +28,6 @@ public class CasinoAudio : MonoBehaviour
         }
     }
 
-    // audio playback methods
     public void PlayTick() { if(src) src.PlayOneShot(tickClip); }
     public void PlayCoin() { if(src) src.PlayOneShot(coinClip); }
     public void PlayExplosion() { if(src) src.PlayOneShot(explosionClip); }
@@ -38,7 +35,6 @@ public class CasinoAudio : MonoBehaviour
     public void PlayCard() { if(src) src.PlayOneShot(cardClip); }
     public void PlayLoss() { if(src) src.PlayOneShot(lossClip); }
 
-    // generate synthesized waveform
     private AudioClip CreateTone(float duration, float startFreq, float endFreq, float volume, int type)
     {
         int sampleRate = 44100;

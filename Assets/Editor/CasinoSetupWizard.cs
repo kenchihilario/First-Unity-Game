@@ -163,7 +163,6 @@ public class CasinoSetupWizard
     [MenuItem("Casino/Build WebGL for Vercel", priority = 1)]
     public static void BuildWebGLForVercel()
     {
-        // 1. Ensure the complete SampleScene is loaded
         var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity", UnityEditor.SceneManagement.OpenSceneMode.Single);
         if (GameObject.Find("CasinoCanvas") == null)
         {
@@ -197,7 +196,6 @@ public class CasinoSetupWizard
         Debug.Log("Casino: Starting WebGL build for Vercel...");
         var report = BuildPipeline.BuildPlayer(buildPlayerOptions);
 
-        // Always re-open the scene cleanly in editor after build completes
         UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity", UnityEditor.SceneManagement.OpenSceneMode.Single);
 
         if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
@@ -1005,7 +1003,6 @@ public class CasinoSetupWizard
 
     static void CreateGameHeaderBar(GameObject parentPanel, Font font, string gameTitle, UnityEngine.Events.UnityAction onBack)
     {
-        // header and back button are handled in the top bar now
     }
 
     static void CreateBetSidebarMobile(GameObject parentPanel, Font font, out InputField betInput, out Button halfBtn, out Button doubleBtn, out Button actionBtn)

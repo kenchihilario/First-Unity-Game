@@ -37,7 +37,6 @@ public class BlackjackGameManager : MonoBehaviour
         if (Instance == null) Instance = this;
     }
 
-    // create and shuffle a 52 card deck
     private void InitializeDeck()
     {
         deck.Clear();
@@ -49,7 +48,6 @@ public class BlackjackGameManager : MonoBehaviour
             }
         }
 
-        // Fisher-Yates shuffle
         for(int i=0; i<deck.Count; i++)
         {
             Card temp = deck[i];
@@ -67,7 +65,6 @@ public class BlackjackGameManager : MonoBehaviour
         return c;
     }
 
-    // calculate hand total, adjusting Aces from 11 to 1 if bust
     public int GetScore(List<Card> hand)
     {
         int score = 0;
@@ -86,7 +83,6 @@ public class BlackjackGameManager : MonoBehaviour
         return score;
     }
 
-    // start a new hand and deal 2 cards each
     public void StartGame(float betAmount)
     {
         if (gameActive) return;
@@ -104,7 +100,6 @@ public class BlackjackGameManager : MonoBehaviour
         playerHand.Clear();
         dealerHand.Clear();
 
-        // deal initial 2 cards
         playerHand.Add(DrawCard());
         dealerHand.Add(DrawCard());
         playerHand.Add(DrawCard());
@@ -112,14 +107,12 @@ public class BlackjackGameManager : MonoBehaviour
 
         OnGameStarted?.Invoke(playerHand, dealerHand, true);
 
-        // instant blackjack check
         if (GetScore(playerHand) == 21)
         {
             EndGame(true, true);
         }
     }
 
-    // player draws another card
     public void Hit()
     {
         if (!gameActive) return;
@@ -137,7 +130,6 @@ public class BlackjackGameManager : MonoBehaviour
         }
     }
 
-    // player stays, dealer hits until 17
     public void Stand()
     {
         if (!gameActive) return;
@@ -155,7 +147,6 @@ public class BlackjackGameManager : MonoBehaviour
         else EndGame(false, false);
     }
 
-    // pay out winnings or tie push
     private void EndGame(bool playerWon, bool blackjack = false, bool push = false)
     {
         gameActive = false;

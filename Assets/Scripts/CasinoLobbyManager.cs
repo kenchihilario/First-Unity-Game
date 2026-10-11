@@ -671,7 +671,6 @@ public class CasinoLobbyManager : MonoBehaviour
             backBtnGo = backTr.gameObject;
         }
 
-        // wire back button click
         Button bBtn = backBtnGo.GetComponent<Button>();
         if (bBtn == null) bBtn = backBtnGo.AddComponent<Button>();
         bBtn.onClick.RemoveAllListeners();
@@ -699,7 +698,6 @@ public class CasinoLobbyManager : MonoBehaviour
             backBtnGo.AddComponent<ButtonHoverJuice>();
         }
 
-        // keep button in front
         backBtnGo.transform.SetAsLastSibling();
 
         bool isLobby = string.IsNullOrEmpty(currentView) || currentView.Equals("LOBBY", System.StringComparison.OrdinalIgnoreCase);
@@ -725,7 +723,6 @@ public class CasinoLobbyManager : MonoBehaviour
     {
         if (panel == null) return;
 
-        // remove old header so it doesn't overlap
         Transform existingHeader = panel.transform.Find("GameHeader");
         if (existingHeader != null)
         {
@@ -741,7 +738,6 @@ public class CasinoLobbyManager : MonoBehaviour
     {
         if (panel == null) return;
 
-        // deactivate rogue/legacy objects that don't belong in game panels
         string[] rogueNames = { "WithdrawPanel", "Plinko", "RegisterPanel", "AmountInput", "HandleArea", "Balance", "TickerContainer", "HalfBtn" };
         for (int i = panel.transform.childCount - 1; i >= 0; i--)
         {
@@ -767,7 +763,6 @@ public class CasinoLobbyManager : MonoBehaviour
         Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         if (font == null) font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 
-        // bet bar at top of game screen
         Transform betPanel = panel.transform.Find("BetPanel");
         if (betPanel != null)
         {
@@ -863,7 +858,6 @@ public class CasinoLobbyManager : MonoBehaviour
             }
         }
 
-        // layout and positioning for each game
         if (gameTitle == "CRASH")
         {
             Transform gc = panel.transform.Find("GraphContainer");
@@ -1068,7 +1062,6 @@ public class CasinoLobbyManager : MonoBehaviour
         }
         else if (gameTitle == "MINES")
         {
-            // clean any rogue legacy objects
             for (int i = panel.transform.childCount - 1; i >= 0; i--)
             {
                 Transform ch = panel.transform.GetChild(i);
@@ -1241,7 +1234,6 @@ public class CasinoLobbyManager : MonoBehaviour
                     bRt.localScale = new Vector3(0.72f, 0.72f, 1f);
                 }
 
-                // ensure all pegs have circle sprite so no square pegs appear
                 Sprite circleSprite = GetCircleSprite();
                 Image[] pegImgs = bc.GetComponentsInChildren<Image>(true);
                 foreach (var pi in pegImgs)
