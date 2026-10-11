@@ -92,7 +92,7 @@ public class LeaderboardUIManager : MonoBehaviour
 
                 string avatar = topPlayers[i].username.EndsWith("(You)") ? "😎" : randomAvatars[Mathf.Abs(topPlayers[i].username.GetHashCode()) % randomAvatars.Length];
                 nameTexts[i].text = $"{avatar}  {topPlayers[i].username}";
-                balanceTexts[i].text = $"${topPlayers[i].balance:F2}";
+                balanceTexts[i].text = $"₱{topPlayers[i].balance:N2}";
 
                 if (topPlayers[i].username.EndsWith("(You)"))
                 {

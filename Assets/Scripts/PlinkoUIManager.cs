@@ -166,11 +166,11 @@ public class PlinkoUIManager : MonoBehaviour
     {
         if (payout > 0)
         {
-            statusText.text = $"<color=#00FFAA>YOU WON ${payout:F2}!</color>";
+            statusText.text = $"<color=#00FFAA>YOU WON ₱{payout:F2}!</color>";
         }
         else
         {
-            statusText.text = $"<color=#FF4444>WON $0.00.</color>";
+            statusText.text = $"<color=#FF4444>WON ₱0.00.</color>";
         }
     }
 }

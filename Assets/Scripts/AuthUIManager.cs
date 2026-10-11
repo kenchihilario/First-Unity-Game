@@ -40,6 +40,7 @@ public class AuthUIManager : MonoBehaviour
     void Awake()
     {
         if (Instance == null) Instance = this;
+        WireAllButtons();
     }
 
     void Start()
@@ -51,6 +52,8 @@ public class AuthUIManager : MonoBehaviour
             inputModule.AssignDefaultActions();
         }
 #endif
+        WireAllButtons();
+
         if (AuthManager.Instance != null)
         {
             AuthManager.Instance.OnLoginStateChanged -= HandleLoginState;
@@ -59,9 +62,95 @@ public class AuthUIManager : MonoBehaviour
         }
         else
         {
-            HandleLoginState(true);
+            HandleLoginState(false);
         }
         CloseAll();
+    }
+
+    public void WireAllButtons()
+    {
+        Button[] allButtons = FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (var btn in allButtons)
+        {
+            string n = btn.gameObject.name;
+            Transform p = btn.transform.parent;
+            string pName = p != null ? p.name : "";
+
+            if (n.Equals("LoginBtn", System.StringComparison.OrdinalIgnoreCase))
+            {
+                btn.onClick.RemoveListener(ShowLogin);
+                btn.onClick.AddListener(ShowLogin);
+            }
+            else if (n.Equals("RegisterBtn", System.StringComparison.OrdinalIgnoreCase))
+            {
+                btn.onClick.RemoveListener(ShowRegister);
+                btn.onClick.AddListener(ShowRegister);
+            }
+            else if (n.Equals("DepositBtn", System.StringComparison.OrdinalIgnoreCase))
+            {
+                btn.onClick.RemoveListener(ShowDeposit);
+                btn.onClick.AddListener(ShowDeposit);
+            }
+            else if (n.Equals("WithdrawBtn", System.StringComparison.OrdinalIgnoreCase))
+            {
+                btn.onClick.RemoveListener(ShowWithdraw);
+                btn.onClick.AddListener(ShowWithdraw);
+            }
+            else if (n.Equals("LogoutBtn", System.StringComparison.OrdinalIgnoreCase))
+            {
+                btn.onClick.RemoveListener(OnLogoutClick);
+                btn.onClick.AddListener(OnLogoutClick);
+            }
+            else if (n.Equals("GuestBtn", System.StringComparison.OrdinalIgnoreCase))
+            {
+                btn.onClick.RemoveListener(OnGuestLogin);
+                btn.onClick.AddListener(OnGuestLogin);
+            }
+            else if (n.Equals("SwitchRegBtn", System.StringComparison.OrdinalIgnoreCase))
+            {
+                btn.onClick.RemoveListener(ShowRegister);
+                btn.onClick.AddListener(ShowRegister);
+            }
+            else if (n.Equals("SwitchLogBtn", System.StringComparison.OrdinalIgnoreCase))
+            {
+                btn.onClick.RemoveListener(ShowLogin);
+                btn.onClick.AddListener(ShowLogin);
+            }
+            else if (n.Equals("SubmitBtn", System.StringComparison.OrdinalIgnoreCase) || n.Equals("ActionBtn", System.StringComparison.OrdinalIgnoreCase))
+            {
+                if (pName.IndexOf("login", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    btn.onClick.RemoveListener(OnLoginSubmit);
+                    btn.onClick.AddListener(OnLoginSubmit);
+                }
+                else if (pName.IndexOf("register", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    btn.onClick.RemoveListener(OnRegisterSubmit);
+                    btn.onClick.AddListener(OnRegisterSubmit);
+                }
+                else if (pName.IndexOf("deposit", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    btn.onClick.RemoveListener(OnDepositSubmit);
+                    btn.onClick.AddListener(OnDepositSubmit);
+                }
+                else if (pName.IndexOf("withdraw", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    btn.onClick.RemoveListener(OnWithdrawSubmit);
+                    btn.onClick.AddListener(OnWithdrawSubmit);
+                }
+            }
+            else if (n.Equals("CloseBtn", System.StringComparison.OrdinalIgnoreCase))
+            {
+                if (pName.IndexOf("panel", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    pName.IndexOf("overlay", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    pName.IndexOf("auth", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    pName.IndexOf("bank", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    btn.onClick.RemoveListener(CloseAll);
+                    btn.onClick.AddListener(CloseAll);
+                }
+            }
+        }
     }
 
     void Update()
@@ -98,26 +187,28 @@ public class AuthUIManager : MonoBehaviour
     public void ShowLogin()
     {
         CloseAll();
-        if (authOverlay) authOverlay.SetActive(true);
-        if (loginPanel) loginPanel.SetActive(true);
+        if (authOverlay) { authOverlay.SetActive(true); authOverlay.transform.SetAsLastSibling(); }
+        if (loginPanel) { loginPanel.SetActive(true); loginPanel.transform.SetAsLastSibling(); }
         if (loginErrorText) loginErrorText.text = "";
         if (loginPhoneInput != null && string.IsNullOrEmpty(loginPhoneInput.text)) loginPhoneInput.text = "Kenchi";
         if (loginPasswordInput != null && string.IsNullOrEmpty(loginPasswordInput.text)) loginPasswordInput.text = "1234";
+        WireAllButtons();
     }
 
     public void ShowRegister()
     {
         CloseAll();
-        if (authOverlay) authOverlay.SetActive(true);
-        if (registerPanel) registerPanel.SetActive(true);
+        if (authOverlay) { authOverlay.SetActive(true); authOverlay.transform.SetAsLastSibling(); }
+        if (registerPanel) { registerPanel.SetActive(true); registerPanel.transform.SetAsLastSibling(); }
         if (registerErrorText) registerErrorText.text = "";
         if (registerPhoneInput != null && string.IsNullOrEmpty(registerPhoneInput.text)) registerPhoneInput.text = "Kenchi";
         if (registerPasswordInput != null && string.IsNullOrEmpty(registerPasswordInput.text)) registerPasswordInput.text = "1234";
+        WireAllButtons();
     }
 
-    public void ShowDeposit() { CloseAll(); if(bankOverlay) bankOverlay.SetActive(true); if(depositPanel) depositPanel.SetActive(true); if(bankErrorText) bankErrorText.text = ""; }
-    public void ShowWithdraw() { CloseAll(); if(bankOverlay) bankOverlay.SetActive(true); if(withdrawPanel) withdrawPanel.SetActive(true); if(bankErrorText) bankErrorText.text = ""; }
-    public void ShowAccountSettings() { CloseAll(); if(accSettingsOverlay) accSettingsOverlay.SetActive(true); }
+    public void ShowDeposit() { CloseAll(); if(bankOverlay) { bankOverlay.SetActive(true); bankOverlay.transform.SetAsLastSibling(); } if(depositPanel) { depositPanel.SetActive(true); depositPanel.transform.SetAsLastSibling(); } if(bankErrorText) bankErrorText.text = ""; WireAllButtons(); }
+    public void ShowWithdraw() { CloseAll(); if(bankOverlay) { bankOverlay.SetActive(true); bankOverlay.transform.SetAsLastSibling(); } if(withdrawPanel) { withdrawPanel.SetActive(true); withdrawPanel.transform.SetAsLastSibling(); } if(bankErrorText) bankErrorText.text = ""; WireAllButtons(); }
+    public void ShowAccountSettings() { CloseAll(); if(accSettingsOverlay) { accSettingsOverlay.SetActive(true); accSettingsOverlay.transform.SetAsLastSibling(); } }
 
     public void CloseAll()
     {

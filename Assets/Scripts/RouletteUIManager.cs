@@ -67,16 +67,16 @@ public class RouletteUIManager : MonoBehaviour
         if (betAmountInput != null) betAmountInput.text = betAmount.ToString("F2");
         if (RouletteGameManager.Instance.currentState == RouletteGameManager.GameState.Betting)
         {
-            betRedBtn.transform.GetChild(0).GetComponent<Text>().text = $"<b>2X</b>\n<size=18>BET ${betAmount:F2}</size>";
-            betBlackBtn.transform.GetChild(0).GetComponent<Text>().text = $"<b>2X</b>\n<size=18>BET ${betAmount:F2}</size>";
-            betGreenBtn.transform.GetChild(0).GetComponent<Text>().text = $"<b>14X</b>\n<size=18>BET ${betAmount:F2}</size>";
+            betRedBtn.transform.GetChild(0).GetComponent<Text>().text = $"<b>2X</b>\n<size=18>BET ₱{betAmount:F2}</size>";
+            betBlackBtn.transform.GetChild(0).GetComponent<Text>().text = $"<b>2X</b>\n<size=18>BET ₱{betAmount:F2}</size>";
+            betGreenBtn.transform.GetChild(0).GetComponent<Text>().text = $"<b>14X</b>\n<size=18>BET ₱{betAmount:F2}</size>";
         }
     }
     void Update()
     {
         if (PlayerManager.Instance != null && balanceText != null)
         {
-            balanceText.text = $"<color=#888888>BALANCE</color>\n<color=#00FFAA><size=50>${PlayerManager.Instance.balance:F2}</size></color>";
+            balanceText.text = $"<color=#888888>BALANCE</color>\n<color=#00FFAA><size=50>₱{PlayerManager.Instance.balance:N2}</size></color>";
         }
     }
     void UpdateState(RouletteGameManager.GameState state)

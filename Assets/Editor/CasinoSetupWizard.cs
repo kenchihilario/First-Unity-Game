@@ -59,6 +59,37 @@ public class CasinoSetupWizard
     public static void RebuildCredibleLobbyMenu()
     {
         EnsureThumbsImportedAsSprites();
+
+        var scalers = Object.FindObjectsByType<CanvasScaler>(FindObjectsInactive.Include);
+        foreach (var s in scalers)
+        {
+            s.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            s.referenceResolution = new Vector2(1920, 1080);
+            s.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+            s.matchWidthOrHeight = 0.5f;
+            EditorUtility.SetDirty(s);
+        }
+
+        var allGOs = Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include);
+        foreach (var go in allGOs)
+        {
+            if (go.name == "BottomNavBar") { go.SetActive(false); EditorUtility.SetDirty(go); }
+            if (go.name == "ProfileBtn" && go.transform.parent != null && go.transform.parent.name == "LoggedInGroup") { go.SetActive(false); EditorUtility.SetDirty(go); }
+            if (go.name == "LeaderboardBtn") { go.SetActive(false); EditorUtility.SetDirty(go); }
+            if (go.name == "LoggedOutGroup") { go.SetActive(true); EditorUtility.SetDirty(go); }
+            if (go.name == "LoggedInGroup") { go.SetActive(false); EditorUtility.SetDirty(go); }
+        }
+
+        UpdateCurrentSceneThumbs();
+
+        var authUIs = Object.FindObjectsByType<AuthUIManager>(FindObjectsInactive.Include);
+        foreach (var aUI in authUIs)
+        {
+            aUI.WireAllButtons();
+            aUI.CloseAll();
+            EditorUtility.SetDirty(aUI);
+        }
+
         var lobbyMgr = Object.FindAnyObjectByType<CasinoLobbyManager>();
         if (lobbyMgr != null)
         {
@@ -75,9 +106,42 @@ public class CasinoSetupWizard
             lobbyMgr.RefreshThumbnails();
             EditorUtility.SetDirty(lobbyMgr);
         }
+
+        var allInputs = Object.FindObjectsByType<InputField>(FindObjectsInactive.Include);
+        foreach (var inp in allInputs)
+        {
+            if (inp.placeholder is Text pText && pText.text.Contains("$"))
+            {
+                pText.text = pText.text.Replace("$", "₱");
+                EditorUtility.SetDirty(pText);
+            }
+        }
+
+        var allTexts = Object.FindObjectsByType<Text>(FindObjectsInactive.Include);
+        foreach (var t in allTexts)
+        {
+            if (t.gameObject.name == "HeroTitle")
+            {
+                t.text = "<b>ORIGINALS & POPULAR GAMES</b>";
+                t.fontSize = 25;
+                EditorUtility.SetDirty(t);
+            }
+            else if (t.gameObject.name == "HeroSub")
+            {
+                t.text = "<b><color=#10B981>Philippine Peso (PHP)</color>  •  <color=#94A3B8>7 Provably Fair Games  •  Fast Gameplay</color></b>";
+                t.fontSize = 15;
+                EditorUtility.SetDirty(t);
+            }
+            else if (t.text.Contains("$0.00"))
+            {
+                t.text = t.text.Replace("$0.00", "₱0.00");
+                EditorUtility.SetDirty(t);
+            }
+        }
+
         UnityEditor.SceneManagement.EditorSceneManager.MarkAllScenesDirty();
         UnityEditor.SceneManagement.EditorSceneManager.SaveOpenScenes();
-        Debug.Log("Casino: Rebuilt Credible Lobby UI and Headers successfully!");
+        Debug.Log("Casino: Rebuilt Clean Modern PHP Lobby UI successfully!");
     }
 
     [MenuItem("Casino/Build WebGL for Vercel")]
@@ -239,73 +303,75 @@ public class CasinoSetupWizard
 
         CanvasScaler scaler = canvasGO.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1080, 1920);
+        scaler.referenceResolution = new Vector2(1920, 1080);
         scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-        scaler.matchWidthOrHeight = 1f;
+        scaler.matchWidthOrHeight = 0.5f;
 
         if (canvasGO.GetComponent<GraphicRaycaster>() == null) canvasGO.AddComponent<GraphicRaycaster>();
 
         Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         if (font == null) font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 
-        Color bgDark = new Color(0.05f, 0.06f, 0.08f, 1f);
-        Color panelColor = new Color(0.11f, 0.13f, 0.17f, 1f);
-        Color accentRed = new Color(1f, 0.13f, 0.33f, 1f);
-        Color accentGreen = new Color(0f, 0.9f, 0.0f, 1f);
-        Color accentGray = new Color(0.17f, 0.19f, 0.25f, 1f);
-        Color accentBlue = new Color(0.13f, 0.67f, 1f, 1f);
-        Color accentYellow = new Color(1f, 0.85f, 0.1f, 1f);
+        Color bgDark = new Color(0.043f, 0.055f, 0.078f, 1f);
+        Color panelColor = new Color(0.06f, 0.08f, 0.12f, 1f);
+        Color accentRed = new Color(0.9f, 0.2f, 0.2f, 1f);
+        Color accentGreen = new Color(0.063f, 0.725f, 0.506f, 1f);
+        Color accentGray = new Color(0.137f, 0.180f, 0.259f, 1f);
+        Color accentBlue = new Color(0.145f, 0.388f, 0.922f, 1f);
+        Color accentYellow = new Color(0.96f, 0.62f, 0.04f, 1f);
 
         GameObject topBar = new GameObject("TopBar", typeof(RectTransform));
         topBar.transform.SetParent(canvasGO.transform, false);
         AddImageWithSprite(topBar, panelColor);
         RectTransform topBarRt = topBar.GetComponent<RectTransform>();
         topBarRt.anchorMin = new Vector2(0, 1); topBarRt.anchorMax = new Vector2(1, 1);
-        topBarRt.pivot = new Vector2(0.5f, 1); topBarRt.sizeDelta = new Vector2(0, 140);
+        topBarRt.pivot = new Vector2(0.5f, 1); topBarRt.sizeDelta = new Vector2(0, 75);
         topBarRt.anchoredPosition = Vector2.zero;
 
-        Text logoText = CreateText(topBar, "Logo", "<b><color=#FF7700>●</color> KENCHI</b>", font, 50, new Vector2(20, 0), new Vector2(400, 140));
+        Text logoText = CreateText(topBar, "Logo", "<b><size=26><color=#10B981>✦</color> <color=#FFFFFF>KENCHI</color> <color=#10B981>CASINO</color></size></b>", font, 26, new Vector2(40, 0), new Vector2(350, 75));
         logoText.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0.5f); logoText.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0.5f);
         logoText.GetComponent<RectTransform>().pivot = new Vector2(0, 0.5f);
         logoText.alignment = TextAnchor.MiddleLeft;
 
         GameObject loggedOutGroup = new GameObject("LoggedOutGroup", typeof(RectTransform));
         loggedOutGroup.transform.SetParent(topBar.transform, false);
-        AnchorToRight(loggedOutGroup, -20);
+        AnchorToRight(loggedOutGroup, -40);
+        loggedOutGroup.GetComponent<RectTransform>().sizeDelta = new Vector2(320, 50);
+        HorizontalLayoutGroup loHlg = loggedOutGroup.AddComponent<HorizontalLayoutGroup>();
+        loHlg.childAlignment = TextAnchor.MiddleRight; loHlg.spacing = 14;
+        loHlg.childControlWidth = false; loHlg.childControlHeight = false;
+        loHlg.childForceExpandWidth = false; loHlg.childForceExpandHeight = false;
         loggedOutGroup.SetActive(false);
 
-        GameObject loginBtnGo = CreateButton(loggedOutGroup, "LoginBtn", "Log In", font, Vector2.zero, new Vector2(200, 80), accentGray, 30);
-        AnchorToRight(loginBtnGo, -220);
-        GameObject registerBtnGo = CreateButton(loggedOutGroup, "RegisterBtn", "Register", font, Vector2.zero, new Vector2(200, 80), accentBlue, 30);
-        AnchorToRight(registerBtnGo, 0);
+        GameObject loginBtnGo = CreateButton(loggedOutGroup, "LoginBtn", "<b>LOG IN</b>", font, Vector2.zero, new Vector2(130, 46), accentGray, 17);
+        GameObject registerBtnGo = CreateButton(loggedOutGroup, "RegisterBtn", "<b>REGISTER</b>", font, Vector2.zero, new Vector2(135, 46), accentBlue, 17);
 
         GameObject loggedInGroup = new GameObject("LoggedInGroup", typeof(RectTransform));
         loggedInGroup.transform.SetParent(topBar.transform, false);
-        AnchorToRight(loggedInGroup, -20);
+        AnchorToRight(loggedInGroup, -40);
+        loggedInGroup.GetComponent<RectTransform>().sizeDelta = new Vector2(680, 50);
+        HorizontalLayoutGroup liHlg = loggedInGroup.AddComponent<HorizontalLayoutGroup>();
+        liHlg.childAlignment = TextAnchor.MiddleRight; liHlg.spacing = 14;
+        liHlg.childControlWidth = false; liHlg.childControlHeight = false;
+        liHlg.childForceExpandWidth = false; liHlg.childForceExpandHeight = false;
         loggedInGroup.SetActive(true);
-
-        GameObject logoutBtnGo = CreateButton(loggedInGroup, "LogoutBtn", "X", font, Vector2.zero, new Vector2(80, 80), accentRed, 30);
-        AnchorToRight(logoutBtnGo, 0);
-
-        GameObject withdrawBtnGo = CreateButton(loggedInGroup, "WithdrawBtn", "W", font, Vector2.zero, new Vector2(80, 80), accentGray, 30);
-        AnchorToRight(withdrawBtnGo, -100);
-
-        GameObject depositBtnGo = CreateButton(loggedInGroup, "DepositBtn", "Deposit", font, Vector2.zero, new Vector2(200, 80), accentGreen, 30);
-        AnchorToRight(depositBtnGo, -200);
-
-        GameObject profileBtnGo = CreateButton(loggedInGroup, "ProfileBtn", "👤", font, Vector2.zero, new Vector2(80, 80), accentBlue, 40);
-        AnchorToRight(profileBtnGo, -420);
 
         GameObject balBg = new GameObject("BalanceBg", typeof(RectTransform));
         balBg.transform.SetParent(loggedInGroup.transform, false);
-        AddImageWithSprite(balBg, bgDark);
-        AnchorToRight(balBg, -520);
-        balBg.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 80);
-        Text globalBalanceText = CreateText(balBg, "BalanceText", "$0.00", font, 35, Vector2.zero, new Vector2(230, 80));
+        AddImageWithSprite(balBg, new Color(0.075f, 0.098f, 0.153f, 1f));
+        balBg.GetComponent<RectTransform>().sizeDelta = new Vector2(240, 46);
+        Text globalBalanceText = CreateText(balBg, "BalanceText", "PHP <b>₱0.00</b>", font, 20, Vector2.zero, new Vector2(230, 46));
         lobbyManager.lobbyBalanceText = globalBalanceText;
 
-        GameObject lbBtnGo = CreateButton(loggedInGroup, "LeaderboardBtn", "🏆", font, Vector2.zero, new Vector2(80, 80), new Color(1f, 0.8f, 0f), 40);
-        AnchorToRight(lbBtnGo, -800);
+        GameObject depositBtnGo = CreateButton(loggedInGroup, "DepositBtn", "<b>+ DEPOSIT</b>", font, Vector2.zero, new Vector2(125, 46), accentGreen, 17);
+        GameObject withdrawBtnGo = CreateButton(loggedInGroup, "WithdrawBtn", "<b>WITHDRAW</b>", font, Vector2.zero, new Vector2(115, 46), accentGray, 16);
+        GameObject logoutBtnGo = CreateButton(loggedInGroup, "LogoutBtn", "<b>✕</b>", font, Vector2.zero, new Vector2(46, 46), accentGray, 20);
+
+        GameObject profileBtnGo = CreateButton(loggedInGroup, "ProfileBtn", "👤", font, Vector2.zero, new Vector2(46, 46), accentBlue, 20);
+        profileBtnGo.SetActive(false);
+
+        GameObject lbBtnGo = CreateButton(loggedInGroup, "LeaderboardBtn", "🏆", font, Vector2.zero, new Vector2(46, 46), accentYellow, 20);
+        lbBtnGo.SetActive(false);
 
         GameObject bottomBar = new GameObject("BottomNavBar", typeof(RectTransform));
         bottomBar.transform.SetParent(canvasGO.transform, false);
@@ -329,13 +395,14 @@ public class CasinoSetupWizard
         GameObject btnPlinko = CreateNavBtn(bottomBar, "Plinko", "👾\n<size=20>Plinko</size>", font);
         GameObject btnDice = CreateNavBtn(bottomBar, "Dice", "🎲\n<size=20>Dice</size>", font);
         GameObject btnBlackjack = CreateNavBtn(bottomBar, "Blackjack", "🃏\n<size=20>BJ</size>", font);
+        bottomBar.SetActive(false);
 
         GameObject contentArea = new GameObject("ContentArea", typeof(RectTransform));
         contentArea.transform.SetParent(canvasGO.transform, false);
         RectTransform caRt = contentArea.GetComponent<RectTransform>();
         caRt.anchorMin = Vector2.zero; caRt.anchorMax = Vector2.one;
-        caRt.offsetMin = new Vector2(0, 160);
-        caRt.offsetMax = new Vector2(0, -140);
+        caRt.offsetMin = new Vector2(0, 0);
+        caRt.offsetMax = new Vector2(0, -75);
         caRt.localScale = Vector3.one;
 
         GameObject overlays = new GameObject("Overlays", typeof(RectTransform));
@@ -379,7 +446,7 @@ public class CasinoSetupWizard
 
         GameObject depPanel = CreatePanel(bankOverlay, "DepositPanel", new Vector2(700, 500), panelColor);
         CreateText(depPanel, "Title", "DEPOSIT", font, 50, new Vector2(0, 180), new Vector2(600, 80));
-        InputField depAmount = CreateInputField(depPanel, "AmountInput", "Amount ($)", font, new Vector2(0, 50));
+        InputField depAmount = CreateInputField(depPanel, "AmountInput", "Amount (₱)", font, new Vector2(0, 50));
         depAmount.contentType = InputField.ContentType.DecimalNumber;
         Text bankErrD = CreateText(depPanel, "Error", "", font, 24, new Vector2(0, -50), new Vector2(600, 60));
         bankErrD.color = accentRed;
@@ -388,7 +455,7 @@ public class CasinoSetupWizard
 
         GameObject withPanel = CreatePanel(bankOverlay, "WithdrawPanel", new Vector2(700, 500), panelColor);
         CreateText(withPanel, "Title", "WITHDRAW", font, 50, new Vector2(0, 180), new Vector2(600, 80));
-        InputField withAmount = CreateInputField(withPanel, "AmountInput", "Amount ($)", font, new Vector2(0, 50));
+        InputField withAmount = CreateInputField(withPanel, "AmountInput", "Amount (₱)", font, new Vector2(0, 50));
         withAmount.contentType = InputField.ContentType.DecimalNumber;
         Text bankErrW = CreateText(withPanel, "Error", "", font, 24, new Vector2(0, -50), new Vector2(600, 60));
         bankErrW.color = accentRed;
@@ -440,21 +507,21 @@ public class CasinoSetupWizard
 
         GameObject heroBanner = new GameObject("HeroBanner", typeof(RectTransform));
         heroBanner.transform.SetParent(lobbyPanel.transform, false);
-        AddImageWithSprite(heroBanner, new Color(0.05f, 0.06f, 0.08f, 1f));
+        AddImageWithSprite(heroBanner, new Color(0.06f, 0.08f, 0.12f, 1f));
         RectTransform hRt = heroBanner.GetComponent<RectTransform>();
         hRt.anchorMin = new Vector2(0, 1); hRt.anchorMax = new Vector2(1, 1); hRt.pivot = new Vector2(0.5f, 1);
-        hRt.offsetMin = new Vector2(20, -220); hRt.offsetMax = new Vector2(-20, -20);
+        hRt.offsetMin = new Vector2(60, -170); hRt.offsetMax = new Vector2(-60, -90);
 
-        Text heroTitle = CreateText(heroBanner, "HeroTitle", "<b>KENCHI</b> CASINO", font, 60, new Vector2(0, 30), new Vector2(1000, 100));
-        heroTitle.color = accentBlue;
-        CreateText(heroBanner, "HeroSub", "HOUSE ALWAYS WINS • PERSONAL GITHUB PROJECT • JUST MADE FOR FUN", font, 28, new Vector2(0, -40), new Vector2(1000, 50));
+        Text heroTitle = CreateText(heroBanner, "HeroTitle", "<b>ORIGINALS & POPULAR GAMES</b>", font, 25, new Vector2(0, 12), new Vector2(1200, 36));
+        heroTitle.color = Color.white;
+        CreateText(heroBanner, "HeroSub", "<b><color=#10B981>Philippine Peso (PHP)</color>  •  <color=#94A3B8>7 Provably Fair Games  •  Fast Gameplay</color></b>", font, 15, new Vector2(0, -14), new Vector2(1200, 28));
 
         GameObject scrollGO = new GameObject("GamesScrollView", typeof(RectTransform));
         scrollGO.transform.SetParent(lobbyPanel.transform, false);
         RectTransform scrollRt = scrollGO.GetComponent<RectTransform>();
         scrollRt.anchorMin = new Vector2(0, 0); scrollRt.anchorMax = new Vector2(1, 1);
         scrollRt.pivot = new Vector2(0.5f, 0.5f);
-        scrollRt.offsetMin = new Vector2(0, 0); scrollRt.offsetMax = new Vector2(0, -240);
+        scrollRt.offsetMin = new Vector2(60, 20); scrollRt.offsetMax = new Vector2(-60, -180);
 
         ScrollRect scrollRect = scrollGO.AddComponent<ScrollRect>();
         scrollRect.horizontal = false; scrollRect.vertical = true;
@@ -471,17 +538,17 @@ public class CasinoSetupWizard
         RectTransform gRt = grid.GetComponent<RectTransform>();
         gRt.anchorMin = new Vector2(0, 1); gRt.anchorMax = new Vector2(1, 1); gRt.pivot = new Vector2(0.5f, 1);
         gRt.offsetMin = new Vector2(0, 0); gRt.offsetMax = new Vector2(0, 0);
-        gRt.sizeDelta = new Vector2(0, 1800);
+        gRt.sizeDelta = new Vector2(0, 700);
 
         scrollRect.viewport = vRt;
         scrollRect.content = gRt;
 
         GridLayoutGroup layout = grid.AddComponent<GridLayoutGroup>();
-        layout.cellSize = new Vector2(490, 420);
-        layout.spacing = new Vector2(30, 30);
-        layout.padding = new RectOffset(35, 35, 20, 60);
+        layout.cellSize = new Vector2(380, 260);
+        layout.spacing = new Vector2(24, 24);
+        layout.padding = new RectOffset(20, 20, 10, 30);
         layout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-        layout.constraintCount = 2;
+        layout.constraintCount = 4;
         layout.childAlignment = TextAnchor.UpperCenter;
 
         CreateGameThumb(grid, "CRASH", "Thumbs/crash", font, lobbyManager.StartCrash);
@@ -856,7 +923,7 @@ public class CasinoSetupWizard
             rName.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0.5f); rName.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0.5f);
             rName.GetComponent<RectTransform>().pivot = new Vector2(0, 0.5f); rName.alignment = TextAnchor.MiddleLeft;
 
-            Text rBal = CreateText(row, "Balance", "$0.00", font, 35, new Vector2(-50, 0), new Vector2(250, 60));
+            Text rBal = CreateText(row, "Balance", "₱0.00", font, 35, new Vector2(-50, 0), new Vector2(250, 60));
             rBal.GetComponent<RectTransform>().anchorMin = new Vector2(1, 0.5f); rBal.GetComponent<RectTransform>().anchorMax = new Vector2(1, 0.5f);
             rBal.GetComponent<RectTransform>().pivot = new Vector2(1, 0.5f); rBal.alignment = TextAnchor.MiddleRight;
 
@@ -918,7 +985,7 @@ public class CasinoSetupWizard
         rt.anchorMin = new Vector2(0, 1); rt.anchorMax = new Vector2(1, 1);
         rt.pivot = new Vector2(0.5f, 1); rt.sizeDelta = new Vector2(0, 200); rt.anchoredPosition = new Vector2(0, -90);
 
-        Text label = CreateText(betPanel, "BetLabel", "Bet Amount", font, 30, new Vector2(20, -40), new Vector2(400, 40));
+        Text label = CreateText(betPanel, "BetLabel", "Bet Amount (₱)", font, 30, new Vector2(20, -40), new Vector2(400, 40));
         label.GetComponent<RectTransform>().anchorMin = new Vector2(0, 1); label.GetComponent<RectTransform>().anchorMax = new Vector2(0, 1);
         label.GetComponent<RectTransform>().pivot = new Vector2(0, 1); label.alignment = TextAnchor.MiddleLeft; label.color = new Color(0.6f, 0.6f, 0.7f, 1f);
 

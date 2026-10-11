@@ -695,7 +695,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1375311938}
+  m_Sprite: {fileID: -8320547613712930583, guid: 0bd23663f508cb14295cd8b1122dc7c8, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -770,7 +770,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: -8320547613712930583, guid: 0bd23663f508cb14295cd8b1122dc7c8, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1581,7 +1581,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: $0.00
+  m_Text: ₱0.00
 --- !u!222 &98581473
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1913,7 +1913,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1252528224}
+  m_Sprite: {fileID: -5538726104556769960, guid: 83be469dcd21e2149b5762e604322bf3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2034,7 +2034,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: -5538726104556769960, guid: 83be469dcd21e2149b5762e604322bf3, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2312,7 +2312,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Amount ($)
+  m_Text: Amount (₱)
 --- !u!222 &142149567
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5483,7 +5483,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1917378250}
+  m_Sprite: {fileID: -8869866268663043733, guid: e9663166409e29440ba761d4c1ff6dc0, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5583,7 +5583,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 343996793}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 518995274}
+        m_TargetAssemblyTypeName: AuthUIManager, Assembly-CSharp
+        m_MethodName: OnLogoutClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &343996793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5604,7 +5616,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: -8869866268663043733, guid: e9663166409e29440ba761d4c1ff6dc0, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6160,7 +6172,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: $0.00
+  m_Text: ₱0.00
 --- !u!222 &373537569
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6824,7 +6836,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Bet Amount
+  m_Text: Bet Amount (₱)
 --- !u!222 &407656030
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8301,9 +8313,9 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 1080, y: 1920}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 1
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -9480,7 +9492,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 553632399}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 518995274}
+        m_TargetAssemblyTypeName: AuthUIManager, Assembly-CSharp
+        m_MethodName: OnLogoutClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &553632399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10586,7 +10610,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &619375951
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11468,7 +11492,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 662090091}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 518995274}
+        m_TargetAssemblyTypeName: AuthUIManager, Assembly-CSharp
+        m_MethodName: ShowLogin
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &662090091
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12118,7 +12154,7 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 340, y: 420}
+  m_CellSize: {x: 380, y: 260}
   m_Spacing: {x: 28, y: 28}
   m_Constraint: 1
   m_ConstraintCount: 4
@@ -12849,7 +12885,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1807682828}
+  m_Sprite: {fileID: -4150405671746537351, guid: 5fbdd7f3c77530a43b0eaddce31b7a4d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -12924,7 +12960,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: -4150405671746537351, guid: 5fbdd7f3c77530a43b0eaddce31b7a4d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -13028,7 +13064,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Bet Amount
+  m_Text: Bet Amount (₱)
 --- !u!222 &761827187
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -16846,7 +16882,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: $0.00
+  m_Text: ₱0.00
 --- !u!222 &894729494
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17078,7 +17114,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: $0.00
+  m_Text: ₱0.00
 --- !u!222 &897439692
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -19612,7 +19648,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Bet Amount
+  m_Text: Bet Amount (₱)
 --- !u!222 &998095590
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -19897,7 +19933,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: $0.00
+  m_Text: ₱0.00
 --- !u!222 &1008735012
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -21605,7 +21641,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: $0.00
+  m_Text: ₱0.00
 --- !u!222 &1082330867
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -21632,7 +21668,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1082909214
 RectTransform:
   m_ObjectHideFlags: 0
@@ -22896,7 +22932,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1141291483}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 518995274}
+        m_TargetAssemblyTypeName: AuthUIManager, Assembly-CSharp
+        m_MethodName: ShowWithdraw
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1141291483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23194,7 +23242,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Bet Amount
+  m_Text: Bet Amount (₱)
 --- !u!222 &1147467386
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -23587,7 +23635,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1177452829}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 518995274}
+        m_TargetAssemblyTypeName: AuthUIManager, Assembly-CSharp
+        m_MethodName: ShowDeposit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1177452829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25008,7 +25068,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Amount ($)
+  m_Text: Amount (₱)
 --- !u!222 &1217841786
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -25772,7 +25832,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 638677808}
+  m_Sprite: {fileID: 5060979170358967256, guid: b17816df3addffb4f8d89d6e21ece466, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -25847,7 +25907,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 5060979170358967256, guid: b17816df3addffb4f8d89d6e21ece466, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -28341,7 +28401,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: $0.00
+  m_Text: ₱0.00
 --- !u!222 &1409011540
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -28850,7 +28910,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1972002904}
+  m_Sprite: {fileID: 39516445742236537, guid: b98bebe6506c26e4a9ff9dfcb06c5f3a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -28971,7 +29031,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 39516445742236537, guid: b98bebe6506c26e4a9ff9dfcb06c5f3a, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -30208,7 +30268,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1531080830
 RectTransform:
   m_ObjectHideFlags: 0
@@ -31288,7 +31348,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: $0.00
+  m_Text: ₱0.00
 --- !u!222 &1596994627
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -32170,7 +32230,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: $0.00
+  m_Text: ₱0.00
 --- !u!222 &1649157479
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -32628,7 +32688,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: $0.00
+  m_Text: ₱0.00
 --- !u!222 &1685260908
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -34690,7 +34750,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1124381550}
+  m_Sprite: {fileID: -8074874087796675718, guid: 5f98229f1cb9d5345a9d0f81f2d29b15, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -36564,7 +36624,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Bet Amount
+  m_Text: Bet Amount (₱)
 --- !u!222 &1836699165
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -37550,7 +37610,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Bet Amount
+  m_Text: Bet Amount (₱)
 --- !u!222 &1871342438
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -38807,7 +38867,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: $0.00
+  m_Text: ₱0.00
 --- !u!222 &1925718373
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -40837,7 +40897,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Bet Amount
+  m_Text: Bet Amount (₱)
 --- !u!222 &2019475520
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -42488,7 +42548,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2109742428}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 518995274}
+        m_TargetAssemblyTypeName: AuthUIManager, Assembly-CSharp
+        m_MethodName: ShowRegister
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2109742428
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -136,7 +136,7 @@ public class DiceUIManager : MonoBehaviour
         {
             if (won)
             {
-                statusText.text = $"<color=#00FFAA>WON ${payout:F2}!</color>";
+                statusText.text = $"<color=#00FFAA>WON ₱{payout:F2}!</color>";
             }
             else
             {

@@ -15,6 +15,8 @@ public class PlayerManager : MonoBehaviour
     }
 
     public float balance = 10000f;
+    public string CurrencySymbol => "₱";
+    public string FormatCurrency(float amt) => $"₱{amt:N2}";
 
     void Awake()
     {

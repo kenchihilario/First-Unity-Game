@@ -108,7 +108,7 @@ public class BlackjackUIManager : MonoBehaviour
             else if (playerWon)
             {
                 if (gameObject.activeInHierarchy && CasinoAudio.Instance) CasinoAudio.Instance.PlayWin();
-                statusText.text = $"<color=#00FFAA>WON ${payout:F2}!</color>";
+                statusText.text = $"<color=#00FFAA>WON ₱{payout:F2}!</color>";
             }
             else
             {

@@ -51,14 +51,14 @@ public class SlotsUIManager : MonoBehaviour
         if (betAmountInput != null) betAmountInput.text = betAmount.ToString("F2");
         if (SlotsGameManager.Instance.currentState == SlotsGameManager.GameState.Idle)
         {
-            spinButton.transform.GetChild(0).GetComponent<Text>().text = $"SPIN ${betAmount:F2}";
+            spinButton.transform.GetChild(0).GetComponent<Text>().text = $"SPIN ₱{betAmount:F2}";
         }
     }
     void Update()
     {
         if (PlayerManager.Instance != null && balanceText != null)
         {
-            balanceText.text = $"<color=#888888>BALANCE</color>\n<color=#00FFAA><size=50>${PlayerManager.Instance.balance:F2}</size></color>";
+            balanceText.text = $"<color=#888888>BALANCE</color>\n<color=#00FFAA><size=50>₱{PlayerManager.Instance.balance:N2}</size></color>";
         }
     }
     void UpdateState(SlotsGameManager.GameState state)
@@ -71,7 +71,7 @@ public class SlotsUIManager : MonoBehaviour
         {
             statusText.text = "READY TO SPIN!";
             statusText.color = Color.white;
-            spinButton.transform.GetChild(0).GetComponent<Text>().text = $"SPIN ${betAmount:F2}";
+            spinButton.transform.GetChild(0).GetComponent<Text>().text = $"SPIN ₱{betAmount:F2}";
             spinButton.GetComponent<Image>().color = new Color(0.1f, 0.8f, 0.3f);
         }
         else if (state == SlotsGameManager.GameState.Spinning)
@@ -135,7 +135,7 @@ public class SlotsUIManager : MonoBehaviour
         if (payout > 0)
         {
             if (gameObject.activeInHierarchy && CasinoAudio.Instance) CasinoAudio.Instance.PlayWin();
-            statusText.text = $"<color=#00FFAA>YOU WON ${payout}!</color>";
+            statusText.text = $"<color=#00FFAA>YOU WON ₱{payout:N2}!</color>";
         }
         else
         {

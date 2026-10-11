@@ -174,7 +174,7 @@ public class MinesUIManager : MonoBehaviour
         if (payout > 0)
         {
             if (gameObject.activeInHierarchy && CasinoAudio.Instance) CasinoAudio.Instance.PlayWin();
-            statusText.text = $"<color=#00FFAA>YOU WON ${payout:F2}!</color>";
+            statusText.text = $"<color=#00FFAA>YOU WON ₱{payout:F2}!</color>";
         }
         else
         {

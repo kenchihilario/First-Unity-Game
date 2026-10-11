@@ -44,14 +44,14 @@ public class CrashUIManager : MonoBehaviour
         if (betAmountInput != null) betAmountInput.text = betAmount.ToString("F2");
         if (CrashGameManager.Instance.currentState == CrashGameManager.GameState.Waiting)
         {
-            actionButtonText.text = $"BET ${betAmount:F2}";
+            actionButtonText.text = $"BET ₱{betAmount:F2}";
         }
     }
     void Update()
     {
         if (PlayerManager.Instance != null && balanceText != null)
         {
-            balanceText.text = $"<color=#888888>BALANCE</color>\n<color=#00FFAA><size=50>${PlayerManager.Instance.balance:F2}</size></color>";
+            balanceText.text = $"<color=#888888>BALANCE</color>\n<color=#00FFAA><size=50>₱{PlayerManager.Instance.balance:N2}</size></color>";
         }
     }
     void SetupGraph()
@@ -142,7 +142,7 @@ public class CrashUIManager : MonoBehaviour
                 statusText.color = Color.white;
                 multiplierText.text = "1.00x";
                 multiplierText.color = Color.white;
-                actionButtonText.text = $"BET ${betAmount:F2}";
+                actionButtonText.text = $"BET ₱{betAmount:F2}";
                 actionButton.interactable = true;
                 backgroundImage.color = bgWaiting;
                 if (lineRenderer != null) lineRenderer.positionCount = 0;
