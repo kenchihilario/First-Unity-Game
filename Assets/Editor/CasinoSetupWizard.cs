@@ -153,9 +153,27 @@ public class CasinoSetupWizard
         Debug.Log("Casino: Rebuilt Clean Modern PHP Lobby UI successfully!");
     }
 
+    [MenuItem("Casino/Reload Casino Scene", priority = 0)]
+    public static void ReloadCasinoScene()
+    {
+        UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity", UnityEditor.SceneManagement.OpenSceneMode.Single);
+        Debug.Log("Casino: SampleScene reloaded from disk successfully!");
+    }
+
     [MenuItem("Casino/Build WebGL for Vercel", priority = 1)]
     public static void BuildWebGLForVercel()
     {
+        // 1. Ensure the complete SampleScene is loaded
+        var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity", UnityEditor.SceneManagement.OpenSceneMode.Single);
+        if (GameObject.Find("CasinoCanvas") == null)
+        {
+            Debug.LogError("Casino: CasinoCanvas not found in current scene! Aborting build to protect scene.");
+            EditorUtility.DisplayDialog("Error", "CasinoCanvas was not found in the scene! Build aborted.", "OK");
+            return;
+        }
+
+        UnityEditor.SceneManagement.EditorSceneManager.SaveScene(scene);
+
         PlayerSettings.WebGL.template = "PROJECT:FullScreen";
         PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
         PlayerSettings.WebGL.decompressionFallback = true;
@@ -178,6 +196,10 @@ public class CasinoSetupWizard
 
         Debug.Log("Casino: Starting WebGL build for Vercel...");
         var report = BuildPipeline.BuildPlayer(buildPlayerOptions);
+
+        // Always re-open the scene cleanly in editor after build completes
+        UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity", UnityEditor.SceneManagement.OpenSceneMode.Single);
+
         if (report.summary.result == UnityEditor.Build.Reporting.BuildResult.Succeeded)
         {
             string vercelJson = @"{

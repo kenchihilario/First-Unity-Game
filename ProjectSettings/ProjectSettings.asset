@@ -814,7 +814,7 @@ PlayerSettings:
   webGLDebugSymbols: 0
   webGLEmscriptenArgs: --bind
   webGLModulesDirectory: 
-  webGLTemplate: APPLICATION:Default
+  webGLTemplate: PROJECT:FullScreen
   webGLAnalyzeBuildSize: 0
   webGLUseEmbeddedResources: 0
   webGLCompressionFormat: 2
