@@ -39,6 +39,8 @@ public class MinesUIManager : MonoBehaviour
             {
                 tileButtons[i].onClick.AddListener(() => gameManager.ClickTile(index));
                 tileTexts[i] = tileButtons[i].transform.GetChild(0).GetComponent<Text>();
+                if (tileTexts[i] != null) { tileTexts[i].fontSize = 32; tileTexts[i].alignment = TextAnchor.MiddleCenter; }
+                if (tileButtons[i].GetComponent<ButtonHoverJuice>() == null) tileButtons[i].gameObject.AddComponent<ButtonHoverJuice>();
                 ResetTile(i);
             }
         }

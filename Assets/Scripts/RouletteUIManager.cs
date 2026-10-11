@@ -13,9 +13,9 @@ public class RouletteUIManager : MonoBehaviour
     public Button halfBetBtn;
     public Button doubleBetBtn;
     private float betAmount = 10f;
-    private Color redColor = new Color(1f, 0.13f, 0.33f);
-    private Color blackColor = new Color(0.17f, 0.19f, 0.25f);
-    private Color greenColor = new Color(0f, 0.9f, 0.0f);
+    private Color redColor = new Color(0.88f, 0.11f, 0.28f);
+    private Color blackColor = new Color(0.09f, 0.12f, 0.18f);
+    private Color greenColor = new Color(0.06f, 0.78f, 0.45f);
     private Image[] blocks = new Image[50];
     private float blockWidth = 80f;
     void Start()
@@ -36,14 +36,17 @@ public class RouletteUIManager : MonoBehaviour
         if (halfBetBtn != null) halfBetBtn.onClick.AddListener(() => { betAmount = Mathf.Max(1f, Mathf.Floor(betAmount / 2f)); UpdateBetDisplay(); });
         if (doubleBetBtn != null) doubleBetBtn.onClick.AddListener(() => { betAmount = Mathf.Floor(betAmount * 2f); UpdateBetDisplay(); });
         UpdateBetDisplay();
-        betRedBtn.onClick.AddListener(() => { RouletteGameManager.Instance.PlaceBet(1, betAmount); betRedBtn.transform.GetChild(0).GetComponent<Text>().text = "BET PLACED"; });
-        betBlackBtn.onClick.AddListener(() => { RouletteGameManager.Instance.PlaceBet(2, betAmount); betBlackBtn.transform.GetChild(0).GetComponent<Text>().text = "BET PLACED"; });
-        betGreenBtn.onClick.AddListener(() => { RouletteGameManager.Instance.PlaceBet(0, betAmount); betGreenBtn.transform.GetChild(0).GetComponent<Text>().text = "BET PLACED"; });
+        betRedBtn.onClick.AddListener(() => { RouletteGameManager.Instance.PlaceBet(1, betAmount); betRedBtn.transform.GetChild(0).GetComponent<Text>().text = $"<b><size=20>BET PLACED</size></b>\n<size=13>₱{betAmount:F2}</size>"; });
+        betBlackBtn.onClick.AddListener(() => { RouletteGameManager.Instance.PlaceBet(2, betAmount); betBlackBtn.transform.GetChild(0).GetComponent<Text>().text = $"<b><size=20>BET PLACED</size></b>\n<size=13>₱{betAmount:F2}</size>"; });
+        betGreenBtn.onClick.AddListener(() => { RouletteGameManager.Instance.PlaceBet(0, betAmount); betGreenBtn.transform.GetChild(0).GetComponent<Text>().text = $"<b><size=20>BET PLACED</size></b>\n<size=13>₱{betAmount:F2}</size>"; });
         SetupTickerBlocks();
     }
     void SetupTickerBlocks()
     {
         foreach (Transform child in tickerContainer) Destroy(child.gameObject);
+        Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        if (font == null) font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+
         for (int i = 0; i < 50; i++)
         {
             GameObject go = new GameObject("Block_" + i);
@@ -59,17 +62,34 @@ public class RouletteUIManager : MonoBehaviour
             rt.pivot = new Vector2(0.5f, 0.5f);
             rt.sizeDelta = new Vector2(blockWidth - 4f, 0);
             rt.anchoredPosition = new Vector2(i * blockWidth + (blockWidth/2f), 0);
+
+            GameObject numGo = new GameObject("Num", typeof(RectTransform));
+            numGo.transform.SetParent(go.transform, false);
+            Text numTxt = numGo.AddComponent<Text>();
+            numTxt.font = font;
+            numTxt.fontSize = 24;
+            numTxt.fontStyle = FontStyle.Bold;
+            numTxt.alignment = TextAnchor.MiddleCenter;
+            numTxt.text = type.ToString();
+            numTxt.color = Color.white;
+            numTxt.raycastTarget = false;
+            RectTransform nRt = numGo.GetComponent<RectTransform>();
+            nRt.anchorMin = Vector2.zero;
+            nRt.anchorMax = Vector2.one;
+            nRt.offsetMin = Vector2.zero;
+            nRt.offsetMax = Vector2.zero;
+
             blocks[i] = img;
         }
     }
     void UpdateBetDisplay()
     {
         if (betAmountInput != null) betAmountInput.text = betAmount.ToString("F2");
-        if (RouletteGameManager.Instance.currentState == RouletteGameManager.GameState.Betting)
+        if (RouletteGameManager.Instance != null && RouletteGameManager.Instance.currentState == RouletteGameManager.GameState.Betting)
         {
-            betRedBtn.transform.GetChild(0).GetComponent<Text>().text = $"<b>2X</b>\n<size=18>BET ₱{betAmount:F2}</size>";
-            betBlackBtn.transform.GetChild(0).GetComponent<Text>().text = $"<b>2X</b>\n<size=18>BET ₱{betAmount:F2}</size>";
-            betGreenBtn.transform.GetChild(0).GetComponent<Text>().text = $"<b>14X</b>\n<size=18>BET ₱{betAmount:F2}</size>";
+            betRedBtn.transform.GetChild(0).GetComponent<Text>().text = $"<b><size=22>2X</size></b>\n<size=14>RED (1-7)</size>\n<size=12><color=#FECACA>BET ₱{betAmount:F2}</color></size>";
+            betBlackBtn.transform.GetChild(0).GetComponent<Text>().text = $"<b><size=22>2X</size></b>\n<size=14>BLACK (8-14)</size>\n<size=12><color=#CBD5E1>BET ₱{betAmount:F2}</color></size>";
+            betGreenBtn.transform.GetChild(0).GetComponent<Text>().text = $"<b><size=22>14X</size></b>\n<size=14>GREEN (0)</size>\n<size=12><color=#A7F3D0>BET ₱{betAmount:F2}</color></size>";
         }
     }
     void Update()

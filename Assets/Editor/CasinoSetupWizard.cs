@@ -70,9 +70,18 @@ public class CasinoSetupWizard
             EditorUtility.SetDirty(s);
         }
 
+        var allCams = Object.FindObjectsByType<Camera>(FindObjectsInactive.Include);
+        foreach (var cam in allCams)
+        {
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            cam.backgroundColor = new Color(0.043f, 0.055f, 0.078f, 1f);
+            EditorUtility.SetDirty(cam);
+        }
+
         var allGOs = Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include);
         foreach (var go in allGOs)
         {
+            if (go.name == "GameHeader") { Object.DestroyImmediate(go); continue; }
             if (go.name == "BottomNavBar") { go.SetActive(false); EditorUtility.SetDirty(go); }
             if (go.name == "ProfileBtn" && go.transform.parent != null && go.transform.parent.name == "LoggedInGroup") { go.SetActive(false); EditorUtility.SetDirty(go); }
             if (go.name == "LeaderboardBtn") { go.SetActive(false); EditorUtility.SetDirty(go); }
@@ -958,60 +967,45 @@ public class CasinoSetupWizard
 
     static void CreateGameHeaderBar(GameObject parentPanel, Font font, string gameTitle, UnityEngine.Events.UnityAction onBack)
     {
-        GameObject header = new GameObject("GameHeader", typeof(RectTransform));
-        header.transform.SetParent(parentPanel.transform, false);
-        Image bg = AddImageWithSprite(header, new Color(0.059f, 0.082f, 0.133f, 1f));
-        RectTransform hRt = header.GetComponent<RectTransform>();
-        hRt.anchorMin = new Vector2(0, 1); hRt.anchorMax = new Vector2(1, 1);
-        hRt.pivot = new Vector2(0.5f, 1); hRt.anchoredPosition = Vector2.zero;
-        hRt.sizeDelta = new Vector2(0, 90);
-
-        GameObject backBtn = CreateButton(header, "BackBtn", "<b><color=#00FFAA>←</color> LOBBY</b>", font, new Vector2(25, 0), new Vector2(220, 64), new Color(0.122f, 0.161f, 0.216f, 1f), 28);
-        RectTransform bRt = backBtn.GetComponent<RectTransform>();
-        bRt.anchorMin = new Vector2(0, 0.5f); bRt.anchorMax = new Vector2(0, 0.5f); bRt.pivot = new Vector2(0, 0.5f);
-        backBtn.GetComponent<Button>().onClick.AddListener(onBack);
-        backBtn.AddComponent<ButtonHoverJuice>();
-
-        Text titleText = CreateText(header, "Title", $"<b>{gameTitle}</b>", font, 34, Vector2.zero, new Vector2(350, 70));
-        AnchorToCenter(titleText.gameObject);
+        // Unified TopBar navigation handles game title and back button without collision
     }
 
     static void CreateBetSidebarMobile(GameObject parentPanel, Font font, out InputField betInput, out Button halfBtn, out Button doubleBtn, out Button actionBtn)
     {
         GameObject betPanel = new GameObject("BetPanel", typeof(RectTransform));
         betPanel.transform.SetParent(parentPanel.transform, false);
-        Image bg = AddImageWithSprite(betPanel, new Color(0.11f, 0.13f, 0.17f, 1f));
+        Image bg = AddImageWithSprite(betPanel, new Color(0.071f, 0.098f, 0.153f, 0.95f));
         RectTransform rt = betPanel.GetComponent<RectTransform>();
         rt.anchorMin = new Vector2(0, 1); rt.anchorMax = new Vector2(1, 1);
-        rt.pivot = new Vector2(0.5f, 1); rt.sizeDelta = new Vector2(0, 200); rt.anchoredPosition = new Vector2(0, -90);
+        rt.pivot = new Vector2(0.5f, 1); rt.sizeDelta = new Vector2(-60, 64); rt.anchoredPosition = new Vector2(0, -10);
 
-        Text label = CreateText(betPanel, "BetLabel", "Bet Amount (₱)", font, 30, new Vector2(20, -40), new Vector2(400, 40));
-        label.GetComponent<RectTransform>().anchorMin = new Vector2(0, 1); label.GetComponent<RectTransform>().anchorMax = new Vector2(0, 1);
-        label.GetComponent<RectTransform>().pivot = new Vector2(0, 1); label.alignment = TextAnchor.MiddleLeft; label.color = new Color(0.6f, 0.6f, 0.7f, 1f);
+        Text label = CreateText(betPanel, "BetLabel", "<b>BET AMOUNT</b>", font, 14, new Vector2(25, 0), new Vector2(130, 44));
+        label.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0.5f); label.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0.5f);
+        label.GetComponent<RectTransform>().pivot = new Vector2(0, 0.5f); label.alignment = TextAnchor.MiddleLeft; label.color = new Color(0.6f, 0.65f, 0.75f, 1f);
 
         GameObject inputBgGO = new GameObject("InputBg", typeof(RectTransform));
         inputBgGO.transform.SetParent(betPanel.transform, false);
-        Image inputBg = AddImageWithSprite(inputBgGO, new Color(0.08f, 0.09f, 0.12f, 1f));
+        Image inputBg = AddImageWithSprite(inputBgGO, new Color(0.12f, 0.16f, 0.24f, 1f));
         RectTransform inRt = inputBgGO.GetComponent<RectTransform>();
-        inRt.anchorMin = new Vector2(0, 1); inRt.anchorMax = new Vector2(0, 1); inRt.pivot = new Vector2(0, 1);
-        inRt.anchoredPosition = new Vector2(20, -100); inRt.sizeDelta = new Vector2(500, 80);
+        inRt.anchorMin = new Vector2(0, 0.5f); inRt.anchorMax = new Vector2(0, 0.5f); inRt.pivot = new Vector2(0, 0.5f);
+        inRt.anchoredPosition = new Vector2(165, 0); inRt.sizeDelta = new Vector2(280, 44);
 
         GameObject textGO = new GameObject("Text", typeof(RectTransform)); textGO.transform.SetParent(inputBgGO.transform, false);
-        Text text = textGO.AddComponent<Text>(); text.font = font; text.fontSize = 35; text.color = Color.white; text.alignment = TextAnchor.MiddleLeft;
+        Text text = textGO.AddComponent<Text>(); text.font = font; text.fontSize = 18; text.color = Color.white; text.alignment = TextAnchor.MiddleLeft;
         RectTransform textRect = textGO.GetComponent<RectTransform>(); textRect.anchorMin = Vector2.zero; textRect.anchorMax = Vector2.one;
-        textRect.offsetMin = new Vector2(20, 0); textRect.offsetMax = new Vector2(-180, 0);
+        textRect.offsetMin = new Vector2(14, 0); textRect.offsetMax = new Vector2(-120, 0);
 
         betInput = inputBgGO.AddComponent<InputField>();
         betInput.textComponent = text; betInput.text = "10.00"; betInput.contentType = InputField.ContentType.DecimalNumber;
 
-        GameObject halfGO = CreateButton(inputBgGO, "HalfBtn", "1/2", font, new Vector2(-95, 0), new Vector2(80, 60), new Color(0.17f, 0.19f, 0.25f, 1f), 24);
-        AnchorToRight(halfGO, -95); halfBtn = halfGO.GetComponent<Button>();
-        GameObject doubleGO = CreateButton(inputBgGO, "DoubleBtn", "2x", font, new Vector2(-10, 0), new Vector2(80, 60), new Color(0.17f, 0.19f, 0.25f, 1f), 24);
+        GameObject halfGO = CreateButton(inputBgGO, "HalfBtn", "1/2", font, new Vector2(-60, 0), new Vector2(48, 34), new Color(0.2f, 0.25f, 0.35f, 1f), 15);
+        AnchorToRight(halfGO, -60); halfBtn = halfGO.GetComponent<Button>();
+        GameObject doubleGO = CreateButton(inputBgGO, "DoubleBtn", "2x", font, new Vector2(-10, 0), new Vector2(48, 34), new Color(0.2f, 0.25f, 0.35f, 1f), 15);
         AnchorToRight(doubleGO, -10); doubleBtn = doubleGO.GetComponent<Button>();
 
-        GameObject actionGO = CreateButton(betPanel, "ActionBtn", "ACTION", font, new Vector2(-20, -100), new Vector2(400, 80), new Color(0f, 0.9f, 0.0f, 1f), 35);
-        actionGO.GetComponent<RectTransform>().anchorMin = new Vector2(1, 1); actionGO.GetComponent<RectTransform>().anchorMax = new Vector2(1, 1);
-        actionGO.GetComponent<RectTransform>().pivot = new Vector2(1, 1);
+        GameObject actionGO = CreateButton(betPanel, "ActionBtn", "BET ₱10.00", font, new Vector2(-20, 0), new Vector2(240, 46), new Color(0.063f, 0.725f, 0.506f, 1f), 18);
+        actionGO.GetComponent<RectTransform>().anchorMin = new Vector2(1, 0.5f); actionGO.GetComponent<RectTransform>().anchorMax = new Vector2(1, 0.5f);
+        actionGO.GetComponent<RectTransform>().pivot = new Vector2(1, 0.5f);
         actionBtn = actionGO.GetComponent<Button>();
     }
 

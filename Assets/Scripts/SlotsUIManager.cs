@@ -12,11 +12,11 @@ public class SlotsUIManager : MonoBehaviour
     public Button doubleBetBtn;
     private float betAmount = 10f;
     private string[] symbolEmojis = new string[] {
-        "<color=#FF4444>APPLE</color>",
-        "<color=#FFFF00>LEMON</color>",
-        "<color=#FF0055>CHERRY</color>",
-        "<color=#FF5500><b>7 7 7</b></color>",
-        "<color=#00FFFF><b>DIAMOND</b></color>"
+        "<size=54>🍎</size>\n<size=18><color=#EF4444><b>APPLE</b></color></size>",
+        "<size=54>🍋</size>\n<size=18><color=#FACC15><b>LEMON</b></color></size>",
+        "<size=54>🍒</size>\n<size=18><color=#F43F5E><b>CHERRY</b></color></size>",
+        "<size=54>🔥</size>\n<size=18><color=#F97316><b>7 7 7</b></color></size>",
+        "<size=54>💎</size>\n<size=18><color=#38BDF8><b>DIAMOND</b></color></size>"
     };
     void Start()
     {
@@ -44,6 +44,16 @@ public class SlotsUIManager : MonoBehaviour
                     SlotsGameManager.Instance.Spin(betAmount);
                 }
             });
+        }
+        for (int i = 0; i < 3; i++)
+        {
+            if (reels[i] != null)
+            {
+                reels[i].supportRichText = true;
+                reels[i].fontSize = 28;
+                reels[i].alignment = TextAnchor.MiddleCenter;
+                reels[i].text = symbolEmojis[(i + 2) % 5];
+            }
         }
     }
     void UpdateBetDisplay()

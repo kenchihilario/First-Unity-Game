@@ -267,11 +267,26 @@ public class CasinoLobbyManager : MonoBehaviour
             }
         }
 
+        EnsureCanvasBackground();
+
+        GameObject contentArea = GameObject.Find("ContentArea");
+        if (contentArea != null)
+        {
+            RectTransform caRt = contentArea.GetComponent<RectTransform>();
+            if (caRt != null)
+            {
+                caRt.anchorMin = Vector2.zero;
+                caRt.anchorMax = Vector2.one;
+                caRt.offsetMin = Vector2.zero;
+                caRt.offsetMax = new Vector2(0, -75);
+            }
+        }
+
         GameObject heroBanner = GameObject.Find("HeroBanner");
         if (heroBanner != null)
         {
             Image hbImg = heroBanner.GetComponent<Image>();
-            if (hbImg != null) hbImg.color = new Color(0.067f, 0.090f, 0.141f, 1f);
+            if (hbImg != null) hbImg.color = new Color(0.071f, 0.098f, 0.153f, 1f);
 
             RectTransform hbRt = heroBanner.GetComponent<RectTransform>();
             if (hbRt != null)
@@ -279,15 +294,15 @@ public class CasinoLobbyManager : MonoBehaviour
                 hbRt.anchorMin = new Vector2(0, 1);
                 hbRt.anchorMax = new Vector2(1, 1);
                 hbRt.pivot = new Vector2(0.5f, 1);
-                hbRt.offsetMin = new Vector2(60, -170);
-                hbRt.offsetMax = new Vector2(-60, -90);
+                hbRt.offsetMin = new Vector2(50, -155);
+                hbRt.offsetMax = new Vector2(-50, -15);
             }
 
             Text hTitle = heroBanner.transform.Find("HeroTitle")?.GetComponent<Text>();
             if (hTitle != null)
             {
-                hTitle.text = "<b>ORIGINALS & POPULAR GAMES</b>";
-                hTitle.fontSize = 25;
+                hTitle.text = "<b><color=#F8FAFC>CASINO ORIGINALS & POPULAR GAMES</color></b>";
+                hTitle.fontSize = 24;
                 hTitle.alignment = TextAnchor.MiddleCenter;
                 hTitle.raycastTarget = false;
                 RectTransform tRt = hTitle.GetComponent<RectTransform>();
@@ -297,7 +312,7 @@ public class CasinoLobbyManager : MonoBehaviour
             Text hSub = heroBanner.transform.Find("HeroSub")?.GetComponent<Text>();
             if (hSub != null)
             {
-                hSub.text = "<b><color=#10B981>Philippine Peso (PHP)</color>  •  <color=#94A3B8>7 Provably Fair Games  •  Fast Gameplay</color></b>";
+                hSub.text = "<b><color=#10B981>✦ Philippine Peso (PHP)</color>  •  <color=#94A3B8>7 Provably Fair Games  •  Fast Gameplay</color></b>";
                 hSub.fontSize = 15;
                 hSub.alignment = TextAnchor.MiddleCenter;
                 hSub.raycastTarget = false;
@@ -314,8 +329,8 @@ public class CasinoLobbyManager : MonoBehaviour
             {
                 sRt.anchorMin = Vector2.zero;
                 sRt.anchorMax = Vector2.one;
-                sRt.offsetMin = new Vector2(60, 20);
-                sRt.offsetMax = new Vector2(-60, -190);
+                sRt.offsetMin = new Vector2(50, 15);
+                sRt.offsetMax = new Vector2(-50, -170);
             }
         }
 
@@ -325,9 +340,9 @@ public class CasinoLobbyManager : MonoBehaviour
             GridLayoutGroup layout = grid.GetComponent<GridLayoutGroup>();
             if (layout != null)
             {
-                layout.cellSize = new Vector2(360, 360);
+                layout.cellSize = new Vector2(330, 250);
                 layout.spacing = new Vector2(24, 24);
-                layout.padding = new RectOffset(20, 20, 10, 30);
+                layout.padding = new RectOffset(15, 15, 10, 30);
                 layout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
                 layout.constraintCount = 4;
                 layout.childAlignment = TextAnchor.UpperCenter;
@@ -336,14 +351,14 @@ public class CasinoLobbyManager : MonoBehaviour
             RectTransform gRt = grid.GetComponent<RectTransform>();
             if (gRt != null)
             {
-                gRt.sizeDelta = new Vector2(0, 800);
+                gRt.sizeDelta = new Vector2(0, 620);
             }
         }
 
         var cardMeta = new Dictionary<string, (string title, string tag, string sub, string hexColor)>()
         {
             { "CRASH", ("CRASH", "99% RTP", "Multiplier", "10B981") },
-            { "ROULETTE", ("ROULETTE", "CLASSIC", "European", "EF4444") },
+            { "ROULETTE", ("ROULETTE", "14X MAX", "European", "EF4444") },
             { "SLOTS", ("SLOTS", "JACKPOT", "3-Reel Classic", "A855F7") },
             { "MINES", ("MINES", "99% RTP", "Gem Grid", "10B981") },
             { "PLINKO", ("PLINKO", "1000X", "Peg Drop", "6366F1") },
@@ -361,8 +376,8 @@ public class CasinoLobbyManager : MonoBehaviour
             if (cardGo.GetComponent<ButtonHoverJuice>() == null)
             {
                 var juice = cardGo.AddComponent<ButtonHoverJuice>();
-                juice.hoverScale = 1.03f;
-                juice.clickScale = 0.97f;
+                juice.hoverScale = 1.04f;
+                juice.clickScale = 0.96f;
                 juice.speed = 20f;
             }
 
@@ -383,8 +398,26 @@ public class CasinoLobbyManager : MonoBehaviour
             Transform nameBg = cardGo.transform.Find("NameBg");
             if (nameBg != null)
             {
-                // Rainbet style tiles already include the crisp typography cleanly embedded!
-                nameBg.gameObject.SetActive(false);
+                nameBg.gameObject.SetActive(true);
+                RectTransform nbRt = nameBg.GetComponent<RectTransform>();
+                if (nbRt != null)
+                {
+                    nbRt.anchorMin = new Vector2(0, 0);
+                    nbRt.anchorMax = new Vector2(1, 0);
+                    nbRt.pivot = new Vector2(0.5f, 0);
+                    nbRt.anchoredPosition = Vector2.zero;
+                    nbRt.sizeDelta = new Vector2(0, 44);
+                }
+                Image nbImg = nameBg.GetComponent<Image>();
+                if (nbImg != null) nbImg.color = new Color(0.047f, 0.063f, 0.098f, 0.95f);
+
+                Text nTxt = nameBg.GetComponentInChildren<Text>();
+                if (nTxt != null)
+                {
+                    nTxt.text = $"<b><size=16><color=#F8FAFC>{data.title}</color></size></b>  <size=12><color=#{data.hexColor}>[{data.tag}]</color></size>";
+                    nTxt.alignment = TextAnchor.MiddleCenter;
+                    nTxt.raycastTarget = false;
+                }
             }
 
             Graphic[] graphics = cardGo.GetComponentsInChildren<Graphic>(true);
@@ -536,114 +569,150 @@ public class CasinoLobbyManager : MonoBehaviour
         return null;
     }
 
+    public void EnsureCanvasBackground()
+    {
+        GameObject canvasGo = GameObject.Find("CasinoCanvas");
+        if (canvasGo == null) return;
+
+        Transform bgTr = canvasGo.transform.Find("CanvasBackground");
+        if (bgTr == null)
+        {
+            GameObject bgGo = new GameObject("CanvasBackground", typeof(RectTransform));
+            bgGo.transform.SetParent(canvasGo.transform, false);
+            bgGo.transform.SetAsFirstSibling();
+            Image img = bgGo.AddComponent<Image>();
+            img.color = new Color(0.043f, 0.055f, 0.078f, 1f);
+            img.raycastTarget = false;
+            RectTransform rt = bgGo.GetComponent<RectTransform>();
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+        }
+    }
+
     public void ShowLobby()
     {
-        if(lobbyPanel) lobbyPanel.SetActive(true);
-        if(crashPanel) crashPanel.SetActive(false);
-        if(roulettePanel) roulettePanel.SetActive(false);
-        if(slotsPanel) slotsPanel.SetActive(false);
-        if(minesPanel) minesPanel.SetActive(false);
-        if(plinkoPanel) plinkoPanel.SetActive(false);
-        if(dicePanel) dicePanel.SetActive(false);
-        if(blackjackPanel) blackjackPanel.SetActive(false);
+        if (lobbyPanel) lobbyPanel.SetActive(true);
+        if (crashPanel) crashPanel.SetActive(false);
+        if (roulettePanel) roulettePanel.SetActive(false);
+        if (slotsPanel) slotsPanel.SetActive(false);
+        if (minesPanel) minesPanel.SetActive(false);
+        if (plinkoPanel) plinkoPanel.SetActive(false);
+        if (dicePanel) dicePanel.SetActive(false);
+        if (blackjackPanel) blackjackPanel.SetActive(false);
+
+        SetupTopBarNavigation("LOBBY");
         StyleCredibleLobbyUI();
+    }
+
+    public void SetupTopBarNavigation(string currentView)
+    {
+        GameObject topBar = GameObject.Find("TopBar");
+        if (topBar == null) return;
+
+        Transform logoTr = topBar.transform.Find("Logo");
+        Text logo = logoTr != null ? logoTr.GetComponent<Text>() : null;
+        RectTransform lRt = logoTr != null ? logoTr.GetComponent<RectTransform>() : null;
+
+        Transform backTr = topBar.transform.Find("TopBarBackBtn");
+        GameObject backBtnGo;
+        if (backTr == null)
+        {
+            backBtnGo = new GameObject("TopBarBackBtn", typeof(RectTransform));
+            backBtnGo.transform.SetParent(topBar.transform, false);
+
+            Image bImg = backBtnGo.AddComponent<Image>();
+            bImg.color = new Color(0.122f, 0.161f, 0.216f, 1f);
+
+            Button bBtn = backBtnGo.AddComponent<Button>();
+            bBtn.onClick.AddListener(ShowLobby);
+            backBtnGo.AddComponent<ButtonHoverJuice>();
+
+            RectTransform bRt = backBtnGo.GetComponent<RectTransform>();
+            bRt.anchorMin = new Vector2(0, 0.5f);
+            bRt.anchorMax = new Vector2(0, 0.5f);
+            bRt.pivot = new Vector2(0, 0.5f);
+            bRt.anchoredPosition = new Vector2(35, 0);
+            bRt.sizeDelta = new Vector2(140, 46);
+
+            GameObject bTxtGo = new GameObject("Text", typeof(RectTransform));
+            bTxtGo.transform.SetParent(backBtnGo.transform, false);
+            Text bTxt = bTxtGo.AddComponent<Text>();
+            Font f = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            if (f == null) f = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            bTxt.font = f;
+            bTxt.fontSize = 17;
+            bTxt.fontStyle = FontStyle.Bold;
+            bTxt.alignment = TextAnchor.MiddleCenter;
+            bTxt.text = "<b><color=#10B981>←</color> LOBBY</b>";
+            bTxt.color = Color.white;
+            bTxt.raycastTarget = false;
+            RectTransform btRt = bTxtGo.GetComponent<RectTransform>();
+            btRt.anchorMin = Vector2.zero;
+            btRt.anchorMax = Vector2.one;
+            btRt.offsetMin = Vector2.zero;
+            btRt.offsetMax = Vector2.zero;
+        }
+        else
+        {
+            backBtnGo = backTr.gameObject;
+        }
+
+        bool isLobby = string.IsNullOrEmpty(currentView) || currentView.Equals("LOBBY", System.StringComparison.OrdinalIgnoreCase);
+        backBtnGo.SetActive(!isLobby);
+
+        if (logo != null && lRt != null)
+        {
+            if (isLobby)
+            {
+                lRt.anchoredPosition = new Vector2(40, 0);
+                logo.text = "<b><size=28><color=#F59E0B>✦</color> <color=#FFFFFF>KENCHI</color> <color=#10B981>CASINO</color></size></b>";
+            }
+            else
+            {
+                lRt.anchoredPosition = new Vector2(195, 0);
+                logo.text = $"<b><size=22><color=#64748B>ORIGINALS  •  </color><color=#FFFFFF>{currentView}</color></size></b>";
+            }
+        }
     }
 
     public void SetupGameHeaderAndBack(GameObject panel, string gameTitle)
     {
         if (panel == null) return;
 
+        // Clean up redundant internal GameHeader so game elements never collide
         Transform existingHeader = panel.transform.Find("GameHeader");
-        if (existingHeader == null)
+        if (existingHeader != null)
         {
-            GameObject headerGo = new GameObject("GameHeader", typeof(RectTransform));
-            headerGo.transform.SetParent(panel.transform, false);
-            headerGo.transform.SetAsFirstSibling();
-
-            Image bg = headerGo.AddComponent<Image>();
-            bg.color = new Color(0.059f, 0.082f, 0.133f, 1f);
-
-            RectTransform hRt = headerGo.GetComponent<RectTransform>();
-            hRt.anchorMin = new Vector2(0, 1);
-            hRt.anchorMax = new Vector2(1, 1);
-            hRt.pivot = new Vector2(0.5f, 1);
-            hRt.anchoredPosition = Vector2.zero;
-            hRt.sizeDelta = new Vector2(0, 100);
-
-            Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            if (font == null) font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-
-            GameObject backGo = new GameObject("BackBtn", typeof(RectTransform));
-            backGo.transform.SetParent(headerGo.transform, false);
-            Image backImg = backGo.AddComponent<Image>();
-            backImg.color = new Color(0.122f, 0.161f, 0.216f, 1f);
-            Button backBtn = backGo.AddComponent<Button>();
-            backBtn.onClick.AddListener(ShowLobby);
-            backGo.AddComponent<ButtonHoverJuice>();
-
-            RectTransform bRt = backGo.GetComponent<RectTransform>();
-            bRt.anchorMin = new Vector2(0, 0.5f);
-            bRt.anchorMax = new Vector2(0, 0.5f);
-            bRt.pivot = new Vector2(0, 0.5f);
-            bRt.anchoredPosition = new Vector2(25, 0);
-            bRt.sizeDelta = new Vector2(220, 70);
-
-            GameObject backTxtGo = new GameObject("Text", typeof(RectTransform));
-            backTxtGo.transform.SetParent(backGo.transform, false);
-            Text backTxt = backTxtGo.AddComponent<Text>();
-            backTxt.font = font;
-            backTxt.fontSize = 28;
-            backTxt.fontStyle = FontStyle.Bold;
-            backTxt.alignment = TextAnchor.MiddleCenter;
-            backTxt.text = "<b><color=#00FFAA>←</color> LOBBY</b>";
-            backTxt.color = Color.white;
-            RectTransform btRt = backTxtGo.GetComponent<RectTransform>();
-            btRt.anchorMin = Vector2.zero;
-            btRt.anchorMax = Vector2.one;
-            btRt.offsetMin = Vector2.zero;
-            btRt.offsetMax = Vector2.zero;
-
-            GameObject titleGo = new GameObject("Title", typeof(RectTransform));
-            titleGo.transform.SetParent(headerGo.transform, false);
-            Text tText = titleGo.AddComponent<Text>();
-            tText.font = font;
-            tText.fontSize = 34;
-            tText.fontStyle = FontStyle.Bold;
-            tText.alignment = TextAnchor.MiddleCenter;
-            tText.text = $"<b>{gameTitle}</b>";
-            tText.color = Color.white;
-            RectTransform tRt = titleGo.GetComponent<RectTransform>();
-            tRt.anchorMin = new Vector2(0.5f, 0.5f);
-            tRt.anchorMax = new Vector2(0.5f, 0.5f);
-            tRt.pivot = new Vector2(0.5f, 0.5f);
-            tRt.anchoredPosition = Vector2.zero;
-            tRt.sizeDelta = new Vector2(350, 70);
-
-            GameObject balGo = new GameObject("Balance", typeof(RectTransform));
-            balGo.transform.SetParent(headerGo.transform, false);
-            Text balTxt = balGo.AddComponent<Text>();
-            balTxt.font = font;
-            balTxt.fontSize = 28;
-            balTxt.fontStyle = FontStyle.Bold;
-            balTxt.alignment = TextAnchor.MiddleRight;
-            balTxt.text = PlayerManager.Instance != null ? $"<b><color=#00FFAA>₱{PlayerManager.Instance.balance:N2}</color></b>" : "₱0.00";
-            balTxt.color = Color.white;
-            RectTransform balRt = balGo.GetComponent<RectTransform>();
-            balRt.anchorMin = new Vector2(1, 0.5f);
-            balRt.anchorMax = new Vector2(1, 0.5f);
-            balRt.pivot = new Vector2(1, 0.5f);
-            balRt.anchoredPosition = new Vector2(-25, 0);
-            balRt.sizeDelta = new Vector2(260, 70);
-        }
-        else
-        {
-            Text balTxt = existingHeader.Find("Balance")?.GetComponent<Text>();
-            if (balTxt != null && PlayerManager.Instance != null)
-            {
-                balTxt.text = $"<b><color=#00FFAA>₱{PlayerManager.Instance.balance:N2}</color></b>";
-            }
+            if (Application.isPlaying) Destroy(existingHeader.gameObject);
+            else DestroyImmediate(existingHeader.gameObject);
         }
 
+        SetupTopBarNavigation(gameTitle);
+        StyleGamePanel(panel, gameTitle);
+    }
+
+    public void StyleGamePanel(GameObject panel, string gameTitle)
+    {
+        if (panel == null) return;
+
+        Image pImg = panel.GetComponent<Image>();
+        if (pImg != null) pImg.color = new Color(0.043f, 0.055f, 0.078f, 1f);
+
+        RectTransform pRt = panel.GetComponent<RectTransform>();
+        if (pRt != null)
+        {
+            pRt.anchorMin = Vector2.zero;
+            pRt.anchorMax = Vector2.one;
+            pRt.offsetMin = Vector2.zero;
+            pRt.offsetMax = Vector2.zero;
+        }
+
+        Font font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        if (font == null) font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+
+        // Format common BetPanel cleanly at the top of game stage
         Transform betPanel = panel.transform.Find("BetPanel");
         if (betPanel != null)
         {
@@ -653,7 +722,485 @@ public class CasinoLobbyManager : MonoBehaviour
                 bpRt.anchorMin = new Vector2(0, 1);
                 bpRt.anchorMax = new Vector2(1, 1);
                 bpRt.pivot = new Vector2(0.5f, 1);
-                bpRt.anchoredPosition = new Vector2(0, -100);
+                bpRt.anchoredPosition = new Vector2(0, -12);
+                bpRt.sizeDelta = new Vector2(0, 65);
+            }
+
+            Image bpImg = betPanel.GetComponent<Image>();
+            if (bpImg != null) bpImg.color = new Color(0.059f, 0.082f, 0.125f, 0.95f);
+
+            Transform inputBg = betPanel.Find("InputBg");
+            if (inputBg != null)
+            {
+                RectTransform ibRt = inputBg.GetComponent<RectTransform>();
+                if (ibRt != null)
+                {
+                    ibRt.anchorMin = new Vector2(0, 0.5f);
+                    ibRt.anchorMax = new Vector2(0, 0.5f);
+                    ibRt.pivot = new Vector2(0, 0.5f);
+                    ibRt.anchoredPosition = new Vector2(160, 0);
+                    ibRt.sizeDelta = new Vector2(250, 46);
+                }
+                Image ibImg = inputBg.GetComponent<Image>();
+                if (ibImg != null) ibImg.color = new Color(0.102f, 0.141f, 0.208f, 1f);
+            }
+
+            Transform betLabel = betPanel.Find("BetLabel");
+            if (betLabel != null)
+            {
+                RectTransform blRt = betLabel.GetComponent<RectTransform>();
+                if (blRt != null)
+                {
+                    blRt.anchorMin = new Vector2(0, 0.5f);
+                    blRt.anchorMax = new Vector2(0, 0.5f);
+                    blRt.pivot = new Vector2(0, 0.5f);
+                    blRt.anchoredPosition = new Vector2(30, 0);
+                    blRt.sizeDelta = new Vector2(120, 46);
+                }
+                Text blTxt = betLabel.GetComponent<Text>();
+                if (blTxt != null)
+                {
+                    blTxt.text = "<b>BET AMOUNT</b>";
+                    blTxt.fontSize = 14;
+                    blTxt.color = new Color(0.58f, 0.64f, 0.72f);
+                }
+            }
+
+            Transform actionBtn = betPanel.Find("ActionBtn");
+            if (actionBtn != null)
+            {
+                RectTransform abRt = actionBtn.GetComponent<RectTransform>();
+                if (abRt != null)
+                {
+                    abRt.anchorMin = new Vector2(1, 0.5f);
+                    abRt.anchorMax = new Vector2(1, 0.5f);
+                    abRt.pivot = new Vector2(1, 0.5f);
+                    abRt.anchoredPosition = new Vector2(-40, 0);
+                    abRt.sizeDelta = new Vector2(220, 48);
+                }
+                Image abImg = actionBtn.GetComponent<Image>();
+                if (abImg != null) abImg.color = new Color(0.063f, 0.725f, 0.506f, 1f);
+            }
+        }
+
+        // Game specific coordinate styling
+        if (gameTitle == "CRASH")
+        {
+            Transform gc = panel.transform.Find("GraphContainer");
+            if (gc != null)
+            {
+                RectTransform gcRt = gc.GetComponent<RectTransform>();
+                if (gcRt != null)
+                {
+                    gcRt.anchorMin = new Vector2(0.5f, 0.5f);
+                    gcRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    gcRt.pivot = new Vector2(0.5f, 0.5f);
+                    gcRt.anchoredPosition = new Vector2(0, -45);
+                    gcRt.sizeDelta = new Vector2(1100, 560);
+                }
+                Image gcImg = gc.GetComponent<Image>();
+                if (gcImg != null) gcImg.color = new Color(0.043f, 0.059f, 0.086f, 1f);
+
+                Transform mult = gc.Find("MultiplierText");
+                if (mult != null)
+                {
+                    RectTransform mRt = mult.GetComponent<RectTransform>();
+                    if (mRt != null)
+                    {
+                        mRt.anchorMin = new Vector2(0.5f, 0.5f);
+                        mRt.anchorMax = new Vector2(0.5f, 0.5f);
+                        mRt.pivot = new Vector2(0.5f, 0.5f);
+                        mRt.anchoredPosition = new Vector2(0, 45);
+                        mRt.sizeDelta = new Vector2(800, 110);
+                    }
+                    Text mTxt = mult.GetComponent<Text>();
+                    if (mTxt != null) { mTxt.fontSize = 90; mTxt.alignment = TextAnchor.MiddleCenter; }
+                }
+                Transform st = gc.Find("StatusText");
+                if (st != null)
+                {
+                    RectTransform sRt = st.GetComponent<RectTransform>();
+                    if (sRt != null)
+                    {
+                        sRt.anchorMin = new Vector2(0.5f, 0.5f);
+                        sRt.anchorMax = new Vector2(0.5f, 0.5f);
+                        sRt.pivot = new Vector2(0.5f, 0.5f);
+                        sRt.anchoredPosition = new Vector2(0, -45);
+                        sRt.sizeDelta = new Vector2(600, 40);
+                    }
+                    Text sTxt = st.GetComponent<Text>();
+                    if (sTxt != null) { sTxt.fontSize = 22; sTxt.alignment = TextAnchor.MiddleCenter; }
+                }
+            }
+        }
+        else if (gameTitle == "ROULETTE")
+        {
+            Transform st = panel.transform.Find("StatusText");
+            if (st != null)
+            {
+                RectTransform sRt = st.GetComponent<RectTransform>();
+                if (sRt != null)
+                {
+                    sRt.anchorMin = new Vector2(0.5f, 0.5f);
+                    sRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    sRt.pivot = new Vector2(0.5f, 0.5f);
+                    sRt.anchoredPosition = new Vector2(0, 130);
+                    sRt.sizeDelta = new Vector2(600, 40);
+                }
+                Text sTxt = st.GetComponent<Text>();
+                if (sTxt != null) { sTxt.fontSize = 24; sTxt.alignment = TextAnchor.MiddleCenter; }
+            }
+            Transform tb = panel.transform.Find("TickerBg");
+            if (tb != null)
+            {
+                RectTransform tbRt = tb.GetComponent<RectTransform>();
+                if (tbRt != null)
+                {
+                    tbRt.anchorMin = new Vector2(0.5f, 0.5f);
+                    tbRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    tbRt.pivot = new Vector2(0.5f, 0.5f);
+                    tbRt.anchoredPosition = new Vector2(0, 20);
+                    tbRt.sizeDelta = new Vector2(900, 96);
+                }
+                Image tbImg = tb.GetComponent<Image>();
+                if (tbImg != null) tbImg.color = new Color(0.035f, 0.051f, 0.078f, 1f);
+
+                Transform cl = tb.Find("CenterLine");
+                if (cl != null)
+                {
+                    RectTransform clRt = cl.GetComponent<RectTransform>();
+                    if (clRt != null) { clRt.anchoredPosition = Vector2.zero; clRt.sizeDelta = new Vector2(4, 110); }
+                    Image clImg = cl.GetComponent<Image>();
+                    if (clImg != null) clImg.color = new Color(0.96f, 0.62f, 0.04f, 1f);
+                }
+            }
+            Transform rb = panel.transform.Find("RButtonGroup");
+            if (rb != null)
+            {
+                RectTransform rbRt = rb.GetComponent<RectTransform>();
+                if (rbRt != null)
+                {
+                    rbRt.anchorMin = new Vector2(0.5f, 0.5f);
+                    rbRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    rbRt.pivot = new Vector2(0.5f, 0.5f);
+                    rbRt.anchoredPosition = new Vector2(0, -115);
+                    rbRt.sizeDelta = new Vector2(860, 90);
+                }
+                Transform r = rb.Find("BetRed");
+                if (r != null)
+                {
+                    RectTransform rt = r.GetComponent<RectTransform>();
+                    if (rt != null)
+                    {
+                        rt.anchorMin = new Vector2(0.5f, 0.5f); rt.anchorMax = new Vector2(0.5f, 0.5f); rt.pivot = new Vector2(0.5f, 0.5f);
+                        rt.anchoredPosition = new Vector2(-295, 0); rt.sizeDelta = new Vector2(260, 84);
+                    }
+                    Image rImg = r.GetComponent<Image>();
+                    if (rImg != null) rImg.color = new Color(0.86f, 0.15f, 0.22f, 1f);
+                }
+                Transform g = rb.Find("BetGreen");
+                if (g != null)
+                {
+                    RectTransform gt = g.GetComponent<RectTransform>();
+                    if (gt != null)
+                    {
+                        gt.anchorMin = new Vector2(0.5f, 0.5f); gt.anchorMax = new Vector2(0.5f, 0.5f); gt.pivot = new Vector2(0.5f, 0.5f);
+                        gt.anchoredPosition = new Vector2(0, 0); gt.sizeDelta = new Vector2(240, 84);
+                    }
+                    Image gImg = g.GetComponent<Image>();
+                    if (gImg != null) gImg.color = new Color(0.05f, 0.75f, 0.45f, 1f);
+                }
+                Transform b = rb.Find("BetBlack");
+                if (b != null)
+                {
+                    RectTransform bt = b.GetComponent<RectTransform>();
+                    if (bt != null)
+                    {
+                        bt.anchorMin = new Vector2(0.5f, 0.5f); bt.anchorMax = new Vector2(0.5f, 0.5f); bt.pivot = new Vector2(0.5f, 0.5f);
+                        bt.anchoredPosition = new Vector2(295, 0); bt.sizeDelta = new Vector2(260, 84);
+                    }
+                    Image bImg = b.GetComponent<Image>();
+                    if (bImg != null) bImg.color = new Color(0.12f, 0.16f, 0.24f, 1f);
+                }
+            }
+        }
+        else if (gameTitle == "SLOTS")
+        {
+            Transform st = panel.transform.Find("StatusText");
+            if (st != null)
+            {
+                RectTransform sRt = st.GetComponent<RectTransform>();
+                if (sRt != null)
+                {
+                    sRt.anchorMin = new Vector2(0.5f, 0.5f);
+                    sRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    sRt.pivot = new Vector2(0.5f, 0.5f);
+                    sRt.anchoredPosition = new Vector2(0, 185);
+                    sRt.sizeDelta = new Vector2(600, 40);
+                }
+                Text sTxt = st.GetComponent<Text>();
+                if (sTxt != null) { sTxt.fontSize = 24; sTxt.alignment = TextAnchor.MiddleCenter; }
+            }
+            Transform reels = panel.transform.Find("ReelsBg");
+            if (reels != null)
+            {
+                RectTransform rRt = reels.GetComponent<RectTransform>();
+                if (rRt != null)
+                {
+                    rRt.anchorMin = new Vector2(0.5f, 0.5f);
+                    rRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    rRt.pivot = new Vector2(0.5f, 0.5f);
+                    rRt.anchoredPosition = new Vector2(0, 20);
+                    rRt.sizeDelta = new Vector2(780, 250);
+                }
+                Image rImg = reels.GetComponent<Image>();
+                if (rImg != null) rImg.color = new Color(0.059f, 0.082f, 0.125f, 1f);
+
+                string[] rNames = { "Reel1Bg", "Reel2Bg", "Reel3Bg" };
+                float[] xPos = { -245f, 0f, 245f };
+                for (int i = 0; i < 3; i++)
+                {
+                    Transform reelBox = reels.Find(rNames[i]);
+                    if (reelBox != null)
+                    {
+                        RectTransform rboxRt = reelBox.GetComponent<RectTransform>();
+                        if (rboxRt != null)
+                        {
+                            rboxRt.anchorMin = new Vector2(0.5f, 0.5f);
+                            rboxRt.anchorMax = new Vector2(0.5f, 0.5f);
+                            rboxRt.pivot = new Vector2(0.5f, 0.5f);
+                            rboxRt.anchoredPosition = new Vector2(xPos[i], 0);
+                            rboxRt.sizeDelta = new Vector2(220, 220);
+                        }
+                        Image rboxImg = reelBox.GetComponent<Image>();
+                        if (rboxImg != null) rboxImg.color = new Color(0.10f, 0.14f, 0.20f, 1f);
+
+                        Text reelTxt = reelBox.GetComponentInChildren<Text>();
+                        if (reelTxt != null)
+                        {
+                            reelTxt.fontSize = 28;
+                            reelTxt.alignment = TextAnchor.MiddleCenter;
+                            reelTxt.supportRichText = true;
+                        }
+                    }
+                }
+            }
+        }
+        else if (gameTitle == "MINES")
+        {
+            Transform mult = panel.transform.Find("MultiplierText");
+            if (mult != null)
+            {
+                RectTransform mRt = mult.GetComponent<RectTransform>();
+                if (mRt != null)
+                {
+                    mRt.anchorMin = new Vector2(0.5f, 0.5f);
+                    mRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    mRt.pivot = new Vector2(0.5f, 0.5f);
+                    mRt.anchoredPosition = new Vector2(0, 235);
+                    mRt.sizeDelta = new Vector2(400, 45);
+                }
+                Text mTxt = mult.GetComponent<Text>();
+                if (mTxt != null) { mTxt.fontSize = 42; mTxt.alignment = TextAnchor.MiddleCenter; mTxt.color = new Color(0f, 1f, 0.67f); }
+            }
+            Transform st = panel.transform.Find("StatusText");
+            if (st != null)
+            {
+                RectTransform sRt = st.GetComponent<RectTransform>();
+                if (sRt != null)
+                {
+                    sRt.anchorMin = new Vector2(0.5f, 0.5f);
+                    sRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    sRt.pivot = new Vector2(0.5f, 0.5f);
+                    sRt.anchoredPosition = new Vector2(0, 195);
+                    sRt.sizeDelta = new Vector2(500, 32);
+                }
+                Text sTxt = st.GetComponent<Text>();
+                if (sTxt != null) { sTxt.fontSize = 18; sTxt.alignment = TextAnchor.MiddleCenter; }
+            }
+            Transform grid = panel.transform.Find("GridContainer");
+            if (grid != null)
+            {
+                RectTransform gRt = grid.GetComponent<RectTransform>();
+                if (gRt != null)
+                {
+                    gRt.anchorMin = new Vector2(0.5f, 0.5f);
+                    gRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    gRt.pivot = new Vector2(0.5f, 0.5f);
+                    gRt.anchoredPosition = new Vector2(0, -10);
+                    gRt.sizeDelta = new Vector2(390, 390);
+                }
+            }
+            Transform ml = panel.transform.Find("MinesLabel");
+            if (ml != null)
+            {
+                RectTransform mlRt = ml.GetComponent<RectTransform>();
+                if (mlRt != null)
+                {
+                    mlRt.anchorMin = new Vector2(0.5f, 0.5f);
+                    mlRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    mlRt.pivot = new Vector2(0.5f, 0.5f);
+                    mlRt.anchoredPosition = new Vector2(-70, -245);
+                    mlRt.sizeDelta = new Vector2(90, 36);
+                }
+                Text mlTxt = ml.GetComponent<Text>();
+                if (mlTxt != null) { mlTxt.fontSize = 15; mlTxt.color = new Color(0.6f, 0.65f, 0.75f); }
+            }
+            Transform mib = panel.transform.Find("MinesInputBg");
+            if (mib != null)
+            {
+                RectTransform mibRt = mib.GetComponent<RectTransform>();
+                if (mibRt != null)
+                {
+                    mibRt.anchorMin = new Vector2(0.5f, 0.5f);
+                    mibRt.anchorMax = new Vector2(0.5f, 0.5f);
+                    mibRt.pivot = new Vector2(0.5f, 0.5f);
+                    mibRt.anchoredPosition = new Vector2(40, -245);
+                    mibRt.sizeDelta = new Vector2(90, 42);
+                }
+            }
+        }
+        else if (gameTitle == "DICE")
+        {
+            Transform res = panel.transform.Find("ResultText");
+            if (res != null)
+            {
+                RectTransform rRt = res.GetComponent<RectTransform>();
+                if (rRt != null)
+                {
+                    rRt.anchorMin = new Vector2(0.5f, 0.5f); rRt.anchorMax = new Vector2(0.5f, 0.5f); rRt.pivot = new Vector2(0.5f, 0.5f);
+                    rRt.anchoredPosition = new Vector2(0, 140); rRt.sizeDelta = new Vector2(400, 70);
+                }
+            }
+            Transform sb = panel.transform.Find("SliderBg");
+            if (sb != null)
+            {
+                RectTransform sRt = sb.GetComponent<RectTransform>();
+                if (sRt != null)
+                {
+                    sRt.anchorMin = new Vector2(0.5f, 0.5f); sRt.anchorMax = new Vector2(0.5f, 0.5f); sRt.pivot = new Vector2(0.5f, 0.5f);
+                    sRt.anchoredPosition = new Vector2(0, 40); sRt.sizeDelta = new Vector2(780, 32);
+                }
+            }
+            Transform target = panel.transform.Find("TargetText");
+            if (target != null)
+            {
+                RectTransform tRt = target.GetComponent<RectTransform>();
+                if (tRt != null)
+                {
+                    tRt.anchorMin = new Vector2(0.5f, 0.5f); tRt.anchorMax = new Vector2(0.5f, 0.5f); tRt.pivot = new Vector2(0.5f, 0.5f);
+                    tRt.anchoredPosition = new Vector2(-250, -25);
+                }
+            }
+            Transform chance = panel.transform.Find("ChanceText");
+            if (chance != null)
+            {
+                RectTransform cRt = chance.GetComponent<RectTransform>();
+                if (cRt != null)
+                {
+                    cRt.anchorMin = new Vector2(0.5f, 0.5f); cRt.anchorMax = new Vector2(0.5f, 0.5f); cRt.pivot = new Vector2(0.5f, 0.5f);
+                    cRt.anchoredPosition = new Vector2(0, -25);
+                }
+            }
+            Transform mult = panel.transform.Find("MultText");
+            if (mult != null)
+            {
+                RectTransform mRt = mult.GetComponent<RectTransform>();
+                if (mRt != null)
+                {
+                    mRt.anchorMin = new Vector2(0.5f, 0.5f); mRt.anchorMax = new Vector2(0.5f, 0.5f); mRt.pivot = new Vector2(0.5f, 0.5f);
+                    mRt.anchoredPosition = new Vector2(250, -25);
+                }
+            }
+            Transform tog = panel.transform.Find("ToggleOverUnderBtn");
+            if (tog != null)
+            {
+                RectTransform togRt = tog.GetComponent<RectTransform>();
+                if (togRt != null)
+                {
+                    togRt.anchorMin = new Vector2(0.5f, 0.5f); togRt.anchorMax = new Vector2(0.5f, 0.5f); togRt.pivot = new Vector2(0.5f, 0.5f);
+                    togRt.anchoredPosition = new Vector2(0, -95); togRt.sizeDelta = new Vector2(220, 48);
+                }
+            }
+        }
+        else if (gameTitle == "PLINKO")
+        {
+            Transform st = panel.transform.Find("StatusText");
+            if (st != null)
+            {
+                RectTransform sRt = st.GetComponent<RectTransform>();
+                if (sRt != null)
+                {
+                    sRt.anchorMin = new Vector2(0.5f, 0.5f); sRt.anchorMax = new Vector2(0.5f, 0.5f); sRt.pivot = new Vector2(0.5f, 0.5f);
+                    sRt.anchoredPosition = new Vector2(0, 225); sRt.sizeDelta = new Vector2(600, 36);
+                }
+            }
+            Transform bc = panel.transform.Find("BoardContainer");
+            if (bc != null)
+            {
+                RectTransform bRt = bc.GetComponent<RectTransform>();
+                if (bRt != null)
+                {
+                    bRt.anchorMin = new Vector2(0.5f, 0.5f); bRt.anchorMax = new Vector2(0.5f, 0.5f); bRt.pivot = new Vector2(0.5f, 0.5f);
+                    bRt.anchoredPosition = new Vector2(0, 15); bRt.sizeDelta = new Vector2(620, 400);
+                }
+            }
+        }
+        else if (gameTitle == "BLACKJACK")
+        {
+            Transform st = panel.transform.Find("StatusText");
+            if (st != null)
+            {
+                RectTransform sRt = st.GetComponent<RectTransform>();
+                if (sRt != null)
+                {
+                    sRt.anchorMin = new Vector2(0.5f, 0.5f); sRt.anchorMax = new Vector2(0.5f, 0.5f); sRt.pivot = new Vector2(0.5f, 0.5f);
+                    sRt.anchoredPosition = new Vector2(0, 215); sRt.sizeDelta = new Vector2(600, 36);
+                }
+            }
+            Transform dc = panel.transform.Find("DealerCards");
+            if (dc != null)
+            {
+                RectTransform dRt = dc.GetComponent<RectTransform>();
+                if (dRt != null)
+                {
+                    dRt.anchorMin = new Vector2(0.5f, 0.5f); dRt.anchorMax = new Vector2(0.5f, 0.5f); dRt.pivot = new Vector2(0.5f, 0.5f);
+                    dRt.anchoredPosition = new Vector2(0, 120); dRt.sizeDelta = new Vector2(600, 110);
+                }
+            }
+            Transform pc = panel.transform.Find("PlayerCards");
+            if (pc != null)
+            {
+                RectTransform pCardsRt = pc.GetComponent<RectTransform>();
+                if (pCardsRt != null)
+                {
+                    pCardsRt.anchorMin = new Vector2(0.5f, 0.5f); pCardsRt.anchorMax = new Vector2(0.5f, 0.5f); pCardsRt.pivot = new Vector2(0.5f, 0.5f);
+                    pCardsRt.anchoredPosition = new Vector2(0, -15); pCardsRt.sizeDelta = new Vector2(600, 110);
+                }
+            }
+            Transform hit = panel.transform.Find("HitBtn");
+            if (hit != null)
+            {
+                RectTransform hRt = hit.GetComponent<RectTransform>();
+                if (hRt != null)
+                {
+                    hRt.anchorMin = new Vector2(0.5f, 0.5f); hRt.anchorMax = new Vector2(0.5f, 0.5f); hRt.pivot = new Vector2(0.5f, 0.5f);
+                    hRt.anchoredPosition = new Vector2(-110, -140); hRt.sizeDelta = new Vector2(160, 50);
+                }
+                Image hImg = hit.GetComponent<Image>();
+                if (hImg != null) hImg.color = new Color(0.145f, 0.388f, 0.922f, 1f);
+            }
+            Transform stand = panel.transform.Find("StandBtn");
+            if (stand != null)
+            {
+                RectTransform sRt = stand.GetComponent<RectTransform>();
+                if (sRt != null)
+                {
+                    sRt.anchorMin = new Vector2(0.5f, 0.5f); sRt.anchorMax = new Vector2(0.5f, 0.5f); sRt.pivot = new Vector2(0.5f, 0.5f);
+                    sRt.anchoredPosition = new Vector2(110, -140); sRt.sizeDelta = new Vector2(160, 50);
+                }
+                Image sImg = stand.GetComponent<Image>();
+                if (sImg != null) sImg.color = new Color(0.96f, 0.62f, 0.04f, 1f);
             }
         }
     }

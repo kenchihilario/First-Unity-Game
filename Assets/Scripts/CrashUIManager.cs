@@ -14,9 +14,9 @@ public class CrashUIManager : MonoBehaviour
     public Button halfBetBtn;
     public Button doubleBetBtn;
     private float betAmount = 10f;
-    private Color bgWaiting = new Color(0.1f, 0.1f, 0.15f);
-    private Color bgPlaying = new Color(0.1f, 0.2f, 0.1f);
-    private Color bgCrashed = new Color(0.2f, 0.1f, 0.1f);
+    private Color bgWaiting = new Color(0.043f, 0.055f, 0.078f, 1f);
+    private Color bgPlaying = new Color(0.039f, 0.063f, 0.094f, 1f);
+    private Color bgCrashed = new Color(0.098f, 0.039f, 0.047f, 1f);
     private LineRenderer lineRenderer;
     private GameObject rocketDot;
     void Start()
@@ -60,10 +60,10 @@ public class CrashUIManager : MonoBehaviour
         lineGo.transform.SetParent(graphContainer, false);
         lineRenderer = lineGo.AddComponent<LineRenderer>();
         lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-        lineRenderer.startColor = new Color(0.2f, 0.8f, 1f);
-        lineRenderer.endColor = new Color(0.8f, 0.2f, 1f);
-        lineRenderer.startWidth = 10f;
-        lineRenderer.endWidth = 10f;
+        lineRenderer.startColor = new Color(0.063f, 0.725f, 0.506f, 0.8f);
+        lineRenderer.endColor = new Color(0.2f, 0.9f, 1f, 1f);
+        lineRenderer.startWidth = 8f;
+        lineRenderer.endWidth = 8f;
         lineRenderer.positionCount = 0;
         lineRenderer.useWorldSpace = false;
         RectTransform rt = lineGo.AddComponent<RectTransform>();
@@ -71,12 +71,28 @@ public class CrashUIManager : MonoBehaviour
         rt.anchorMax = Vector2.one;
         rt.offsetMin = Vector2.zero;
         rt.offsetMax = Vector2.zero;
+
         rocketDot = new GameObject("RocketDot");
         rocketDot.transform.SetParent(graphContainer, false);
         Image dotImg = rocketDot.AddComponent<Image>();
-        dotImg.color = Color.white;
+        dotImg.color = new Color(0.063f, 0.725f, 0.506f, 0.2f);
         RectTransform dotRt = rocketDot.GetComponent<RectTransform>();
-        dotRt.sizeDelta = new Vector2(30, 30);
+        dotRt.sizeDelta = new Vector2(40, 40);
+
+        GameObject rIcon = new GameObject("Icon", typeof(RectTransform));
+        rIcon.transform.SetParent(rocketDot.transform, false);
+        Text rTxt = rIcon.AddComponent<Text>();
+        Font f = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        if (f == null) f = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        rTxt.font = f;
+        rTxt.fontSize = 28;
+        rTxt.alignment = TextAnchor.MiddleCenter;
+        rTxt.text = "🚀";
+        rTxt.raycastTarget = false;
+        RectTransform riRt = rIcon.GetComponent<RectTransform>();
+        riRt.anchorMin = Vector2.zero; riRt.anchorMax = Vector2.one;
+        riRt.offsetMin = Vector2.zero; riRt.offsetMax = Vector2.zero;
+
         rocketDot.SetActive(false);
     }
     void OnActionButtonClicked()
