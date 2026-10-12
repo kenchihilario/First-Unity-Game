@@ -4,7 +4,7 @@
     { "source": "/", "destination": "/WebGLBuild/index.html" },
     { "source": "/Build/(.*)", "destination": "/WebGLBuild/Build/$1" },
     { "source": "/TemplateData/(.*)", "destination": "/WebGLBuild/TemplateData/$1" },
-    { "source": "/((?!WebGLBuild/).*)", "destination": "/WebGLBuild/$1" }
+    { "source": "/((?!WebGLBuild/|_vercel/).*)", "destination": "/WebGLBuild/$1" }
   ],
   "headers": [
     {
