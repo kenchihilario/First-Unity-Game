@@ -58,6 +58,19 @@ public class CasinoLobbyManager : MonoBehaviour
         }
     }
 
+    private struct CardMetaItem
+    {
+        public string key;
+        public string title;
+        public string tag;
+        public string sub;
+        public string hexColor;
+        public CardMetaItem(string k, string t, string tg, string s, string h)
+        {
+            key = k; title = t; tag = tg; sub = s; hexColor = h;
+        }
+    }
+
     public void StyleCredibleLobbyUI()
     {
         if (_isStyling) return;
@@ -352,19 +365,6 @@ public class CasinoLobbyManager : MonoBehaviour
             if (gRt != null)
             {
                 gRt.sizeDelta = new Vector2(0, 620);
-            }
-        }
-
-        struct CardMetaItem
-        {
-            public string key;
-            public string title;
-            public string tag;
-            public string sub;
-            public string hexColor;
-            public CardMetaItem(string k, string t, string tg, string s, string h)
-            {
-                key = k; title = t; tag = tg; sub = s; hexColor = h;
             }
         }
 
