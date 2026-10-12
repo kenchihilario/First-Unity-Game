@@ -86,13 +86,13 @@ public class BlackjackGameManager : MonoBehaviour
     public void StartGame(float betAmount)
     {
         if (gameActive) return;
-        if (PlayerManager.Instance.balance < betAmount)
+        if (betAmount <= 0) return;
+        if (PlayerManager.Instance != null && PlayerManager.Instance.balance < betAmount)
         {
-            Debug.Log("Insufficient balance");
             return;
         }
 
-        PlayerManager.Instance.Withdraw(betAmount);
+        if (PlayerManager.Instance != null) PlayerManager.Instance.Withdraw(betAmount);
         currentBet = betAmount;
         gameActive = true;
 
@@ -154,12 +154,12 @@ public class BlackjackGameManager : MonoBehaviour
         if (push)
         {
             payout = currentBet;
-            PlayerManager.Instance.Deposit(payout);
+            if (PlayerManager.Instance != null) PlayerManager.Instance.Deposit(payout);
         }
         else if (playerWon)
         {
             payout = blackjack ? currentBet * 2.5f : currentBet * 2f;
-            PlayerManager.Instance.Deposit(payout);
+            if (PlayerManager.Instance != null) PlayerManager.Instance.Deposit(payout);
         }
 
         OnGameOver?.Invoke(dealerHand, GetScore(dealerHand), playerWon, payout);

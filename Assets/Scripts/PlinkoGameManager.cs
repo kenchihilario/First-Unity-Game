@@ -2,8 +2,11 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
 public class PlinkoGameManager : MonoBehaviour
 {
+    public static PlinkoGameManager Instance;
+
     public enum GameState { Idle, Dropping, Result }
     public GameState currentState = GameState.Idle;
     public int rows = 8;
@@ -11,10 +14,16 @@ public class PlinkoGameManager : MonoBehaviour
     public float[] multipliers = new float[] { 29f, 4f, 1.5f, 0.3f, 0.2f, 0.3f, 1.5f, 4f, 29f };
     public event Action<float, int[]> OnBallPathGenerated;
     public event Action<float> OnBallLanded;
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+    }
+
     public void DropBall(float betAmount)
     {
         if (betAmount <= 0) return;
-        if (PlayerManager.Instance.PlaceBet(betAmount))
+        if (PlayerManager.Instance != null && PlayerManager.Instance.PlaceBet(betAmount))
         {
             int[] path = new int[rows];
             int finalSlot = 0;
@@ -30,12 +39,15 @@ public class PlinkoGameManager : MonoBehaviour
 
     public void BallReachedBottom(float betAmount, int finalSlot)
     {
-        float mult = multipliers[finalSlot];
-        float payout = betAmount * mult;
-        if (payout > 0)
+        if (finalSlot >= 0 && finalSlot < multipliers.Length)
         {
-            PlayerManager.Instance.AddWinnings(payout);
+            float mult = multipliers[finalSlot];
+            float payout = betAmount * mult;
+            if (payout > 0 && PlayerManager.Instance != null)
+            {
+                PlayerManager.Instance.AddWinnings(payout);
+            }
+            OnBallLanded?.Invoke(payout);
         }
-        OnBallLanded?.Invoke(payout);
     }
 }

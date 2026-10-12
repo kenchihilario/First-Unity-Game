@@ -19,36 +19,102 @@ public class PlinkoUIManager : MonoBehaviour
     public Text[] slotTexts;
     void Start()
     {
-        gameManager = FindAnyObjectByType<PlinkoGameManager>();
+        if (boardContainer == null) boardContainer = transform.Find("BoardContainer");
+        if (actionButton == null)
+        {
+            Transform ab = transform.Find("BetPanel/ActionBtn");
+            if (ab != null) actionButton = ab.GetComponent<Button>();
+        }
+        if (statusText == null)
+        {
+            Transform st = transform.Find("StatusText");
+            if (st != null) statusText = st.GetComponent<Text>();
+        }
+        if (betAmountInput == null)
+        {
+            Transform inp = transform.Find("BetPanel/InputBg");
+            if (inp != null) betAmountInput = inp.GetComponent<InputField>();
+        }
+        if (halfBetBtn == null)
+        {
+            Transform hb = transform.Find("BetPanel/InputBg/HalfBtn");
+            if (hb != null) halfBetBtn = hb.GetComponent<Button>();
+        }
+        if (doubleBetBtn == null)
+        {
+            Transform db = transform.Find("BetPanel/InputBg/DoubleBtn");
+            if (db != null) doubleBetBtn = db.GetComponent<Button>();
+        }
+
+        if (gameManager == null) gameManager = FindAnyObjectByType<PlinkoGameManager>();
+        if (gameManager == null) gameManager = PlinkoGameManager.Instance;
         if (gameManager != null)
         {
+            gameManager.OnBallPathGenerated -= AnimateBall;
             gameManager.OnBallPathGenerated += AnimateBall;
+            gameManager.OnBallLanded -= HandleCashOut;
             gameManager.OnBallLanded += HandleCashOut;
         }
         if (actionButton != null)
         {
+            actionButton.onClick.RemoveAllListeners();
             actionButton.onClick.AddListener(OnActionClicked);
         }
-        if (halfBetBtn != null) halfBetBtn.onClick.AddListener(() => ModifyBet(0.5f));
-        if (doubleBetBtn != null) doubleBetBtn.onClick.AddListener(() => ModifyBet(2f));
-        pegPositions = new Vector2[gameManager.rows][];
-        for (int r = 0; r < gameManager.rows; r++)
+        if (halfBetBtn != null)
+        {
+            halfBetBtn.onClick.RemoveAllListeners();
+            halfBetBtn.onClick.AddListener(() => ModifyBet(0.5f));
+        }
+        if (doubleBetBtn != null)
+        {
+            doubleBetBtn.onClick.RemoveAllListeners();
+            doubleBetBtn.onClick.AddListener(() => ModifyBet(2f));
+        }
+
+        int rows = gameManager != null ? gameManager.rows : 8;
+        pegPositions = new Vector2[rows][];
+        for (int r = 0; r < rows; r++)
         {
             int pegsInRow = r + 1;
             pegPositions[r] = new Vector2[pegsInRow];
             for (int c = 0; c < pegsInRow; c++)
             {
-                Transform peg = boardContainer.Find($"Peg_{r}_{c}");
+                Transform peg = boardContainer != null ? boardContainer.Find($"Peg_{r}_{c}") : null;
                 if (peg != null)
                 {
                     pegPositions[r][c] = peg.GetComponent<RectTransform>().anchoredPosition;
                 }
             }
         }
+
+        if (slotTexts == null || slotTexts.Length == 0)
+        {
+            if (boardContainer != null)
+            {
+                List<Text> stList = new List<Text>();
+                for (int i = 0; i <= rows; i++)
+                {
+                    Transform s = boardContainer.Find($"Slot_{i}");
+                    if (s != null) stList.Add(s.GetComponentInChildren<Text>(true));
+                }
+                slotTexts = stList.ToArray();
+            }
+        }
+
         UpdateState(PlinkoGameManager.GameState.Idle);
+    }
+    void OnDestroy()
+    {
+        if (gameManager != null)
+        {
+            gameManager.OnBallPathGenerated -= AnimateBall;
+            gameManager.OnBallLanded -= HandleCashOut;
+        }
     }
     void OnActionClicked()
     {
+        if (gameManager == null) gameManager = FindAnyObjectByType<PlinkoGameManager>();
+        if (gameManager == null) return;
         float bet = 10f;
         if (betAmountInput != null && float.TryParse(betAmountInput.text, out float b)) bet = b;
         gameManager.DropBall(bet);
@@ -62,10 +128,13 @@ public class PlinkoUIManager : MonoBehaviour
     }
     void UpdateState(PlinkoGameManager.GameState state)
     {
-
-        Text actionText = actionButton.transform.GetChild(0).GetComponent<Text>();
-        actionText.text = "DROP BALL";
-        actionButton.GetComponent<Image>().color = new Color(0f, 0.9f, 0.0f, 1f);
+        if (actionButton != null && actionButton.transform.childCount > 0)
+        {
+            Text actionText = actionButton.transform.GetChild(0).GetComponent<Text>();
+            if (actionText != null) actionText.text = "DROP BALL";
+            Image img = actionButton.GetComponent<Image>();
+            if (img != null) img.color = new Color(0f, 0.9f, 0.0f, 1f);
+        }
     }
     void AnimateBall(float betAmount, int[] path)
     {
@@ -144,33 +213,33 @@ public class PlinkoUIManager : MonoBehaviour
         }
 
         ballRt.localScale = new Vector3(1.3f, 0.7f, 1f);
-        if (slotTexts[currentCol] != null)
+        if (slotTexts != null && currentCol >= 0 && currentCol < slotTexts.Length && slotTexts[currentCol] != null)
         {
             slotTexts[currentCol].transform.localScale = new Vector3(1.5f, 1.5f, 1f);
             slotTexts[currentCol].color = activeSlotColor;
         }
         if (gameObject.activeInHierarchy && CasinoAudio.Instance)
         {
-            if (currentCol == 0 || currentCol == gameManager.rows) CasinoAudio.Instance.PlayWin();
+            if (currentCol == 0 || (gameManager != null && currentCol == gameManager.rows)) CasinoAudio.Instance.PlayWin();
             else CasinoAudio.Instance.PlayCoin();
         }
 
         yield return new WaitForSeconds(0.1f);
         ballRt.localScale = Vector3.one;
-        if (slotTexts[currentCol] != null) slotTexts[currentCol].transform.localScale = Vector3.one;
+        if (slotTexts != null && currentCol >= 0 && currentCol < slotTexts.Length && slotTexts[currentCol] != null)
+        {
+            slotTexts[currentCol].transform.localScale = Vector3.one;
+        }
 
         Destroy(ball, 1f);
-        gameManager.BallReachedBottom(betAmount, currentCol);
+        if (gameManager != null) gameManager.BallReachedBottom(betAmount, currentCol);
     }
     void HandleCashOut(float payout)
     {
-        if (payout > 0)
+        if (statusText != null)
         {
-            statusText.text = $"<color=#00FFAA>YOU WON ₱{payout:F2}!</color>";
-        }
-        else
-        {
-            statusText.text = $"<color=#FF4444>WON ₱0.00.</color>";
+            if (payout > 0) statusText.text = $"<color=#00FFAA>YOU WON ₱{payout:F2}!</color>";
+            else statusText.text = $"<color=#FF4444>WON ₱0.00.</color>";
         }
     }
 }

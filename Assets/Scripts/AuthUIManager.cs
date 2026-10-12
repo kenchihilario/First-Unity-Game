@@ -53,6 +53,17 @@ public class AuthUIManager : MonoBehaviour
             inputModule.AssignDefaultActions();
         }
 #endif
+        if (authOverlay == null) authOverlay = GameObject.Find("AuthOverlay");
+        if (bankOverlay == null) bankOverlay = GameObject.Find("BankOverlay");
+        if (accSettingsOverlay == null) accSettingsOverlay = GameObject.Find("AccountSettingsOverlay");
+        if (loginPanel == null && authOverlay != null) loginPanel = authOverlay.transform.Find("LoginPanel")?.gameObject;
+        if (registerPanel == null && authOverlay != null) registerPanel = authOverlay.transform.Find("RegisterPanel")?.gameObject;
+        if (depositPanel == null && bankOverlay != null) depositPanel = bankOverlay.transform.Find("DepositPanel")?.gameObject;
+        if (withdrawPanel == null && bankOverlay != null) withdrawPanel = bankOverlay.transform.Find("WithdrawPanel")?.gameObject;
+
+        if (depositAmountInput == null && depositPanel != null) depositAmountInput = depositPanel.GetComponentInChildren<InputField>(true);
+        if (withdrawAmountInput == null && withdrawPanel != null) withdrawAmountInput = withdrawPanel.GetComponentInChildren<InputField>(true);
+
         WireAllButtons();
 
         if (AuthManager.Instance != null)
@@ -66,6 +77,14 @@ public class AuthUIManager : MonoBehaviour
             HandleLoginState(false);
         }
         CloseAll();
+    }
+
+    void OnDestroy()
+    {
+        if (AuthManager.Instance != null)
+        {
+            AuthManager.Instance.OnLoginStateChanged -= HandleLoginState;
+        }
     }
 
     public void WireAllButtons()
@@ -265,9 +284,9 @@ public class AuthUIManager : MonoBehaviour
 
     public void OnDepositSubmit()
     {
-        if (float.TryParse(depositAmountInput.text, out float amt) && amt > 0)
+        if (depositAmountInput != null && float.TryParse(depositAmountInput.text, out float amt) && amt > 0)
         {
-            PlayerManager.Instance.Deposit(amt);
+            if (PlayerManager.Instance != null) PlayerManager.Instance.Deposit(amt);
             CloseAll();
         }
         else if (bankErrorText != null) bankErrorText.text = "Invalid amount!";
@@ -275,9 +294,9 @@ public class AuthUIManager : MonoBehaviour
 
     public void OnWithdrawSubmit()
     {
-        if (float.TryParse(withdrawAmountInput.text, out float amt) && amt > 0)
+        if (withdrawAmountInput != null && float.TryParse(withdrawAmountInput.text, out float amt) && amt > 0)
         {
-            if (PlayerManager.Instance.balance >= amt)
+            if (PlayerManager.Instance != null && PlayerManager.Instance.balance >= amt)
             {
                 PlayerManager.Instance.Withdraw(amt);
                 CloseAll();
@@ -289,6 +308,6 @@ public class AuthUIManager : MonoBehaviour
 
     public void OnLogoutClick()
     {
-        AuthManager.Instance.Logout();
+        if (AuthManager.Instance != null) AuthManager.Instance.Logout();
     }
 }

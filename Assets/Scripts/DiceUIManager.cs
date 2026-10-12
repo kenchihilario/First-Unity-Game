@@ -21,17 +21,98 @@ public class DiceUIManager : MonoBehaviour
 
     void Start()
     {
+        if (rollBtn == null)
+        {
+            Transform rb = transform.Find("BetPanel/ActionBtn");
+            if (rb != null) rollBtn = rb.GetComponent<Button>();
+        }
+        if (betAmountInput == null)
+        {
+            Transform inp = transform.Find("BetPanel/InputBg");
+            if (inp != null) betAmountInput = inp.GetComponent<InputField>();
+        }
+        if (halfBetBtn == null)
+        {
+            Transform hb = transform.Find("BetPanel/InputBg/HalfBtn");
+            if (hb != null) halfBetBtn = hb.GetComponent<Button>();
+        }
+        if (doubleBetBtn == null)
+        {
+            Transform db = transform.Find("BetPanel/InputBg/DoubleBtn");
+            if (db != null) doubleBetBtn = db.GetComponent<Button>();
+        }
+        if (statusText == null)
+        {
+            Transform st = transform.Find("StatusText");
+            if (st != null) statusText = st.GetComponent<Text>();
+        }
+        if (resultText == null)
+        {
+            Transform rt = transform.Find("ResultText");
+            if (rt != null) resultText = rt.GetComponent<Text>();
+        }
+        if (targetText == null)
+        {
+            Transform tt = transform.Find("TargetText");
+            if (tt != null) targetText = tt.GetComponent<Text>();
+        }
+        if (multiplierText == null)
+        {
+            Transform mt = transform.Find("MultText");
+            if (mt != null) multiplierText = mt.GetComponent<Text>();
+        }
+        if (winChanceText == null)
+        {
+            Transform ct = transform.Find("ChanceText");
+            if (ct != null) winChanceText = ct.GetComponent<Text>();
+        }
+        if (targetSlider == null)
+        {
+            Transform sb = transform.Find("SliderBg");
+            if (sb != null) targetSlider = sb.GetComponentInChildren<Slider>(true);
+        }
+        if (toggleOverUnderBtn == null)
+        {
+            Transform tog = transform.Find("ToggleOverUnderBtn");
+            if (tog != null) toggleOverUnderBtn = tog.GetComponent<Button>();
+        }
+        if (toggleOverUnderText == null && toggleOverUnderBtn != null)
+        {
+            toggleOverUnderText = toggleOverUnderBtn.GetComponentInChildren<Text>(true);
+        }
+
         if (DiceGameManager.Instance != null)
         {
+            DiceGameManager.Instance.OnRollComplete -= HandleRollComplete;
             DiceGameManager.Instance.OnRollComplete += HandleRollComplete;
         }
 
-        if (rollBtn != null) rollBtn.onClick.AddListener(OnRollClicked);
-        if (toggleOverUnderBtn != null) toggleOverUnderBtn.onClick.AddListener(ToggleOverUnder);
-        if (targetSlider != null) targetSlider.onValueChanged.AddListener(UpdateTargetUI);
+        if (rollBtn != null)
+        {
+            rollBtn.onClick.RemoveAllListeners();
+            rollBtn.onClick.AddListener(OnRollClicked);
+        }
+        if (toggleOverUnderBtn != null)
+        {
+            toggleOverUnderBtn.onClick.RemoveAllListeners();
+            toggleOverUnderBtn.onClick.AddListener(ToggleOverUnder);
+        }
+        if (targetSlider != null)
+        {
+            targetSlider.onValueChanged.RemoveAllListeners();
+            targetSlider.onValueChanged.AddListener(UpdateTargetUI);
+        }
 
-        if (halfBetBtn != null) halfBetBtn.onClick.AddListener(() => AdjustBet(0.5f));
-        if (doubleBetBtn != null) doubleBetBtn.onClick.AddListener(() => AdjustBet(2f));
+        if (halfBetBtn != null)
+        {
+            halfBetBtn.onClick.RemoveAllListeners();
+            halfBetBtn.onClick.AddListener(() => AdjustBet(0.5f));
+        }
+        if (doubleBetBtn != null)
+        {
+            doubleBetBtn.onClick.RemoveAllListeners();
+            doubleBetBtn.onClick.AddListener(() => AdjustBet(2f));
+        }
 
         if (targetSlider != null)
         {
@@ -39,6 +120,13 @@ public class DiceUIManager : MonoBehaviour
             targetSlider.maxValue = 98f;
             targetSlider.value = 50f;
             UpdateTargetUI(targetSlider.value);
+        }
+    }
+    void OnDestroy()
+    {
+        if (DiceGameManager.Instance != null)
+        {
+            DiceGameManager.Instance.OnRollComplete -= HandleRollComplete;
         }
     }
 

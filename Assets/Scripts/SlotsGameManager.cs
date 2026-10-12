@@ -44,11 +44,11 @@ public class SlotsGameManager : MonoBehaviour
 
             float payout = 0;
             if (result[0] == result[1] && result[1] == result[2]) {
-                if (result[0] == 4) payout = currentBet * 500f; // 7 7 7 jackpot
-                else if (result[0] == 3) payout = currentBet * 100f; // diamonds
-                else if (result[0] == 2) payout = currentBet * 25f; // cherries
-                else if (result[0] == 1) payout = currentBet * 15f; // lemons
-                else payout = currentBet * 5f; // apples
+                if (result[0] == 4) payout = currentBet * 500f;
+                else if (result[0] == 3) payout = currentBet * 100f;
+                else if (result[0] == 2) payout = currentBet * 25f;
+                else if (result[0] == 1) payout = currentBet * 15f;
+                else payout = currentBet * 5f;
             }
             if (payout > 0)
             {

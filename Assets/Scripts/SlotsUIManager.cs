@@ -20,35 +20,64 @@ public class SlotsUIManager : MonoBehaviour
     };
     void Start()
     {
+        EnsureReferences();
         if (SlotsGameManager.Instance != null)
         {
+            SlotsGameManager.Instance.OnStateChanged -= UpdateState;
             SlotsGameManager.Instance.OnStateChanged += UpdateState;
+            SlotsGameManager.Instance.OnSpinResult -= SetFinalReels;
             SlotsGameManager.Instance.OnSpinResult += SetFinalReels;
+            SlotsGameManager.Instance.OnPayout -= ShowPayout;
             SlotsGameManager.Instance.OnPayout += ShowPayout;
         }
         if (betAmountInput != null)
         {
+            betAmountInput.gameObject.SetActive(true);
+            betAmountInput.onEndEdit.RemoveAllListeners();
             betAmountInput.onEndEdit.AddListener(val => {
                 if (float.TryParse(val, out float res)) betAmount = Mathf.Max(1f, res);
                 UpdateBetDisplay();
             });
         }
-        if (halfBetBtn != null) halfBetBtn.onClick.AddListener(() => { betAmount = Mathf.Max(1f, Mathf.Floor(betAmount / 2f)); UpdateBetDisplay(); });
-        if (doubleBetBtn != null) doubleBetBtn.onClick.AddListener(() => { betAmount = Mathf.Floor(betAmount * 2f); UpdateBetDisplay(); });
+        if (halfBetBtn != null)
+        {
+            halfBetBtn.gameObject.SetActive(true);
+            halfBetBtn.onClick.RemoveAllListeners();
+            halfBetBtn.onClick.AddListener(() => { betAmount = Mathf.Max(1f, Mathf.Floor(betAmount / 2f)); UpdateBetDisplay(); });
+        }
+        if (doubleBetBtn != null)
+        {
+            doubleBetBtn.gameObject.SetActive(true);
+            doubleBetBtn.onClick.RemoveAllListeners();
+            doubleBetBtn.onClick.AddListener(() => { betAmount = Mathf.Floor(betAmount * 2f); UpdateBetDisplay(); });
+        }
         UpdateBetDisplay();
         if (spinButton != null)
         {
+            spinButton.gameObject.SetActive(true);
+            spinButton.onClick.RemoveAllListeners();
             spinButton.onClick.AddListener(() => {
-                if (SlotsGameManager.Instance.currentState == SlotsGameManager.GameState.Idle)
+                if (SlotsGameManager.Instance != null && SlotsGameManager.Instance.currentState == SlotsGameManager.GameState.Idle)
                 {
                     SlotsGameManager.Instance.Spin(betAmount);
                 }
             });
         }
+        if (statusText != null)
+        {
+            statusText.gameObject.SetActive(true);
+            statusText.text = "READY TO SPIN!";
+            statusText.color = Color.white;
+        }
         for (int i = 0; i < 3; i++)
         {
             if (reels[i] != null)
             {
+                reels[i].gameObject.SetActive(true);
+                if (reels[i].transform.parent != null)
+                {
+                    reels[i].transform.parent.gameObject.SetActive(true);
+                }
                 reels[i].supportRichText = true;
                 reels[i].fontSize = 28;
                 reels[i].alignment = TextAnchor.MiddleCenter;
@@ -56,12 +85,67 @@ public class SlotsUIManager : MonoBehaviour
             }
         }
     }
+    void EnsureReferences()
+    {
+        if (statusText == null)
+        {
+            Transform st = transform.Find("StatusText");
+            if (st != null) statusText = st.GetComponent<Text>();
+        }
+        if (betAmountInput == null)
+        {
+            Transform inf = transform.Find("BetPanel/InputBg");
+            if (inf != null) betAmountInput = inf.GetComponent<InputField>();
+        }
+        if (halfBetBtn == null)
+        {
+            Transform hb = transform.Find("BetPanel/InputBg/HalfBtn");
+            if (hb != null) halfBetBtn = hb.GetComponent<Button>();
+        }
+        if (doubleBetBtn == null)
+        {
+            Transform db = transform.Find("BetPanel/InputBg/DoubleBtn");
+            if (db != null) doubleBetBtn = db.GetComponent<Button>();
+        }
+        if (spinButton == null)
+        {
+            Transform sb = transform.Find("BetPanel/ActionBtn");
+            if (sb != null) spinButton = sb.GetComponent<Button>();
+        }
+        if (reels == null || reels.Length < 3 || reels[0] == null)
+        {
+            Transform rBg = transform.Find("ReelsBg");
+            if (rBg != null)
+            {
+                reels = new Text[3];
+                string[] rNames = { "Reel1Bg/Reel1", "Reel2Bg/Reel2", "Reel3Bg/Reel3" };
+                for (int i = 0; i < 3; i++)
+                {
+                    Transform t = rBg.Find(rNames[i]);
+                    if (t != null) reels[i] = t.GetComponent<Text>();
+                }
+            }
+        }
+    }
+    void OnDestroy()
+    {
+        if (SlotsGameManager.Instance != null)
+        {
+            SlotsGameManager.Instance.OnStateChanged -= UpdateState;
+            SlotsGameManager.Instance.OnSpinResult -= SetFinalReels;
+            SlotsGameManager.Instance.OnPayout -= ShowPayout;
+        }
+    }
     void UpdateBetDisplay()
     {
         if (betAmountInput != null) betAmountInput.text = betAmount.ToString("F2");
-        if (SlotsGameManager.Instance.currentState == SlotsGameManager.GameState.Idle)
+        if (spinButton != null && spinButton.transform.childCount > 0)
         {
-            spinButton.transform.GetChild(0).GetComponent<Text>().text = $"SPIN ₱{betAmount:F2}";
+            if (SlotsGameManager.Instance == null || SlotsGameManager.Instance.currentState == SlotsGameManager.GameState.Idle)
+            {
+                Text t = spinButton.transform.GetChild(0).GetComponent<Text>();
+                if (t != null) t.text = $"SPIN ₱{betAmount:F2}";
+            }
         }
     }
     void Update()
@@ -73,22 +157,35 @@ public class SlotsUIManager : MonoBehaviour
     }
     void UpdateState(SlotsGameManager.GameState state)
     {
-        spinButton.interactable = state == SlotsGameManager.GameState.Idle;
-        halfBetBtn.interactable = state == SlotsGameManager.GameState.Idle;
-        doubleBetBtn.interactable = state == SlotsGameManager.GameState.Idle;
-        betAmountInput.interactable = state == SlotsGameManager.GameState.Idle;
+        if (spinButton != null) spinButton.interactable = state == SlotsGameManager.GameState.Idle;
+        if (halfBetBtn != null) halfBetBtn.interactable = state == SlotsGameManager.GameState.Idle;
+        if (doubleBetBtn != null) doubleBetBtn.interactable = state == SlotsGameManager.GameState.Idle;
+        if (betAmountInput != null) betAmountInput.interactable = state == SlotsGameManager.GameState.Idle;
         if (state == SlotsGameManager.GameState.Idle)
         {
-            statusText.text = "READY TO SPIN!";
-            statusText.color = Color.white;
-            spinButton.transform.GetChild(0).GetComponent<Text>().text = $"SPIN ₱{betAmount:F2}";
-            spinButton.GetComponent<Image>().color = new Color(0.1f, 0.8f, 0.3f);
+            if (statusText != null)
+            {
+                statusText.text = "READY TO SPIN!";
+                statusText.color = Color.white;
+            }
+            if (spinButton != null && spinButton.transform.childCount > 0)
+            {
+                Text t = spinButton.transform.GetChild(0).GetComponent<Text>();
+                if (t != null) t.text = $"SPIN ₱{betAmount:F2}";
+                Image img = spinButton.GetComponent<Image>();
+                if (img != null) img.color = new Color(0.1f, 0.8f, 0.3f);
+            }
         }
         else if (state == SlotsGameManager.GameState.Spinning)
         {
-            statusText.text = "<color=#FFFF00>SPINNING...</color>";
-            spinButton.transform.GetChild(0).GetComponent<Text>().text = "GOOD LUCK!";
-            spinButton.GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f);
+            if (statusText != null) statusText.text = "<color=#FFFF00>SPINNING...</color>";
+            if (spinButton != null && spinButton.transform.childCount > 0)
+            {
+                Text t = spinButton.transform.GetChild(0).GetComponent<Text>();
+                if (t != null) t.text = "GOOD LUCK!";
+                Image img = spinButton.GetComponent<Image>();
+                if (img != null) img.color = new Color(0.5f, 0.5f, 0.5f);
+            }
             if (!isSpinning) StartCoroutine(SpinAnimation());
         }
     }

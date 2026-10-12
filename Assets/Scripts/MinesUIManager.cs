@@ -19,35 +19,119 @@ public class MinesUIManager : MonoBehaviour
     private Color mineColor = new Color(1f, 0.2f, 0.2f, 1f);
     void Start()
     {
-        gameManager = FindAnyObjectByType<MinesGameManager>();
+        if (tileButtons == null || tileButtons.Length < 25 || tileButtons[0] == null)
+        {
+            Transform grid = transform.Find("GridContainer");
+            if (grid != null)
+            {
+                tileButtons = new Button[25];
+                tileTexts = new Text[25];
+                int idx = 0;
+                foreach (Transform t in grid)
+                {
+                    if (idx < 25)
+                    {
+                        tileButtons[idx] = t.GetComponent<Button>();
+                        idx++;
+                    }
+                }
+            }
+        }
+        if (actionButton == null)
+        {
+            Transform ab = transform.Find("BetPanel/ActionBtn");
+            if (ab != null) actionButton = ab.GetComponent<Button>();
+        }
+        if (statusText == null)
+        {
+            Transform st = transform.Find("StatusText");
+            if (st != null) statusText = st.GetComponent<Text>();
+        }
+        if (currentMultiplierText == null)
+        {
+            Transform mt = transform.Find("MultiplierText");
+            if (mt != null) currentMultiplierText = mt.GetComponent<Text>();
+        }
+        if (betAmountInput == null)
+        {
+            Transform inp = transform.Find("BetPanel/InputBg");
+            if (inp != null) betAmountInput = inp.GetComponent<InputField>();
+        }
+        if (minesCountInput == null)
+        {
+            Transform minp = transform.Find("MinesInputBg");
+            if (minp != null) minesCountInput = minp.GetComponent<InputField>();
+        }
+        if (halfBetBtn == null)
+        {
+            Transform hb = transform.Find("BetPanel/InputBg/HalfBtn");
+            if (hb != null) halfBetBtn = hb.GetComponent<Button>();
+        }
+        if (doubleBetBtn == null)
+        {
+            Transform db = transform.Find("BetPanel/InputBg/DoubleBtn");
+            if (db != null) doubleBetBtn = db.GetComponent<Button>();
+        }
+
+        if (gameManager == null) gameManager = FindAnyObjectByType<MinesGameManager>();
+        if (gameManager == null) gameManager = MinesGameManager.Instance;
         if (gameManager != null)
         {
+            gameManager.OnStateChanged -= UpdateState;
             gameManager.OnStateChanged += UpdateState;
+            gameManager.OnTileRevealed -= HandleTileRevealed;
             gameManager.OnTileRevealed += HandleTileRevealed;
+            gameManager.OnCashOut -= HandleCashOut;
             gameManager.OnCashOut += HandleCashOut;
         }
         if (actionButton != null)
         {
+            actionButton.onClick.RemoveAllListeners();
             actionButton.onClick.AddListener(OnActionClicked);
         }
-        if (halfBetBtn != null) halfBetBtn.onClick.AddListener(() => ModifyBet(0.5f));
-        if (doubleBetBtn != null) doubleBetBtn.onClick.AddListener(() => ModifyBet(2f));
+        if (halfBetBtn != null)
+        {
+            halfBetBtn.onClick.RemoveAllListeners();
+            halfBetBtn.onClick.AddListener(() => ModifyBet(0.5f));
+        }
+        if (doubleBetBtn != null)
+        {
+            doubleBetBtn.onClick.RemoveAllListeners();
+            doubleBetBtn.onClick.AddListener(() => ModifyBet(2f));
+        }
         for (int i = 0; i < 25; i++)
         {
             int index = i;
             if (tileButtons[i] != null)
             {
-                tileButtons[i].onClick.AddListener(() => gameManager.ClickTile(index));
-                tileTexts[i] = tileButtons[i].transform.GetChild(0).GetComponent<Text>();
-                if (tileTexts[i] != null) { tileTexts[i].fontSize = 32; tileTexts[i].alignment = TextAnchor.MiddleCenter; }
+                tileButtons[i].onClick.RemoveAllListeners();
+                tileButtons[i].onClick.AddListener(() => {
+                    if (gameManager != null) gameManager.ClickTile(index);
+                });
+                if (tileButtons[i].transform.childCount > 0)
+                {
+                    tileTexts[i] = tileButtons[i].transform.GetChild(0).GetComponent<Text>();
+                    if (tileTexts[i] != null) { tileTexts[i].fontSize = 32; tileTexts[i].alignment = TextAnchor.MiddleCenter; }
+                }
                 if (tileButtons[i].GetComponent<ButtonHoverJuice>() == null) tileButtons[i].gameObject.AddComponent<ButtonHoverJuice>();
                 ResetTile(i);
             }
         }
         UpdateState(MinesGameManager.GameState.Idle);
     }
+    void OnDestroy()
+    {
+        if (gameManager != null)
+        {
+            gameManager.OnStateChanged -= UpdateState;
+            gameManager.OnTileRevealed -= HandleTileRevealed;
+            gameManager.OnCashOut -= HandleCashOut;
+        }
+    }
     void OnActionClicked()
     {
+        if (gameManager == null) gameManager = FindAnyObjectByType<MinesGameManager>();
+        if (gameManager == null) return;
         if (gameManager.currentState == MinesGameManager.GameState.Idle)
         {
             float bet = 10f;
@@ -74,42 +158,55 @@ public class MinesUIManager : MonoBehaviour
     }
     void UpdateState(MinesGameManager.GameState state)
     {
-        Text actionText = actionButton.transform.GetChild(0).GetComponent<Text>();
-        betAmountInput.interactable = state == MinesGameManager.GameState.Idle;
-        if(minesCountInput != null) minesCountInput.interactable = state == MinesGameManager.GameState.Idle;
-        halfBetBtn.interactable = state == MinesGameManager.GameState.Idle;
-        doubleBetBtn.interactable = state == MinesGameManager.GameState.Idle;
+        if (actionButton != null && actionButton.transform.childCount > 0)
+        {
+            Text actionText = actionButton.transform.GetChild(0).GetComponent<Text>();
+            if (actionText != null)
+            {
+                if (state == MinesGameManager.GameState.Idle) actionText.text = "BET";
+                else if (state == MinesGameManager.GameState.Playing) actionText.text = "CASHOUT";
+                else if (state == MinesGameManager.GameState.Result) actionText.text = "PLAY AGAIN";
+            }
+            Image img = actionButton.GetComponent<Image>();
+            if (img != null)
+            {
+                if (state == MinesGameManager.GameState.Idle) img.color = new Color(0f, 0.9f, 0.0f, 1f);
+                else if (state == MinesGameManager.GameState.Playing) img.color = new Color(1f, 0.6f, 0.0f, 1f);
+                else if (state == MinesGameManager.GameState.Result) img.color = new Color(0.13f, 0.67f, 1f, 1f);
+            }
+        }
+        if (betAmountInput != null) betAmountInput.interactable = state == MinesGameManager.GameState.Idle;
+        if (minesCountInput != null) minesCountInput.interactable = state == MinesGameManager.GameState.Idle;
+        if (halfBetBtn != null) halfBetBtn.interactable = state == MinesGameManager.GameState.Idle;
+        if (doubleBetBtn != null) doubleBetBtn.interactable = state == MinesGameManager.GameState.Idle;
         if (state == MinesGameManager.GameState.Idle)
         {
-            actionText.text = "BET";
-            actionButton.GetComponent<Image>().color = new Color(0f, 0.9f, 0.0f, 1f);
-            statusText.text = "<color=#AAAAAA>READY TO PLAY</color>";
-            currentMultiplierText.text = "1.00x";
+            if (statusText != null) statusText.text = "<color=#AAAAAA>READY TO PLAY</color>";
+            if (currentMultiplierText != null) currentMultiplierText.text = "1.00x";
             for (int i = 0; i < 25; i++) ResetTile(i);
         }
         else if (state == MinesGameManager.GameState.Playing)
         {
-            actionText.text = "CASHOUT";
-            actionButton.GetComponent<Image>().color = new Color(1f, 0.6f, 0.0f, 1f);
-            statusText.text = "<color=#FFFF00>PICK A TILE...</color>";
+            if (statusText != null) statusText.text = "<color=#FFFF00>PICK A TILE...</color>";
         }
-        else if (state == MinesGameManager.GameState.Result)
+        else if (state == MinesGameManager.GameState.Result && gameManager != null)
         {
-            actionText.text = "PLAY AGAIN";
-            actionButton.GetComponent<Image>().color = new Color(0.13f, 0.67f, 1f, 1f);
             for (int i = 0; i < 25; i++)
             {
+                if (tileTexts[i] == null || tileButtons[i] == null) continue;
                 if (!gameManager.revealed[i])
                 {
                     if (gameManager.grid[i])
                     {
                         tileTexts[i].text = "💣";
-                        tileButtons[i].GetComponent<Image>().color = new Color(mineColor.r, mineColor.g, mineColor.b, 0.3f);
+                        Image bi = tileButtons[i].GetComponent<Image>();
+                        if (bi != null) bi.color = new Color(mineColor.r, mineColor.g, mineColor.b, 0.3f);
                     }
                     else
                     {
                         tileTexts[i].text = "💎";
-                        tileButtons[i].GetComponent<Image>().color = new Color(gemColor.r, gemColor.g, gemColor.b, 0.3f);
+                        Image bi = tileButtons[i].GetComponent<Image>();
+                        if (bi != null) bi.color = new Color(gemColor.r, gemColor.g, gemColor.b, 0.3f);
                     }
                 }
             }

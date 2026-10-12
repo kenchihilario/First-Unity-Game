@@ -1,8 +1,11 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+
 public class MinesGameManager : MonoBehaviour
 {
+    public static MinesGameManager Instance;
+
     public enum GameState { Idle, Playing, Result }
     public GameState currentState = GameState.Idle;
     public int totalMines = 3;
@@ -14,10 +17,15 @@ public class MinesGameManager : MonoBehaviour
     public event Action<int, bool, float> OnTileRevealed;
     public event Action<float> OnCashOut;
 
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+    }
+
     public void StartGame(float betAmount, int minesCount)
     {
         if (currentState != GameState.Idle || betAmount <= 0) return;
-        if (PlayerManager.Instance.PlaceBet(betAmount))
+        if (PlayerManager.Instance != null && PlayerManager.Instance.PlaceBet(betAmount))
         {
             currentBet = betAmount;
             totalMines = Mathf.Clamp(minesCount, 1, 24);
@@ -72,7 +80,7 @@ public class MinesGameManager : MonoBehaviour
         if (currentState != GameState.Playing || gemsFound == 0) return;
         float multiplier = CalculateMultiplier(gemsFound, totalMines);
         float payout = currentBet * multiplier;
-        PlayerManager.Instance.AddWinnings(payout);
+        if (PlayerManager.Instance != null) PlayerManager.Instance.AddWinnings(payout);
         currentState = GameState.Result;
         OnCashOut?.Invoke(payout);
         OnStateChanged?.Invoke(currentState);
@@ -93,6 +101,7 @@ public class MinesGameManager : MonoBehaviour
         float multiplier = (float)(0.99 / probability);
         return Mathf.Floor(multiplier * 100f) / 100f;
     }
+
     public void ResetGame()
     {
         if (currentState == GameState.Result)

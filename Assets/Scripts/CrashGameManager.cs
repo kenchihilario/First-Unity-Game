@@ -37,7 +37,6 @@ public class CrashGameManager : MonoBehaviour
             OnGameStateChanged?.Invoke(currentState);
             hasCashedOut = false;
 
-            // 2% instant crash chance
             float rand = Random.Range(0f, 100f);
             if (rand < 2f)
             {
