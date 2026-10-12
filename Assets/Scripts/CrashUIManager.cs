@@ -188,6 +188,7 @@ public class CrashUIManager : MonoBehaviour
         RectTransform curveRt = curveGO.GetComponent<RectTransform>();
         curveRt.anchorMin = Vector2.zero;
         curveRt.anchorMax = Vector2.one;
+        curveRt.pivot = Vector2.zero;
         curveRt.offsetMin = Vector2.zero;
         curveRt.offsetMax = Vector2.zero;
 
@@ -205,9 +206,9 @@ public class CrashUIManager : MonoBehaviour
         launchPad = padGO.GetComponent<RectTransform>();
         launchPad.anchorMin = Vector2.zero;
         launchPad.anchorMax = Vector2.zero;
-        launchPad.sizeDelta = new Vector2(50, 6);
+        launchPad.sizeDelta = new Vector2(56, 8);
         launchPad.pivot = new Vector2(0.5f, 0.5f);
-        launchPad.anchoredPosition = new Vector2(40f, 30f);
+        launchPad.anchoredPosition = new Vector2(50f, 26f);
         Image padImg = padGO.GetComponent<Image>();
         padImg.color = new Color(0.0f, 0.95f, 0.65f, 0.8f);
 
@@ -364,8 +365,8 @@ public class CrashUIManager : MonoBehaviour
         float viewW = Mathf.Max(300f, viewRect.width);
         float viewH = Mathf.Max(200f, viewRect.height);
 
-        float originX = 40f;
-        float originY = 32f;
+        float originX = 50f;
+        float originY = 36f;
         float usableW = viewW - originX - 90f;
         float usableH = viewH - originY - 80f;
 
@@ -395,18 +396,20 @@ public class CrashUIManager : MonoBehaviour
 
         Vector2 tipPos = curvePoints[curvePoints.Count - 1];
         Vector2 prevPos = curvePoints[curvePoints.Count - 2];
+        Vector2 delta = tipPos - prevPos;
+
+        Vector2 flightDir = new Vector2(0.906f, 0.422f);
+        float flightAngle = 25f;
+        if (delta.sqrMagnitude > 0.0001f)
+        {
+            flightDir = delta.normalized;
+            flightAngle = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg;
+        }
 
         if (rocketRoot != null)
         {
             if (!rocketRoot.gameObject.activeSelf) rocketRoot.gameObject.SetActive(true);
-            rocketRoot.anchoredPosition = tipPos;
-
-            Vector2 delta = tipPos - prevPos;
-            float flightAngle = 25f;
-            if (delta.sqrMagnitude > 0.0001f)
-            {
-                flightAngle = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg;
-            }
+            rocketRoot.anchoredPosition = tipPos + flightDir * 24f;
 
             float turbulence = (Mathf.PerlinNoise(Time.time * 30f, 0.5f) - 0.5f) * 2.8f;
             rocketRoot.localRotation = Quaternion.Euler(0, 0, flightAngle + turbulence);
@@ -432,9 +435,10 @@ public class CrashUIManager : MonoBehaviour
     {
         if (sparkPool == null) return;
 
-        Vector2 flightDir = (tipPos - prevPos).normalized;
-        Vector2 nozzlePos = tipPos - flightDir * 32f + (Vector2)Random.insideUnitCircle * 4f;
-        Vector2 backwardVel = -flightDir * Random.Range(60f, 160f) + new Vector2(Random.Range(-25f, 25f), Random.Range(-25f, 25f));
+        Vector2 delta = tipPos - prevPos;
+        Vector2 flightDir = (delta.sqrMagnitude > 0.0001f) ? delta.normalized : new Vector2(0.906f, 0.422f);
+        Vector2 nozzlePos = tipPos + (Vector2)Random.insideUnitCircle * 3f;
+        Vector2 backwardVel = -flightDir * Random.Range(70f, 180f) + new Vector2(Random.Range(-20f, 20f), Random.Range(-20f, 20f));
 
         ref SparkParticle sp = ref sparkPool[sparkPoolIndex];
         sp.rt.gameObject.SetActive(true);
@@ -537,9 +541,10 @@ public class CrashUIManager : MonoBehaviour
         if (rocketRoot != null)
         {
             if (!rocketRoot.gameObject.activeSelf) rocketRoot.gameObject.SetActive(true);
-            float idleBob = Mathf.Sin(Time.time * 4f) * 3.5f;
-            rocketRoot.anchoredPosition = new Vector2(40f, 34f + idleBob);
-            rocketRoot.localRotation = Quaternion.Euler(0, 0, 26f);
+            float idleBob = Mathf.Sin(Time.time * 4f) * 2.5f;
+            Vector2 launchDir = new Vector2(0.906f, 0.422f);
+            rocketRoot.anchoredPosition = new Vector2(50f, 36f) + launchDir * 24f + new Vector2(0f, idleBob);
+            rocketRoot.localRotation = Quaternion.Euler(0, 0, 25f);
         }
 
         if (flameRoot != null)
@@ -635,8 +640,9 @@ public class CrashUIManager : MonoBehaviour
                 if (rocketRoot != null)
                 {
                     rocketRoot.gameObject.SetActive(true);
-                    rocketRoot.anchoredPosition = new Vector2(40f, 34f);
-                    rocketRoot.localRotation = Quaternion.Euler(0, 0, 26f);
+                    Vector2 launchDir = new Vector2(0.906f, 0.422f);
+                    rocketRoot.anchoredPosition = new Vector2(50f, 36f) + launchDir * 24f;
+                    rocketRoot.localRotation = Quaternion.Euler(0, 0, 25f);
                 }
                 break;
 
@@ -663,7 +669,7 @@ public class CrashUIManager : MonoBehaviour
                 break;
 
             case CrashGameManager.GameState.Crashed:
-                Vector2 crashPos = (curvePoints.Count > 0) ? curvePoints[curvePoints.Count - 1] : new Vector2(40, 32);
+                Vector2 crashPos = (rocketRoot != null) ? rocketRoot.anchoredPosition : ((curvePoints.Count > 0) ? curvePoints[curvePoints.Count - 1] : new Vector2(50f, 36f));
 
                 if (statusText != null)
                 {
@@ -682,7 +688,7 @@ public class CrashUIManager : MonoBehaviour
 
                 if (curveGraphic != null)
                 {
-                    curveGraphic.UpdateCurve(curvePoints, 32f, true);
+                    curveGraphic.UpdateCurve(curvePoints, 36f, true);
                 }
 
                 if (gameObject.activeInHierarchy && CasinoAudio.Instance)

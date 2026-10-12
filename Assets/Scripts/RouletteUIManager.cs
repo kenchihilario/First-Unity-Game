@@ -39,9 +39,17 @@ public class RouletteUIManager : MonoBehaviour
             if (t != null) tickerContainer = t.GetComponent<RectTransform>();
         }
         if (statusText == null) statusText = transform.Find("StatusText")?.GetComponent<Text>();
-        if (betRedBtn == null) betRedBtn = transform.Find("BetRedBtn")?.GetComponent<Button>() ?? transform.Find("BetPanel/BetRedBtn")?.GetComponent<Button>();
-        if (betBlackBtn == null) betBlackBtn = transform.Find("BetBlackBtn")?.GetComponent<Button>() ?? transform.Find("BetPanel/BetBlackBtn")?.GetComponent<Button>();
-        if (betGreenBtn == null) betGreenBtn = transform.Find("BetGreenBtn")?.GetComponent<Button>() ?? transform.Find("BetPanel/BetGreenBtn")?.GetComponent<Button>();
+        if (betRedBtn == null) betRedBtn = transform.Find("RButtonGroup/BetRed")?.GetComponent<Button>() ?? transform.Find("BetRedBtn")?.GetComponent<Button>() ?? transform.Find("BetPanel/BetRedBtn")?.GetComponent<Button>();
+        if (betBlackBtn == null) betBlackBtn = transform.Find("RButtonGroup/BetBlack")?.GetComponent<Button>() ?? transform.Find("BetBlackBtn")?.GetComponent<Button>() ?? transform.Find("BetPanel/BetBlackBtn")?.GetComponent<Button>();
+        if (betGreenBtn == null) betGreenBtn = transform.Find("RButtonGroup/BetGreen")?.GetComponent<Button>() ?? transform.Find("BetGreenBtn")?.GetComponent<Button>() ?? transform.Find("BetPanel/BetGreenBtn")?.GetComponent<Button>();
+
+        Sprite uiSprite = Resources.GetBuiltinResource<Sprite>("UI/Skin/UISprite.psd");
+        if (uiSprite != null)
+        {
+            if (betRedBtn != null && betRedBtn.image != null) { betRedBtn.image.sprite = uiSprite; betRedBtn.image.type = Image.Type.Sliced; }
+            if (betBlackBtn != null && betBlackBtn.image != null) { betBlackBtn.image.sprite = uiSprite; betBlackBtn.image.type = Image.Type.Sliced; }
+            if (betGreenBtn != null && betGreenBtn.image != null) { betGreenBtn.image.sprite = uiSprite; betGreenBtn.image.type = Image.Type.Sliced; }
+        }
         if (betAmountInput == null) betAmountInput = transform.Find("BetPanel/BetInput")?.GetComponent<InputField>() ?? GetComponentInChildren<InputField>(true);
         if (halfBetBtn == null) halfBetBtn = transform.Find("BetPanel/HalfBtn")?.GetComponent<Button>();
         if (doubleBetBtn == null) doubleBetBtn = transform.Find("BetPanel/DoubleBtn")?.GetComponent<Button>();

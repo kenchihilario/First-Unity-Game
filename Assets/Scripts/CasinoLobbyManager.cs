@@ -895,7 +895,9 @@ public class CasinoLobbyManager : MonoBehaviour
                     {
                         itRt.anchorMin = Vector2.zero;
                         itRt.anchorMax = Vector2.one;
-                        itRt.offsetMin = new Vector2(12, 0);
+                        itRt.anchoredPosition = Vector2.zero;
+                        itRt.sizeDelta = Vector2.zero;
+                        itRt.offsetMin = new Vector2(16, 0);
                         itRt.offsetMax = new Vector2(-115, 0);
                     }
                 }
@@ -1094,6 +1096,7 @@ public class CasinoLobbyManager : MonoBehaviour
                 }
                 Image tbImg = tb.GetComponent<Image>();
                 if (tbImg != null) tbImg.color = new Color(0.035f, 0.051f, 0.078f, 1f);
+                if (tb.GetComponent<RectMask2D>() == null) tb.gameObject.AddComponent<RectMask2D>();
 
                 Transform cl = tb.Find("CenterLine");
                 if (cl != null)
@@ -1114,8 +1117,9 @@ public class CasinoLobbyManager : MonoBehaviour
                     rbRt.anchorMax = new Vector2(0.5f, 0.5f);
                     rbRt.pivot = new Vector2(0.5f, 0.5f);
                     rbRt.anchoredPosition = new Vector2(0, -115);
-                    rbRt.sizeDelta = new Vector2(860, 90);
+                    rbRt.sizeDelta = new Vector2(880, 96);
                 }
+                Sprite uiSprite = Resources.GetBuiltinResource<Sprite>("UI/Skin/UISprite.psd");
                 Transform r = rb.Find("BetRed");
                 if (r != null)
                 {
@@ -1124,10 +1128,14 @@ public class CasinoLobbyManager : MonoBehaviour
                     if (rt != null)
                     {
                         rt.anchorMin = new Vector2(0.5f, 0.5f); rt.anchorMax = new Vector2(0.5f, 0.5f); rt.pivot = new Vector2(0.5f, 0.5f);
-                        rt.anchoredPosition = new Vector2(-295, 0); rt.sizeDelta = new Vector2(260, 84);
+                        rt.anchoredPosition = new Vector2(-295, 0); rt.sizeDelta = new Vector2(270, 88);
                     }
                     Image rImg = r.GetComponent<Image>();
-                    if (rImg != null) rImg.color = new Color(0.86f, 0.15f, 0.22f, 1f);
+                    if (rImg != null)
+                    {
+                        if (uiSprite != null) { rImg.sprite = uiSprite; rImg.type = Image.Type.Sliced; }
+                        rImg.color = new Color(0.86f, 0.15f, 0.22f, 1f);
+                    }
                     Text rTxt = r.GetComponentInChildren<Text>(true);
                     if (rTxt != null) { rTxt.gameObject.SetActive(true); rTxt.color = Color.white; }
                 }
@@ -1139,10 +1147,14 @@ public class CasinoLobbyManager : MonoBehaviour
                     if (gt != null)
                     {
                         gt.anchorMin = new Vector2(0.5f, 0.5f); gt.anchorMax = new Vector2(0.5f, 0.5f); gt.pivot = new Vector2(0.5f, 0.5f);
-                        gt.anchoredPosition = new Vector2(0, 0); gt.sizeDelta = new Vector2(240, 84);
+                        gt.anchoredPosition = new Vector2(0, 0); gt.sizeDelta = new Vector2(270, 88);
                     }
                     Image gImg = g.GetComponent<Image>();
-                    if (gImg != null) gImg.color = new Color(0.05f, 0.75f, 0.45f, 1f);
+                    if (gImg != null)
+                    {
+                        if (uiSprite != null) { gImg.sprite = uiSprite; gImg.type = Image.Type.Sliced; }
+                        gImg.color = new Color(0.05f, 0.75f, 0.45f, 1f);
+                    }
                     Text gTxt = g.GetComponentInChildren<Text>(true);
                     if (gTxt != null) { gTxt.gameObject.SetActive(true); gTxt.color = Color.white; }
                 }
@@ -1154,10 +1166,14 @@ public class CasinoLobbyManager : MonoBehaviour
                     if (bt != null)
                     {
                         bt.anchorMin = new Vector2(0.5f, 0.5f); bt.anchorMax = new Vector2(0.5f, 0.5f); bt.pivot = new Vector2(0.5f, 0.5f);
-                        bt.anchoredPosition = new Vector2(295, 0); bt.sizeDelta = new Vector2(260, 84);
+                        bt.anchoredPosition = new Vector2(295, 0); bt.sizeDelta = new Vector2(270, 88);
                     }
                     Image bImg = b.GetComponent<Image>();
-                    if (bImg != null) bImg.color = new Color(0.12f, 0.16f, 0.24f, 1f);
+                    if (bImg != null)
+                    {
+                        if (uiSprite != null) { bImg.sprite = uiSprite; bImg.type = Image.Type.Sliced; }
+                        bImg.color = new Color(0.12f, 0.16f, 0.24f, 1f);
+                    }
                     Text bTxt = b.GetComponentInChildren<Text>(true);
                     if (bTxt != null) { bTxt.gameObject.SetActive(true); bTxt.color = Color.white; }
                 }
@@ -1264,14 +1280,33 @@ public class CasinoLobbyManager : MonoBehaviour
                     gRt.anchorMax = new Vector2(0.5f, 0.5f);
                     gRt.pivot = new Vector2(0.5f, 0.5f);
                     gRt.anchoredPosition = new Vector2(0, -15);
-                    gRt.sizeDelta = new Vector2(590, 590);
-                    gRt.localScale = new Vector3(0.68f, 0.68f, 1f);
+                    gRt.sizeDelta = new Vector2(510, 510);
+                    gRt.localScale = Vector3.one;
                 }
+                GridLayoutGroup glg = grid.GetComponent<GridLayoutGroup>();
+                if (glg != null)
+                {
+                    glg.cellSize = new Vector2(88, 88);
+                    glg.spacing = new Vector2(10, 10);
+                    glg.padding = new RectOffset(10, 10, 10, 10);
+                }
+                Sprite uiSprite = Resources.GetBuiltinResource<Sprite>("UI/Skin/UISprite.psd");
                 foreach (Transform tile in grid)
                 {
                     tile.gameObject.SetActive(true);
+                    Image tImg = tile.GetComponent<Image>();
+                    if (tImg != null)
+                    {
+                        if (uiSprite != null) { tImg.sprite = uiSprite; tImg.type = Image.Type.Sliced; }
+                        tImg.color = new Color(0.12f, 0.16f, 0.23f, 1f);
+                    }
                     Text tt = tile.GetComponentInChildren<Text>(true);
-                    if (tt != null) tt.gameObject.SetActive(true);
+                    if (tt != null)
+                    {
+                        tt.gameObject.SetActive(true);
+                        tt.fontSize = 36;
+                        tt.alignment = TextAnchor.MiddleCenter;
+                    }
                 }
             }
 
@@ -1285,7 +1320,7 @@ public class CasinoLobbyManager : MonoBehaviour
                     mRt.anchorMin = new Vector2(0.5f, 0.5f);
                     mRt.anchorMax = new Vector2(0.5f, 0.5f);
                     mRt.pivot = new Vector2(0.5f, 0.5f);
-                    mRt.anchoredPosition = new Vector2(0, 270);
+                    mRt.anchoredPosition = new Vector2(0, 290);
                     mRt.sizeDelta = new Vector2(600, 48);
                 }
                 Text mTxt = mult.GetComponent<Text>();
@@ -1303,7 +1338,7 @@ public class CasinoLobbyManager : MonoBehaviour
                     sRt.anchorMin = new Vector2(0.5f, 0.5f);
                     sRt.anchorMax = new Vector2(0.5f, 0.5f);
                     sRt.pivot = new Vector2(0.5f, 0.5f);
-                    sRt.anchoredPosition = new Vector2(0, 222);
+                    sRt.anchoredPosition = new Vector2(0, 240);
                     sRt.sizeDelta = new Vector2(600, 36);
                 }
                 Text sTxt = st.GetComponent<Text>();
@@ -1321,7 +1356,7 @@ public class CasinoLobbyManager : MonoBehaviour
                     mlRt.anchorMin = new Vector2(0.5f, 0.5f);
                     mlRt.anchorMax = new Vector2(0.5f, 0.5f);
                     mlRt.pivot = new Vector2(0.5f, 0.5f);
-                    mlRt.anchoredPosition = new Vector2(-75, -270);
+                    mlRt.anchoredPosition = new Vector2(-75, -290);
                     mlRt.sizeDelta = new Vector2(140, 36);
                 }
                 Text mlTxt = ml.GetComponent<Text>();
@@ -1339,7 +1374,7 @@ public class CasinoLobbyManager : MonoBehaviour
                     mibRt.anchorMin = new Vector2(0.5f, 0.5f);
                     mibRt.anchorMax = new Vector2(0.5f, 0.5f);
                     mibRt.pivot = new Vector2(0.5f, 0.5f);
-                    mibRt.anchoredPosition = new Vector2(50, -270);
+                    mibRt.anchoredPosition = new Vector2(50, -290);
                     mibRt.sizeDelta = new Vector2(90, 42);
                 }
                 Text mibTxt = mib.GetComponentInChildren<Text>(true);

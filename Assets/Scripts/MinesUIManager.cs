@@ -216,7 +216,13 @@ public class MinesUIManager : MonoBehaviour
     {
         if (tileButtons[index] == null) return;
         tileTexts[index].text = "";
-        tileButtons[index].GetComponent<Image>().color = darkTileColor;
+        Image img = tileButtons[index].GetComponent<Image>();
+        if (img != null)
+        {
+            Sprite s = Resources.GetBuiltinResource<Sprite>("UI/Skin/UISprite.psd");
+            if (s != null) { img.sprite = s; img.type = Image.Type.Sliced; }
+            img.color = darkTileColor;
+        }
         tileButtons[index].transform.localScale = Vector3.one;
         tileButtons[index].transform.localRotation = Quaternion.Euler(0, 0, 0);
     }
